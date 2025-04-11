@@ -1,67 +1,51 @@
-<nav class="navbar navbar-light">
-  <div class="container">
-    <a class="navbar-brand" routerLink="/">conduit</a>
+<mat-toolbar color="primary" class="app-header">
 
-    <!-- Show this for logged out users -->
-    <ul *ifAuthenticated="false" class="nav navbar-nav pull-xs-right">
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/"> Home </a>
-      </li>
+  <!-- Left Side: Authenticated -->
+  <ng-container *ifAuthenticated="true">
+    <button mat-icon-button (click)="onToggleSidebar()">
+      <mat-icon>menu</mat-icon>
+    </button>
 
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/login" routerLinkActive="active">
-          Sign in
-        </a>
-      </li>
+    <a mat-button class="header-link" routerLink="/">Home</a>
+  </ng-container>
 
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/register" routerLinkActive="active">
-          Sign up
-        </a>
-      </li>
-    </ul>
+  <!-- Left Side: Not Authenticated -->
+  <ng-container *ifAuthenticated="false">
+    <a mat-button class="header-link" routerLink="/">Home</a>
+  </ng-container>
 
-    <!-- Show this for logged in users -->
-    <ul *ifAuthenticated="true" class="nav navbar-nav pull-xs-right">
-      <li class="nav-item">
-        <a
-          class="nav-link"
-          routerLink="/"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-        >
-          Home
-        </a>
-      </li>
+  <span class="spacer"></span>
 
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/editor" routerLinkActive="active">
-          <i class="ion-compose"></i>&nbsp;New Article
-        </a>
-      </li>
+  <!-- Right Side: Not Authenticated -->
+  <ng-container *ifAuthenticated="false">
+    <a mat-button routerLink="/login">Sign In</a>
+    <a mat-button routerLink="/register">Sign Up</a>
+  </ng-container>
 
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/settings" routerLinkActive="active">
-          <i class="ion-gear-a"></i>&nbsp;Settings
-        </a>
-      </li>
+  <!-- Right Side: Authenticated -->
+  <ng-container *ifAuthenticated="true">
+    @if (currentUser$ | async; as currentUser) {
+      <button mat-button [matMenuTriggerFor]="userMenu">
+        <img
+          *ngIf="currentUser.image"
+          [src]="currentUser.image"
+          class="user-avatar"
+          alt="User"
+        />
+        <mat-icon *ngIf="!currentUser.image">account_circle</mat-icon>
+      </button>
 
-      @if (currentUser$ | async; as currentUser) {
-        <li class="nav-item">
-          <a
-            class="nav-link"
-            [routerLink]="['/profile', currentUser.username]"
-            routerLinkActive="active"
-          >
-            <img
-              [src]="currentUser.image"
-              *ngIf="currentUser.image"
-              class="user-pic"
-            />
-            {{ currentUser.username }}
-          </a>
-        </li>
-      }
-    </ul>
-  </div>
-</nav>
+      <mat-menu #userMenu="matMenu">
+        <button mat-menu-item routerLink="/settings">
+          <mat-icon>settings</mat-icon>
+          Settings
+        </button>
+        <button mat-menu-item (click)="onLogout()">
+          <mat-icon>logout</mat-icon>
+          Log out
+        </button>
+      </mat-menu>
+    }
+  </ng-container>
+
+</mat-toolbar>
