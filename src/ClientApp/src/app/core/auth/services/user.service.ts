@@ -9,7 +9,18 @@ import { Router } from "@angular/router";
 
 @Injectable({ providedIn: "root" })
 export class UserService {
-  private currentUserSubject = new BehaviorSubject<User | null>(null);
+
+// Mock user for dev/testing
+  private mockUser: User = {
+    email: 'devuser@example.com',
+    token: 'mock-token-1234',
+    username: 'devUser',
+    bio: 'This is a mock user for development.',
+    image: 'https://images.pexels.com/photos/1759531/pexels-photo-1759531.jpeg',
+  };
+//
+
+  private currentUserSubject = new BehaviorSubject<User | null>(this.mockUser);
   public currentUser = this.currentUserSubject
     .asObservable()
     .pipe(distinctUntilChanged());

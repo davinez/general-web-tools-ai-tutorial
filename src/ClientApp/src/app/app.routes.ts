@@ -3,9 +3,9 @@ import { inject } from "@angular/core";
 import { UserService } from "./core/auth/services/user.service";
 import { map } from "rxjs/operators";
 import { PublicLayoutComponent } from "./core/layout/public-layout.component";
-import { AppComponent } from "./app.component";
 import { PublicGuard } from "./shared/guards/public.guard";
 import { AuthGuard } from "./shared/guards/auth.guard";
+import { AppLayoutComponent } from "./core/layout/app-layout.component";
 
 export const routes: Routes = [
   // Unauthorized
@@ -32,7 +32,7 @@ export const routes: Routes = [
   // Authorized
   {
     path: "app",
-    component: AppComponent,
+    component: AppLayoutComponent,
     canActivate: [AuthGuard],
     children: [
       // Tutorial
@@ -67,6 +67,10 @@ export const routes: Routes = [
               import("./features/article/pages/editor/editor.component"),
           },
         ],
+      },
+      {
+        path: "articles",
+        loadComponent: () => import("./features/article/pages/home/home.component"),
       },
       {
         path: "article/:slug",

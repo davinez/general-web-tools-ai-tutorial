@@ -28,7 +28,7 @@ import { SidebarComponent } from './sidebar.component';
   templateUrl: "./app-layout.component.html",
   styleUrls: ['./app-layout.component.scss'],
 })
-export class AppComponent {
+export class AppLayoutComponent {
   isSmallScreen = signal(window.innerWidth < 768);
   isSidebarOpened = signal(!this.isSmallScreen());
 
