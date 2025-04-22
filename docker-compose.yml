@@ -1,9 +1,9 @@
 version: '3'
 services:
-  conduit:
+  CoreApp:
     build: .
     environment:
-     - ASPNETCORE_Conduit_DatabaseProvider=${ASPNETCORE_Conduit_DatabaseProvider}
-     - ASPNETCORE_Conduit_ConnectionString=${ASPNETCORE_Conduit_ConnectionString}
+     - ASPNETCORE_CoreApp_DatabaseProvider=${ASPNETCORE_CoreApp_DatabaseProvider}
+     - ASPNETCORE_CoreApp_ConnectionString=${ASPNETCORE_CoreApp_ConnectionString}
     ports:
      - "5000:5000"

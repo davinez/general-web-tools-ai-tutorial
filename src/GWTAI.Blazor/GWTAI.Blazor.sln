@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34622.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GWTAI.Blazor.Client", "GWTAI.Blazor.Client\GWTAI.Blazor.Client.csproj", "{CBF0AB35-CE3C-4CB2-A2BB-ABB49DDFD381}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CBF0AB35-CE3C-4CB2-A2BB-ABB49DDFD381}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBF0AB35-CE3C-4CB2-A2BB-ABB49DDFD381}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBF0AB35-CE3C-4CB2-A2BB-ABB49DDFD381}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBF0AB35-CE3C-4CB2-A2BB-ABB49DDFD381}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D34FB4B0-DFDE-425D-804C-57530571EB64}
+	EndGlobalSection
+EndGlobal
