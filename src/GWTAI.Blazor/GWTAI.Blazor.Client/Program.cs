@@ -1,36 +1,37 @@
-using GWTAI.Blazor.Client.Components;
+using GWTAI.Blazor.Client;
+using GWTAI.Blazor.Client.Services;
+using GWTAI.Blazor.Client.Services.Contracts;
+using GWTAI.Blazor.Client.Shared;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using static GWTAI.Blazor.Client.Shared.Extensions.HttpClientExtensions;
 
-namespace GWTAI.Blazor.Client
+
+var builder = WebAssemblyHostBuilder.CreateDefault(args);
+builder.RootComponents.Add<App>("#app");
+// Purpose?
+builder.RootComponents.Add<HeadOutlet>("head::after");
+
+// Add services to the container.
+//builder.Services.AddRazorComponents()
+//    .AddInteractiveServerComponents();
+
+// Add custom services
+builder.Services.AddHttpClient<BookmarkService>(client =>
 {
-  public class Program
-  {
-    public static void Main(string[] args)
-    {
-      var builder = WebApplication.CreateBuilder(args);
+  client.ConfigureGWTAIServiceClient();
+});
 
-      // Add services to the container.
-      builder.Services.AddRazorComponents()
-          .AddInteractiveServerComponents();
 
-      var app = builder.Build();
+builder.Services.AddScoped(sp => new HttpClient
+{
+  BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
+});
 
-      // Configure the HTTP request pipeline.
-      if (!app.Environment.IsDevelopment())
-      {
-        app.UseExceptionHandler("/Error");
-        // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-        app.UseHsts();
-      }
+// Add custom services
+builder.Services.AddScoped<IBookmarkService, BookmarkService>();
+builder.Services.AddScoped<IAlertService, AlertService>();
 
-      app.UseHttpsRedirection();
+builder.Services.AddSingleton<PageHistoryState>();
 
-      app.UseStaticFiles();
-      app.UseAntiforgery();
-
-      app.MapRazorComponents<App>()
-          .AddInteractiveServerRenderMode();
-
-      app.Run();
-    }
-  }
-}
+await builder.Build().RunAsync();

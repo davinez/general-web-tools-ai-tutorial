@@ -1,4 +1,4 @@
-# general-web-tools-ai
+# general-web-tools-ai-tutorials
 
 
 

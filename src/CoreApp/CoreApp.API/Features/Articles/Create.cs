@@ -42,7 +42,7 @@ public class Create
             RuleFor(x => x.Article).NotNull().SetValidator(new ArticleDataValidator());
     }
 
-    public class Handler(CoreApp.APIContext context, ICurrentUserAccessor currentUserAccessor)
+    public class Handler(CoreApp.API.Infrastructure.CoreAppContext context, ICurrentUserAccessor currentUserAccessor)
         : IRequestHandler<Command, ArticleEnvelope>
     {
         public async Task<ArticleEnvelope> Handle(
