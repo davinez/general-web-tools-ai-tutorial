@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CoreApp.API.Domain;
 using CoreApp.API.Infrastructure;
+using CoreApp.API.Infrastructure.Data;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -42,7 +43,7 @@ public class Create
             RuleFor(x => x.Article).NotNull().SetValidator(new ArticleDataValidator());
     }
 
-    public class Handler(CoreApp.API.Infrastructure.CoreAppContext context, ICurrentUserAccessor currentUserAccessor)
+    public class Handler(CoreAppContext context, ICurrentUserAccessor currentUserAccessor)
         : IRequestHandler<Command, ArticleEnvelope>
     {
         public async Task<ArticleEnvelope> Handle(

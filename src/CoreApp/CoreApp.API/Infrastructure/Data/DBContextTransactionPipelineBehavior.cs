@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 
-namespace CoreApp.API.Infrastructure;
+namespace CoreApp.API.Infrastructure.Data;
 
 /// <summary>
 /// Adds transaction to the processing pipeline

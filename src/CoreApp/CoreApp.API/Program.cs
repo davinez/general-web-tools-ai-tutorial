@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using CoreApp.API;
 using CoreApp.API.Infrastructure;
+using CoreApp.API.Infrastructure.Data;
+using CoreApp.API.Infrastructure.Data.Interceptors;
 using CoreApp.API.Infrastructure.Errors;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
@@ -12,28 +15,34 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration["ConnectionStrings:CoreAppDB"] ?? throw new CoreAppException("Missing connection string"); 
+
+builder.Services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
+
+builder.Services.AddSingleton(TimeProvider.System);
+
+var connectionString = builder.Configuration["ConnectionStrings:CoreAppDB"] ?? throw new CoreAppException("Missing connection string");
 var databaseProvider = builder.Configuration["ConnectionStrings:CoreAppDBProvider"] ?? throw new CoreAppException("Missing CoreAppDBProvider");
 
-builder.Services.AddDbContext<CoreAppContext>(options =>
+builder.Services.AddDbContext<CoreAppContext>((sp, options) =>
 {
-    if (databaseProvider.ToLowerInvariant().Trim().Equals("sqlite", StringComparison.Ordinal))
-    {
-        // options.UseSqlite(connectionString);
-    }
-    else if (
-        databaseProvider.ToLowerInvariant().Trim().Equals("sqlserver", StringComparison.Ordinal)
-    )
-    {
-        // only works in windows container
-        options.UseSqlServer(connectionString);
-    }
-    else
-    {
-        throw new InvalidOperationException(
-            "Database provider unknown. Please check configuration"
-        );
-    }
+  if (databaseProvider.ToLowerInvariant().Trim().Equals("sqlite", StringComparison.Ordinal))
+  {
+    // options.UseSqlite(connectionString);
+  }
+  else if (
+      databaseProvider.ToLowerInvariant().Trim().Equals("sqlserver", StringComparison.Ordinal)
+  )
+  {
+
+    options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
+    options.UseSqlServer(connectionString);
+  }
+  else
+  {
+    throw new InvalidOperationException(
+        "Database provider unknown. Please check configuration"
+    );
+  }
 });
 
 builder.Services.AddLocalization(x => x.ResourcesPath = "Resources");
@@ -41,23 +50,23 @@ builder.Services.AddLocalization(x => x.ResourcesPath = "Resources");
 // Inject an implementation of ISwaggerProvider with defaulted settings applied
 builder.Services.AddSwaggerGen(x =>
 {
-    x.AddSecurityDefinition(
-        "Bearer",
-        new OpenApiSecurityScheme
-        {
-            In = ParameterLocation.Header,
-            Description = "Please insert JWT with Bearer into field",
-            Name = "Authorization",
-            Type = SecuritySchemeType.ApiKey,
-            BearerFormat = "JWT"
-        }
-    );
+  x.AddSecurityDefinition(
+      "Bearer",
+      new OpenApiSecurityScheme
+      {
+        In = ParameterLocation.Header,
+        Description = "Please insert JWT with Bearer into field",
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        BearerFormat = "JWT"
+      }
+  );
 
-    x.SupportNonNullableReferenceTypes();
+  x.SupportNonNullableReferenceTypes();
 
-    x.AddSecurityRequirement(
-        new OpenApiSecurityRequirement
-        {
+  x.AddSecurityRequirement(
+      new OpenApiSecurityRequirement
+      {
             {
                 new OpenApiSecurityScheme
                 {
@@ -69,22 +78,22 @@ builder.Services.AddSwaggerGen(x =>
                 },
                 Array.Empty<string>()
             }
-        }
-    );
-    x.SwaggerDoc("v1", new OpenApiInfo { Title = "RealWorld API", Version = "v1" });
-    x.CustomSchemaIds(y => y.FullName);
-    x.DocInclusionPredicate((_, _) => true);
-    x.TagActionsBy(y => new List<string> { y.GroupName ?? throw new InvalidOperationException() });
-    x.CustomSchemaIds(s => s.FullName?.Replace("+", "."));
+      }
+  );
+  x.SwaggerDoc("v1", new OpenApiInfo { Title = "RealWorld API", Version = "v1" });
+  x.CustomSchemaIds(y => y.FullName);
+  x.DocInclusionPredicate((_, _) => true);
+  x.TagActionsBy(y => new List<string> { y.GroupName ?? throw new InvalidOperationException() });
+  x.CustomSchemaIds(s => s.FullName?.Replace("+", "."));
 });
 
 builder.Services.AddCors();
 builder
     .Services.AddMvc(opt =>
     {
-        opt.Conventions.Add(new GroupByApiRootConvention());
-        opt.Filters.Add(typeof(ValidatorActionFilter));
-        opt.EnableEndpointRouting = false;
+      opt.Conventions.Add(new GroupByApiRootConvention());
+      opt.Filters.Add(typeof(ValidatorActionFilter));
+      opt.EnableEndpointRouting = false;
     })
     .AddJsonOptions(opt =>
         opt.JsonSerializerOptions.DefaultIgnoreCondition = System
@@ -118,9 +127,9 @@ app.UseSwaggerUI(x => x.SwaggerEndpoint("/swagger/v1/swagger.json", "RealWorld A
 
 using (var scope = app.Services.CreateScope())
 {
-    var dbContext = scope
-        .ServiceProvider.GetRequiredService<CoreAppContext>()
-        .Database.EnsureCreated();
-    // use context
+  var dbContext = scope
+      .ServiceProvider.GetRequiredService<CoreAppContext>()
+      .Database.EnsureCreated();
+  // use context
 }
 app.Run();

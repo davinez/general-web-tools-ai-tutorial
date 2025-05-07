@@ -21,6 +21,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreApp.API", "src\CoreApp\CoreApp.API\CoreApp.API.csproj", "{6D52F4F1-FDEE-4AD0-93C1-BE5C123A7BCA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{31331F64-3D32-4669-B599-80DF34D9F230}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GWTAI.Blazor.Client", "src\GWTAI.Blazor\GWTAI.Blazor.Client\GWTAI.Blazor.Client.csproj", "{FFB523FD-DF3D-646C-6E1E-2FAB14997473}"
 EndProject
