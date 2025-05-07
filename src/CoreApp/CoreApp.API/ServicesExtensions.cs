@@ -19,7 +19,7 @@ namespace CoreApp.API;
 
 public static class ServicesExtensions
 {
-    public static void AddCoreApp.API(this IServiceCollection services)
+    public static void AddCoreAppAPI(this IServiceCollection services)
     {
         services.AddMediatR(cfg =>
             cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly())

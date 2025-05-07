@@ -9,25 +9,17 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
-// read database configuration (database provider + database connection) from environment variables
-//Environment.GetEnvironmentVariable(DEFAULT_DATABASE_PROVIDER)
-//Environment.GetEnvironmentVariable(DEFAULT_DATABASE_CONNECTION_STRING)
-var defaultDatabaseConnectionSrting = "Filename=realworld.db";
-var defaultDatabaseProvider = "sqlite";
 
 var builder = WebApplication.CreateBuilder(args);
 
-// take the connection string from the environment variable or use hard-coded database name
-var connectionString = defaultDatabaseConnectionSrting;
+var connectionString = builder.Configuration["ConnectionStrings:CoreAppDB"] ?? throw new CoreAppException("Missing connection string"); 
+var databaseProvider = builder.Configuration["ConnectionStrings:CoreAppDBProvider"] ?? throw new CoreAppException("Missing CoreAppDBProvider");
 
-// take the database provider from the environment variable or use hard-coded database provider
-var databaseProvider = defaultDatabaseProvider;
-
-builder.Services.AddDbContext<CoreApp.APIContext>(options =>
+builder.Services.AddDbContext<CoreAppContext>(options =>
 {
     if (databaseProvider.ToLowerInvariant().Trim().Equals("sqlite", StringComparison.Ordinal))
     {
-        options.UseSqlite(connectionString);
+        // options.UseSqlite(connectionString);
     }
     else if (
         databaseProvider.ToLowerInvariant().Trim().Equals("sqlserver", StringComparison.Ordinal)
@@ -103,7 +95,7 @@ builder
             .WhenWritingNull
     );
 
-builder.Services.AddCoreApp.API();
+builder.Services.AddCoreAppAPI();
 
 builder.Services.AddJwt();
 
@@ -127,7 +119,7 @@ app.UseSwaggerUI(x => x.SwaggerEndpoint("/swagger/v1/swagger.json", "RealWorld A
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope
-        .ServiceProvider.GetRequiredService<CoreApp.APIContext>()
+        .ServiceProvider.GetRequiredService<CoreAppContext>()
         .Database.EnsureCreated();
     // use context
 }

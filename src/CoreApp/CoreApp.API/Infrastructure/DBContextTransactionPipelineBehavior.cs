@@ -10,7 +10,7 @@ namespace CoreApp.API.Infrastructure;
 /// </summary>
 /// <typeparam name="TRequest"></typeparam>
 /// <typeparam name="TResponse"></typeparam>
-public class DBContextTransactionPipelineBehavior<TRequest, TResponse>(CoreApp.APIContext context)
+public class DBContextTransactionPipelineBehavior<TRequest, TResponse>(CoreAppContext context)
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : notnull
 {
