@@ -15,6 +15,14 @@ public class CoreAppContext : DbContext
   public DbSet<Bookmark> Bookmarks { get; set; } = null!;
   public DbSet<BookmarkFolder> BookmarkFolders { get; set; } = null!;
 
+  public DbSet<Article> Articles { get; init; } = null!;
+  public DbSet<Comment> Comments { get; init; } = null!;
+  public DbSet<Person> Persons { get; init; } = null!;
+  public DbSet<Tag> Tags { get; init; } = null!;
+  public DbSet<ArticleTag> ArticleTags { get; init; } = null!;
+  public DbSet<ArticleFavorite> ArticleFavorites { get; init; } = null!;
+  public DbSet<FollowedPeople> FollowedPeople { get; init; } = null!;
+
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
 

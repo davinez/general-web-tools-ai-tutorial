@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using CoreApp.API.Infrastructure;
+using CoreApp.API.Infrastructure.Data;
 using CoreApp.API.Infrastructure.Errors;
 using CoreApp.API.Infrastructure.Security;
 using FluentValidation;
@@ -22,7 +23,7 @@ public class Details
     }
 
     public class QueryHandler(
-        CoreApp.APIContext context,
+        CoreAppContext context,
         IJwtTokenGenerator jwtTokenGenerator,
         IMapper mapper
     ) : IRequestHandler<Query, UserEnvelope>

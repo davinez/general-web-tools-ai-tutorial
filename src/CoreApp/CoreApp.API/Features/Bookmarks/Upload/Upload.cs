@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CoreApp.API.Domain;
@@ -15,7 +14,7 @@ namespace CoreApp.API.Features.Bookmarks.Upload;
 
 public class Upload
 {
-  public record Command(UploadRequest File) : IRequest<UploadResponse>;
+  public record Command(UploadRequest File) : IRequest;
 
   public class UploadValidator : AbstractValidator<UploadRequest>
   {
@@ -33,7 +32,7 @@ public class Upload
         RuleFor(x => x.File).NotNull().SetValidator(new UploadValidator());
   }
 
-  public class Handler : IRequestHandler<Command, UploadResponse>
+  public class Handler : IRequestHandler<Command>
   {
     private readonly CoreAppContext _context;
     private readonly ICurrentUserAccessor _currentUserAccessor;
@@ -59,38 +58,8 @@ public class Upload
       BookmarkFolderDto rootFolder = ParseBookmarks(htmlContentString);
 
       // Iterate all folders
-      foreach (var folder in (rootFolder. ?? Enumerable.Empty<string>()))
-      {
-        var t = await context.Tags.FindAsync(tag);
-        if (t == null)
-        {
-          t = new Tag { TagId = tag };
-          await context.Tags.AddAsync(t, cancellationToken);
-          //save immediately for reuse
-          await context.SaveChangesAsync(cancellationToken);
-        }
-        tags.Add(t);
-      }
-
-
-      var bookmark = new Article
-      {
-        Author = author,
-        Body = message.Article.Body,
-        CreatedAt = DateTime.UtcNow,
-        UpdatedAt = DateTime.UtcNow,
-        Description = message.Article.Description,
-        Title = message.Article.Title,
-        Slug = message.Article.Title.GenerateSlug()
-      };
-      await context.Articles.AddAsync(article, cancellationToken);
-
-      await context.ArticleTags.AddRangeAsync(
-          tags.Select(x => new ArticleTag { Article = article, Tag = x }),
-          cancellationToken
-      );
-
-      await context.SaveChangesAsync(cancellationToken);
+      // Call this method in the Handler's Handle method
+      await SaveFoldersAndBookmarksToDatabase(rootFolder, 0, _context, cancellationToken);
 
       /* TODO: Processes content
 
@@ -144,7 +113,6 @@ public class Upload
             Title = h3Node.InnerText,
             AddDate = string.IsNullOrWhiteSpace(addDateValue) ? null : ParseUnixTimestamp(addDateValue),
             LastModified = string.IsNullOrWhiteSpace(lastModifiedDateValue) ? null : ParseUnixTimestamp(lastModifiedDateValue),
-            IsPersonalToolbarFolder = h3Node.GetAttributeValue("personal_toolbar_folder", "false") == "true"
           };
 
           var subDlNode = node.SelectSingleNode("following-sibling::dl");
@@ -185,4 +153,48 @@ public class Upload
 
     return null;
   }
+
+  private static async Task SaveFoldersAndBookmarksToDatabase(
+    BookmarkFolderDto folder,
+    int fatherId,
+    CoreAppContext context,
+    CancellationToken cancellationToken)
+  {
+    // Save the folder
+    var dbFolder = new BookmarkFolder
+    {
+      Title = folder.Title,
+      AddDate = folder.AddDate,
+      LastModified = folder.LastModified,
+      IsPersonalToolbarFolder = false
+    };
+
+    await context.BookmarkFolders.AddAsync(dbFolder, cancellationToken);
+    await context.SaveChangesAsync(cancellationToken);
+
+    // Save the bookmarks in the folder
+    foreach (var bookmark in folder.Bookmarks)
+    {
+      var dbBookmark = new Bookmark
+      {
+        Title = bookmark.Title,
+        Url = bookmark.Url,
+        AddDate = bookmark.AddDate,
+        Icon = bookmark.Icon,
+        BookmarkFolderId = dbFolder.Id,
+      };
+
+      await context.Bookmarks.AddAsync(dbBookmark, cancellationToken);
+    }
+
+    await context.SaveChangesAsync(cancellationToken);
+
+    // Recursively save subfolders
+    foreach (var subFolder in folder.SubFolders)
+    {
+      await SaveFoldersAndBookmarksToDatabase(subFolder, dbFolder.Id, context, cancellationToken);
+    }
+  }
+
+
 }

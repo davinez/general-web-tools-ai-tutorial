@@ -2,6 +2,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using CoreApp.API.Infrastructure;
+using CoreApp.API.Infrastructure.Data;
 using CoreApp.API.Infrastructure.Errors;
 using FluentValidation;
 using MediatR;
@@ -18,7 +19,7 @@ public class Details
         public QueryValidator() => RuleFor(x => x.Slug).NotNull().NotEmpty();
     }
 
-    public class QueryHandler(CoreApp.APIContext context) : IRequestHandler<Query, ArticleEnvelope>
+    public class QueryHandler(CoreAppContext context) : IRequestHandler<Query, ArticleEnvelope>
     {
         public async Task<ArticleEnvelope> Handle(
             Query message,

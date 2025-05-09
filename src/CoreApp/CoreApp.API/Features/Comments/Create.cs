@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CoreApp.API.Domain;
 using CoreApp.API.Infrastructure;
+using CoreApp.API.Infrastructure.Data;
 using CoreApp.API.Infrastructure.Errors;
 using FluentValidation;
 using MediatR;
@@ -24,7 +25,7 @@ public class Create
         public CommandValidator() => RuleFor(x => x.Model.Comment.Body).NotEmpty();
     }
 
-    public class Handler(CoreApp.APIContext context, ICurrentUserAccessor currentUserAccessor)
+    public class Handler(CoreAppContext context, ICurrentUserAccessor currentUserAccessor)
         : IRequestHandler<Command, CommentEnvelope>
     {
         public async Task<CommentEnvelope> Handle(

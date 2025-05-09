@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using CoreApp.API.Infrastructure;
+using CoreApp.API.Infrastructure.Data;
 using CoreApp.API.Infrastructure.Errors;
 using CoreApp.API.Infrastructure.Security;
 using FluentValidation;
@@ -36,7 +37,7 @@ public class Edit
     }
 
     public class Handler(
-        CoreApp.APIContext context,
+        CoreAppContext context,
         IPasswordHasher passwordHasher,
         ICurrentUserAccessor currentUserAccessor,
         IMapper mapper

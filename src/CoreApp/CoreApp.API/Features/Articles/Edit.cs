@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CoreApp.API.Domain;
 using CoreApp.API.Infrastructure;
+using CoreApp.API.Infrastructure.Data;
 using CoreApp.API.Infrastructure.Errors;
 using FluentValidation;
 using MediatR;
@@ -26,7 +27,7 @@ public class Edit
         public CommandValidator() => RuleFor(x => x.Model.Article).NotNull();
     }
 
-    public class Handler(CoreApp.APIContext context) : IRequestHandler<Command, ArticleEnvelope>
+    public class Handler(CoreAppContext context) : IRequestHandler<Command, ArticleEnvelope>
     {
         public async Task<ArticleEnvelope> Handle(
             Command message,

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CoreApp.API.Domain;
 using CoreApp.API.Features.Articles;
 using CoreApp.API.Infrastructure;
+using CoreApp.API.Infrastructure.Data;
 using CoreApp.API.Infrastructure.Errors;
 using FluentValidation;
 using MediatR;
@@ -20,7 +21,7 @@ public class Add
         public CommandValidator() => RuleFor(x => x.Slug).NotNull().NotEmpty();
     }
 
-    public class QueryHandler(CoreApp.APIContext context, ICurrentUserAccessor currentUserAccessor)
+    public class QueryHandler(CoreAppContext context, ICurrentUserAccessor currentUserAccessor)
         : IRequestHandler<Command, ArticleEnvelope>
     {
         public async Task<ArticleEnvelope> Handle(

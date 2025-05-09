@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CoreApp.API.Infrastructure;
+using CoreApp.API.Infrastructure.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,7 +13,7 @@ public class List
 {
     public record Query : IRequest<TagsEnvelope>;
 
-    public class QueryHandler(CoreApp.APIContext context) : IRequestHandler<Query, TagsEnvelope>
+    public class QueryHandler(CoreAppContext context) : IRequestHandler<Query, TagsEnvelope>
     {
         public async Task<TagsEnvelope> Handle(Query message, CancellationToken cancellationToken)
         {

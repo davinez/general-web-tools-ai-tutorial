@@ -9,14 +9,17 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 builder.Services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
+builder.Services.AddScoped<CoreAppContext>(provider => provider.GetRequiredService<CoreAppContext>());
+builder.Services.AddScoped<ApplicationDbContextInitialiser>();
 
 builder.Services.AddSingleton(TimeProvider.System);
 
@@ -35,7 +38,8 @@ builder.Services.AddDbContext<CoreAppContext>((sp, options) =>
   {
 
     options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
-    options.UseSqlServer(connectionString);
+
+    options.UseSqlServer(connectionString, x => x.MigrationsHistoryTable("__EFMigrationsHistory", "coreapp"));
   }
   else
   {
@@ -125,11 +129,26 @@ app.UseSwagger(c => c.RouteTemplate = "swagger/{documentName}/swagger.json");
 // Enable middleware to serve swagger-ui assets(HTML, JS, CSS etc.)
 app.UseSwaggerUI(x => x.SwaggerEndpoint("/swagger/v1/swagger.json", "RealWorld API V1"));
 
-using (var scope = app.Services.CreateScope())
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
 {
-  var dbContext = scope
-      .ServiceProvider.GetRequiredService<CoreAppContext>()
-      .Database.EnsureCreated();
-  // use context
+  await app.InitialiseDatabaseAsync();
+  IdentityModelEventSource.ShowPII = false;
 }
+else if (app.Environment.IsProduction())
+{
+  // For prod environment, ideally we want a script migration not auto-migration using EF Core
+  // example dotnet ef migrations script --idempotent --output EFCore/migrations.sql
+  await app.InitialiseDatabaseAsync();
+  // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+  app.UseHsts();
+}
+else
+{
+  // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+  app.UseHsts();
+}
+
+
 app.Run();

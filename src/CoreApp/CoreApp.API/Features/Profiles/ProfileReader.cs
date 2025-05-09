@@ -4,13 +4,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using CoreApp.API.Infrastructure;
+using CoreApp.API.Infrastructure.Data;
 using CoreApp.API.Infrastructure.Errors;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoreApp.API.Features.Profiles;
 
 public class ProfileReader(
-    CoreApp.APIContext context,
+    CoreAppContext context,
     ICurrentUserAccessor currentUserAccessor,
     IMapper mapper
 ) : IProfileReader

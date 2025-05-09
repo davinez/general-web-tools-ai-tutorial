@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CoreApp.API.Domain;
 using CoreApp.API.Features.Profiles;
 using CoreApp.API.Infrastructure;
+using CoreApp.API.Infrastructure.Data;
 using CoreApp.API.Infrastructure.Errors;
 using FluentValidation;
 using MediatR;
@@ -21,7 +22,7 @@ public class Add
     }
 
     public class QueryHandler(
-        CoreApp.APIContext context,
+        CoreAppContext context,
         ICurrentUserAccessor currentUserAccessor,
         IProfileReader profileReader
     ) : IRequestHandler<Command, ProfileEnvelope>

@@ -2,6 +2,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using CoreApp.API.Infrastructure;
+using CoreApp.API.Infrastructure.Data;
 using CoreApp.API.Infrastructure.Errors;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,7 @@ public class List
 {
     public record Query(string Slug) : IRequest<CommentsEnvelope>;
 
-    public class QueryHandler(CoreApp.APIContext context) : IRequestHandler<Query, CommentsEnvelope>
+    public class QueryHandler(CoreAppContext context) : IRequestHandler<Query, CommentsEnvelope>
     {
         public async Task<CommentsEnvelope> Handle(
             Query message,

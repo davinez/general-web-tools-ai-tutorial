@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CoreApp.API.Domain;
 using CoreApp.API.Infrastructure;
+using CoreApp.API.Infrastructure.Data;
 using CoreApp.API.Infrastructure.Errors;
 using CoreApp.API.Infrastructure.Security;
 using FluentValidation;
@@ -31,7 +32,7 @@ public class Create
     }
 
     public class Handler(
-        CoreApp.APIContext context,
+        CoreAppContext context,
         IPasswordHasher passwordHasher,
         IJwtTokenGenerator jwtTokenGenerator,
         IMapper mapper

@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using CoreApp.API.Infrastructure;
+using CoreApp.API.Infrastructure.Data;
 using CoreApp.API.Infrastructure.Errors;
 using FluentValidation;
 using MediatR;
@@ -19,7 +20,7 @@ public class Delete
         public CommandValidator() => RuleFor(x => x.Slug).NotNull().NotEmpty();
     }
 
-    public class QueryHandler(CoreApp.APIContext context) : IRequestHandler<Command>
+    public class QueryHandler(CoreAppContext context) : IRequestHandler<Command>
     {
         public async Task Handle(Command message, CancellationToken cancellationToken)
         {

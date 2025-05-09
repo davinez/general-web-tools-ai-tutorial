@@ -1,10 +1,7 @@
-using CoreApp.API.Infrastructure.Security;
-using System.Threading.Tasks;
 using System.Threading;
+using System.Threading.Tasks;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using CoreApp.API.Features.Bookmarks.Responses;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -14,10 +11,11 @@ namespace CoreApp.API.Features.Bookmarks
   [ApiController]
   public class BookmarksController(IMediator mediator) : ControllerBase
   {
-    // POST: api/bookmarks/bulkupload
+    // POST: api/bookmarks/bulkupload}
+    [Route("upload")]
     [HttpPost]
     //[Authorize(AuthenticationSchemes = JwtIssuerOptions.Schemes)]
-    public async Task BulkUpload([FromBody] Upload.UploadData command, CancellationToken cancellationToken)
+    public async Task BulkUpload([FromBody] Upload.Upload.Command command, CancellationToken cancellationToken)
     {
       await mediator.Send(command, cancellationToken);
     }

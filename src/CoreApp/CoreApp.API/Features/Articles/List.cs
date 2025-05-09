@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using CoreApp.API.Infrastructure;
+using CoreApp.API.Infrastructure.Data;
 using CoreApp.API.Infrastructure.Errors;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +21,7 @@ public class List
         bool IsFeed = false
     ) : IRequest<ArticlesEnvelope>;
 
-    public class QueryHandler(CoreApp.APIContext context, ICurrentUserAccessor currentUserAccessor)
+    public class QueryHandler(CoreAppContext context, ICurrentUserAccessor currentUserAccessor)
         : IRequestHandler<Query, ArticlesEnvelope>
     {
         public async Task<ArticlesEnvelope> Handle(
