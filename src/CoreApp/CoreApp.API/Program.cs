@@ -18,7 +18,6 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
-builder.Services.AddScoped<CoreAppContext>(provider => provider.GetRequiredService<CoreAppContext>());
 builder.Services.AddScoped<ApplicationDbContextInitialiser>();
 
 builder.Services.AddSingleton(TimeProvider.System);
@@ -48,6 +47,9 @@ builder.Services.AddDbContext<CoreAppContext>((sp, options) =>
     );
   }
 });
+
+// if we're using the Interface, we register the interface
+// builder.Services.AddScoped<CoreAppContext>(provider => provider.GetRequiredService<CoreAppContext>());
 
 builder.Services.AddLocalization(x => x.ResourcesPath = "Resources");
 
@@ -84,7 +86,7 @@ builder.Services.AddSwaggerGen(x =>
             }
       }
   );
-  x.SwaggerDoc("v1", new OpenApiInfo { Title = "RealWorld API", Version = "v1" });
+  x.SwaggerDoc("v1", new OpenApiInfo { Title = "GWTAI Core API", Version = "v1" });
   x.CustomSchemaIds(y => y.FullName);
   x.DocInclusionPredicate((_, _) => true);
   x.TagActionsBy(y => new List<string> { y.GroupName ?? throw new InvalidOperationException() });

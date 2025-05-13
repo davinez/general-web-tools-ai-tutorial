@@ -6,7 +6,7 @@ namespace GWTAI.Blazor.Client.Shared.Extensions
   {
     public static void ConfigureGWTAIServiceClient(this HttpClient client)
     {
-      client.BaseAddress = new Uri("https://google.com/");
+      client.BaseAddress = new Uri("http://localhost:8081/");
       client.DefaultRequestHeaders.Add("Custom-Header", "GoogleServiceHeaderValue");
     }
 

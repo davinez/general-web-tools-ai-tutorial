@@ -15,19 +15,19 @@ dotnet ef database update
 ```
 
 
-add-migration [name]	Create a new migration with the specific migration name.
+Create a new migration	Add-Migration [MigrationName]
 
-remove-migration	Remove the latest migration.
+Remove the latest migration	Remove-Migration
 
-update-database	Update the database to the latest migration.
+Update the database to the latest migration	Update-Database
 
-update-database [name]	Update the database to a specific migration name point.
+Update the database to a specific migration	Update-Database -Migration [MigrationName]
 
-get-migrations	Lists all available migrations.
+List all available migrations	Get-Migrations
 
-script-migration	Generates a SQL script for all migrations.
+Generate SQL script for all migrations	Script-Migration
 
-drop-database	Drop the database.
+Drop the database	Drop-Database
 
 
 

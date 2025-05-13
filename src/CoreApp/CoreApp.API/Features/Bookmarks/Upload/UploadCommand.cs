@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CoreApp.API.Domain;
@@ -12,27 +14,30 @@ using MediatR;
 
 namespace CoreApp.API.Features.Bookmarks.Upload;
 
-public class Upload
-{
-  public record Command(UploadRequest File) : IRequest;
+public record UploadCommand(UploadRequest File) : IRequest;
 
+
+public class UploadCommandHandler
+{
+ 
   public class UploadValidator : AbstractValidator<UploadRequest>
   {
     public UploadValidator()
     {
       RuleFor(x => x.FileName).NotNull().NotEmpty();
+      // TODO: check type of file
       RuleFor(x => x.FileContent).NotNull().NotEmpty();
       RuleFor(x => x.UploadTimestamp).NotNull().NotEmpty();
     }
   }
 
-  public class CommandValidator : AbstractValidator<Command>
+  public class CommandValidator : AbstractValidator<UploadCommand>
   {
     public CommandValidator() =>
         RuleFor(x => x.File).NotNull().SetValidator(new UploadValidator());
   }
 
-  public class Handler : IRequestHandler<Command>
+  public class Handler : IRequestHandler<UploadCommand>
   {
     private readonly CoreAppContext _context;
     private readonly ICurrentUserAccessor _currentUserAccessor;
@@ -46,19 +51,25 @@ public class Upload
 
 
     public async Task Handle(
-        Command command,
+        UploadCommand command,
         CancellationToken cancellationToken
     )
     {
-      // TODO: Map byte file to string and check type of file
-      string htmlContentString = System.Text.Encoding.UTF8.GetString(command.File.FileContent);
+      // Read the file content into a byte array (if needed)
+      using var memoryStream = new MemoryStream();
+      await command.File.FileContent.CopyToAsync(memoryStream);
+      var fileBytes = memoryStream.ToArray();
 
+      string htmlContentString = System.Text.Encoding.UTF8.GetString(fileBytes);
+
+      // Remove all <p> nodes
+      string cleanedHtml = CleanHtml(htmlContentString);
 
       // TODO: Map to model of html content
-      BookmarkFolderDto rootFolder = ParseBookmarks(htmlContentString);
+      BookmarkFolderDto rootFolder = ParseBookmarks(cleanedHtml);
 
       // Iterate all folders
-      // Call this method in the Handler's Handle method
+      // TODO: the method its not mapping correctly, use an iterate method and then AI to generate suggested folders?
       await SaveFoldersAndBookmarksToDatabase(rootFolder, 0, _context, cancellationToken);
 
       /* TODO: Processes content
@@ -74,6 +85,16 @@ public class Upload
     }
   }
 
+  public static string CleanHtml(string htmlContent)
+  {
+
+    return htmlContent.Replace("<p>", string.Empty)
+                      .Replace("<P>", string.Empty)
+                      .Replace("</P>", string.Empty)
+                      .Replace("</p>", string.Empty);
+
+  }
+
 
   private static BookmarkFolderDto ParseBookmarks(string html)
   {
@@ -82,10 +103,8 @@ public class Upload
 
     var rootFolder = new BookmarkFolderDto
     {
-      Title = "Root",
-      SubFolders = new List<BookmarkFolderDto>()
+      Title = "Root"
     };
-
     var dlNode = document.DocumentNode.SelectSingleNode("//dl");
     if (dlNode != null)
     {
@@ -115,7 +134,9 @@ public class Upload
             LastModified = string.IsNullOrWhiteSpace(lastModifiedDateValue) ? null : ParseUnixTimestamp(lastModifiedDateValue),
           };
 
-          var subDlNode = node.SelectSingleNode("following-sibling::dl");
+          var subDlNode = node.ChildNodes
+           .FirstOrDefault(n => string.Equals(n.Name, "dl", StringComparison.OrdinalIgnoreCase));
+
           if (subDlNode != null)
           {
             ParseFolder(subDlNode, folder);

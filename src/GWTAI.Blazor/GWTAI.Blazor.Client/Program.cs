@@ -4,8 +4,6 @@ using GWTAI.Blazor.Client.Services.Contracts;
 using GWTAI.Blazor.Client.Shared;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.Configuration;
-using static GWTAI.Blazor.Client.Shared.Extensions.HttpClientExtensions;
 
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -25,20 +23,18 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 //    .AddInteractiveServerComponents();
 
 // Add custom services
-builder.Services.AddHttpClient<BookmarkService>(client =>
+
+
+builder.Services.AddHttpClient("Local", (_, c) =>
 {
-  client.ConfigureGWTAIServiceClient();
+  c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
 });
 
-// CoreApp URL
-builder.Services.AddScoped(sp => {
-  var apiUrl = new Uri("https://localhost:5001");
-  return new HttpClient() { BaseAddress = apiUrl };
+builder.Services.AddHttpClient<BookmarkService>("CoreApi", (_, c) =>
+{
+  c.BaseAddress = new Uri("http://localhost:8081/");
+  c.DefaultRequestHeaders.Add("Custom-Header", "MockHeaderValue");
 });
-
-// Base address of the Blazor WebAssembly app itself,
-// for making requests within the same domain where the Blazor WebAssembly app is hosted.
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(coreAppApiUrl) });
 
 
 // Add custom services

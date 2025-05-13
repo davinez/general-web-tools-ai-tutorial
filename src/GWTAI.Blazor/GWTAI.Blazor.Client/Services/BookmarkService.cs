@@ -3,19 +3,21 @@ using GWTAI.Blazor.Client.Models.Bookmarks.Dtos;
 using GWTAI.Blazor.Client.Models.Bookmarks.Requests;
 using GWTAI.Blazor.Client.Services.Contracts;
 using GWTAI.Blazor.Client.Shared.Data;
-using static System.Net.WebRequestMethods;
 
 namespace GWTAI.Blazor.Client.Services;
 
 public class BookmarkService : IBookmarkService
 {
+
+
   private readonly HttpClient _httpClient;
 
-
-  public BookmarkService(HttpClient httpClient)
+  public BookmarkService(IHttpClientFactory httpClientFactory)
   {
-    _httpClient = httpClient;
+    _httpClient = httpClientFactory.CreateClient("CoreApi");
   }
+
+
 
   public async Task<PagedResult<BookmarkDto>> GetBookmarks(string name, string page)
   {
@@ -56,7 +58,7 @@ public class BookmarkService : IBookmarkService
     content.Add(new StringContent(request.FileName), "FileName");
     content.Add(new StringContent(request.UploadTimestamp.ToString("o")), "UploadTimestamp"); // ISO 8601 format
 
-    var response = await _httpClient.PostAsync("api/bookmarks/upload", content);
+    var response = await _httpClient.PostAsync("api/bookmarks/bulk-upload", content);
 
     if (!response.IsSuccessStatusCode)
     {

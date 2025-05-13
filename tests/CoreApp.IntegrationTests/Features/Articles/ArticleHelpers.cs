@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using CoreApp.API.Domain;
 using CoreApp.API.Features.Articles;
+using CoreApp.API.Infrastructure.Errors;
 using CoreApp.IntegrationTests.Features.Users;
 using Microsoft.EntityFrameworkCore;
 
