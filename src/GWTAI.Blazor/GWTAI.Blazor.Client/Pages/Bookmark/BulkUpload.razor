@@ -36,8 +36,9 @@
 		<button disabled="@loading" class="btn btn-primary">
 			@if (loading)
 			{
-				<span class="spinner">Uploading...</span>
-				
+				<span class="spinner"></span>
+				<span>Uploading...</span>
+
 			}
 			else
 			{
@@ -100,16 +101,28 @@
 			}
 			else
 			{
-				navManager.NavigateTo("/upload/1");
+				// navManager.NavigateTo("/upload/1");
+				ResetForm();
 			}
 		}
 		catch (Exception ex)
 		{
 			AlertService.Error(ex.Message);
-			loading = false;
-			StateHasChanged();
+			ResetForm();
 		}
 
+	}
+
+	void ResetForm()
+	{
+		upload = new BulkUploadDto
+			{
+				FileName = string.Empty,
+				FileContent = Array.Empty<byte>()
+			};
+		status = "File pending upload...";
+		loading = false;
+		StateHasChanged();
 	}
 
 

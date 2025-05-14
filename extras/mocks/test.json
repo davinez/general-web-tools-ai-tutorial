@@ -1,0 +1,177 @@
+{
+  "Title": "Root",
+  "AddDate": null,
+  "LastModified": null,
+  "Bookmarks": [
+    {
+      "suggestionsAI": {
+       "route": "5784sadfdf/xzxcsd554",
+       "duplicated": ["URL"]
+      },
+      "currentStructure": {
+       "route": "78445/78456"
+      },
+      "Title": "Manual:FAQ - MediaWiki",
+      "Url": "https://www.mediawiki.org/wiki/Manual:FAQ",
+      "AddDate": "2025-05-14T16:43:56",
+      "Icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACsklEQVQ4jW2TT2tcZRSHn3PeO38yM7mZO0kmkxgjRWqpLS0SbQWLG7+AoBtdlLpwUdSVILh0KQhF6CcoLSgYKfgF3CgtYtVoXYiMQw3tBJK5M3ecyWTmve9xUSqY9ln/nsPh/BGegL12bIWqW2PDVSg4ZUUy1Hblo9+7R7PyPxFKPHvs/dB0ExL3MnWJWHCQqNfY3aLu5ijtX5V3OpPHCszYeEXQdU3cG6EZ1jVxE0tkmYYzWdA96q4sdbdDVbeohh259PN3ABHAL6xUR0irgntdUjslyNQgQcyhwQxpYf4Q4ZSY5aBbdu1MVS5uj6KHbSxc2iN/NcFOzxO8S6Uk5H+Ykzs4EHjBTI+beg/RGSEoWmgBV6MtNld7hJAzflrxhwLFecJXUTr8TNNeBmDnG7Hp0oegb1rw05C7DednZp+eWNMxEqeUzmeUxwOK5T6ucx+7IjyUAeR2L8uG0yuShTYZJR36cRjaOfJirPu0lofMRX3Ki32K2qPw6zPcS4+uK/m207c0bDPI1XosMgiR3/fNaARjR8UMiQLqAipH5f9IgxJw5EQIFsFIUxq+R836VLoZc35I+ew3bC49dlw8tShdztLDS2pdehboHnp3khdnzoVywL0kGGDLgq29ReOnL9kdATygtVym/LEccI7A2CJwYjfR6W0BeLd0+YM4TC7U/T/P1+0gX2BcnGeyEzO+22BiNfzpBvl6DFPFIhJ3VxP7Xtrtzx1AnNfuxIW1gyA0MVaBCdiSICfAnlOoGXYAoVjEbcsk/0LTv258AsEBdOiE46ULsRDaJm5VjArQE6wEeCN0wUTJ/yyQX48IDyKyHQD3aEi/zW7d38w3O+NCsREZPwSThmK7QuiCDsBuKvm9Ge2vm2R/P/EbH/EeFxcjwlKLtFbCZIX9geDTt/lx72j2XyhzMNUM3J0EAAAAAElFTkSuQmCC"
+    },
+    {
+      "Title": "Download from Git - MediaWiki",
+      "Url": "https://www.mediawiki.org/wiki/Download_from_Git",
+      "AddDate": "2025-05-14T16:44:22",
+      "Icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACsklEQVQ4jW2TT2tcZRSHn3PeO38yM7mZO0kmkxgjRWqpLS0SbQWLG7+AoBtdlLpwUdSVILh0KQhF6CcoLSgYKfgF3CgtYtVoXYiMQw3tBJK5M3ecyWTmve9xUSqY9ln/nsPh/BGegL12bIWqW2PDVSg4ZUUy1Hblo9+7R7PyPxFKPHvs/dB0ExL3MnWJWHCQqNfY3aLu5ijtX5V3OpPHCszYeEXQdU3cG6EZ1jVxE0tkmYYzWdA96q4sdbdDVbeohh259PN3ABHAL6xUR0irgntdUjslyNQgQcyhwQxpYf4Q4ZSY5aBbdu1MVS5uj6KHbSxc2iN/NcFOzxO8S6Uk5H+Ykzs4EHjBTI+beg/RGSEoWmgBV6MtNld7hJAzflrxhwLFecJXUTr8TNNeBmDnG7Hp0oegb1rw05C7DednZp+eWNMxEqeUzmeUxwOK5T6ucx+7IjyUAeR2L8uG0yuShTYZJR36cRjaOfJirPu0lofMRX3Ki32K2qPw6zPcS4+uK/m207c0bDPI1XosMgiR3/fNaARjR8UMiQLqAipH5f9IgxJw5EQIFsFIUxq+R836VLoZc35I+ew3bC49dlw8tShdztLDS2pdehboHnp3khdnzoVywL0kGGDLgq29ReOnL9kdATygtVym/LEccI7A2CJwYjfR6W0BeLd0+YM4TC7U/T/P1+0gX2BcnGeyEzO+22BiNfzpBvl6DFPFIhJ3VxP7Xtrtzx1AnNfuxIW1gyA0MVaBCdiSICfAnlOoGXYAoVjEbcsk/0LTv258AsEBdOiE46ULsRDaJm5VjArQE6wEeCN0wUTJ/yyQX48IDyKyHQD3aEi/zW7d38w3O+NCsREZPwSThmK7QuiCDsBuKvm9Ge2vm2R/P/EbH/EeFxcjwlKLtFbCZIX9geDTt/lx72j2XyhzMNUM3J0EAAAAAElFTkSuQmCC"
+    }
+  ],
+  "SubFolders": [
+    {
+      "Title": "Bookmarks bar",
+      "AddDate": "2025-05-07T18:44:16",
+      "LastModified": "2025-05-14T16:43:56",
+      "Bookmarks": [
+        {
+          "Title": "Manual:linktarget table - MediaWiki",
+          "Url": "https://www.mediawiki.org/wiki/Manual:Linktarget_table",
+          "AddDate": "2025-05-14T16:43:34",
+          "Icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACsklEQVQ4jW2TT2tcZRSHn3PeO38yM7mZO0kmkxgjRWqpLS0SbQWLG7+AoBtdlLpwUdSVILh0KQhF6CcoLSgYKfgF3CgtYtVoXYiMQw3tBJK5M3ecyWTmve9xUSqY9ln/nsPh/BGegL12bIWqW2PDVSg4ZUUy1Hblo9+7R7PyPxFKPHvs/dB0ExL3MnWJWHCQqNfY3aLu5ijtX5V3OpPHCszYeEXQdU3cG6EZ1jVxE0tkmYYzWdA96q4sdbdDVbeohh259PN3ABHAL6xUR0irgntdUjslyNQgQcyhwQxpYf4Q4ZSY5aBbdu1MVS5uj6KHbSxc2iN/NcFOzxO8S6Uk5H+Ykzs4EHjBTI+beg/RGSEoWmgBV6MtNld7hJAzflrxhwLFecJXUTr8TNNeBmDnG7Hp0oegb1rw05C7DednZp+eWNMxEqeUzmeUxwOK5T6ucx+7IjyUAeR2L8uG0yuShTYZJR36cRjaOfJirPu0lofMRX3Ki32K2qPw6zPcS4+uK/m207c0bDPI1XosMgiR3/fNaARjR8UMiQLqAipH5f9IgxJw5EQIFsFIUxq+R836VLoZc35I+ew3bC49dlw8tShdztLDS2pdehboHnp3khdnzoVywL0kGGDLgq29ReOnL9kdATygtVym/LEccI7A2CJwYjfR6W0BeLd0+YM4TC7U/T/P1+0gX2BcnGeyEzO+22BiNfzpBvl6DFPFIhJ3VxP7Xtrtzx1AnNfuxIW1gyA0MVaBCdiSICfAnlOoGXYAoVjEbcsk/0LTv258AsEBdOiE46ULsRDaJm5VjArQE6wEeCN0wUTJ/yyQX48IDyKyHQD3aEi/zW7d38w3O+NCsREZPwSThmK7QuiCDsBuKvm9Ge2vm2R/P/EbH/EeFxcjwlKLtFbCZIX9geDTt/lx72j2XyhzMNUM3J0EAAAAAElFTkSuQmCC"
+        },
+        {
+          "Title": "Manual:$wgTemplateLinksSchemaMigrationStage - MediaWiki",
+          "Url": "https://www.mediawiki.org/wiki/Manual:$wgTemplateLinksSchemaMigrationStage",
+          "AddDate": "2025-05-14T16:43:49",
+          "Icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACsklEQVQ4jW2TT2tcZRSHn3PeO38yM7mZO0kmkxgjRWqpLS0SbQWLG7+AoBtdlLpwUdSVILh0KQhF6CcoLSgYKfgF3CgtYtVoXYiMQw3tBJK5M3ecyWTmve9xUSqY9ln/nsPh/BGegL12bIWqW2PDVSg4ZUUy1Hblo9+7R7PyPxFKPHvs/dB0ExL3MnWJWHCQqNfY3aLu5ijtX5V3OpPHCszYeEXQdU3cG6EZ1jVxE0tkmYYzWdA96q4sdbdDVbeohh259PN3ABHAL6xUR0irgntdUjslyNQgQcyhwQxpYf4Q4ZSY5aBbdu1MVS5uj6KHbSxc2iN/NcFOzxO8S6Uk5H+Ykzs4EHjBTI+beg/RGSEoWmgBV6MtNld7hJAzflrxhwLFecJXUTr8TNNeBmDnG7Hp0oegb1rw05C7DednZp+eWNMxEqeUzmeUxwOK5T6ucx+7IjyUAeR2L8uG0yuShTYZJR36cRjaOfJirPu0lofMRX3Ki32K2qPw6zPcS4+uK/m207c0bDPI1XosMgiR3/fNaARjR8UMiQLqAipH5f9IgxJw5EQIFsFIUxq+R836VLoZc35I+ew3bC49dlw8tShdztLDS2pdehboHnp3khdnzoVywL0kGGDLgq29ReOnL9kdATygtVym/LEccI7A2CJwYjfR6W0BeLd0+YM4TC7U/T/P1+0gX2BcnGeyEzO+22BiNfzpBvl6DFPFIhJ3VxP7Xtrtzx1AnNfuxIW1gyA0MVaBCdiSICfAnlOoGXYAoVjEbcsk/0LTv258AsEBdOiE46ULsRDaJm5VjArQE6wEeCN0wUTJ/yyQX48IDyKyHQD3aEi/zW7d38w3O+NCsREZPwSThmK7QuiCDsBuKvm9Ge2vm2R/P/EbH/EeFxcjwlKLtFbCZIX9geDTt/lx72j2XyhzMNUM3J0EAAAAAElFTkSuQmCC"
+        }
+      ],
+      "SubFolders": [
+        {
+          "Title": "Folder A",
+          "AddDate": "2025-05-07T18:46:07",
+          "LastModified": "2025-05-14T16:45:41",
+          "Bookmarks": [
+            {
+              "Title": "Wikipedia:Wikipedia no es un diccionario - Wikipedia, la enciclopedia libre",
+              "Url": "https://es.wikipedia.org/wiki/Wikipedia:Wikipedia_no_es_un_diccionario",
+              "AddDate": "2025-05-14T16:45:37",
+              "Icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABO0lEQVQ4jaWTMaoCMRCG/wnvDtELmHaxdAmIXcheZA9hYeMNxNZqsc81lu0X+2VLTzBj8V5C8uQ9UAcG5k+YP5kvhPATzCx4IZRSBAD0TnNuQu82J5NPmgFADcMAay2UUjifzwAA733S8zzDWgtrLeZ5xvV6xXK5hPcet9vte/5pmoSIJIQgURtj5HQ6CTOLc06maRJmFmaWuq5TjVg454qNrutEay0hBDkej8V6NC4M+r4XANL3fdo0xogxJul4UK4TxPV6Decc9vt9ArTb7XC/35MehgFVVZUUc7cQghCRjOOYTtNaS9d1wszStm3BgpnlKzfz3mO1WuFyuWCz2aBpGlhrcTgcsN1uAQCLxeLvG0RIRJRmjS9U13XB5wlinlrrgnTbtk/w/jWIDPL8PXvMzz9TzuLVZgB4AExRsO8ga8hoAAAAAElFTkSuQmCC"
+            },
+            {
+              "Title": "Wikipedia:Consenso - Wikipedia, la enciclopedia libre",
+              "Url": "https://es.wikipedia.org/wiki/Wikipedia:Consenso",
+              "AddDate": "2025-05-14T16:45:41",
+              "Icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABO0lEQVQ4jaWTMaoCMRCG/wnvDtELmHaxdAmIXcheZA9hYeMNxNZqsc81lu0X+2VLTzBj8V5C8uQ9UAcG5k+YP5kvhPATzCx4IZRSBAD0TnNuQu82J5NPmgFADcMAay2UUjifzwAA733S8zzDWgtrLeZ5xvV6xXK5hPcet9vte/5pmoSIJIQgURtj5HQ6CTOLc06maRJmFmaWuq5TjVg454qNrutEay0hBDkej8V6NC4M+r4XANL3fdo0xogxJul4UK4TxPV6Decc9vt9ArTb7XC/35MehgFVVZUUc7cQghCRjOOYTtNaS9d1wszStm3BgpnlKzfz3mO1WuFyuWCz2aBpGlhrcTgcsN1uAQCLxeLvG0RIRJRmjS9U13XB5wlinlrrgnTbtk/w/jWIDPL8PXvMzz9TzuLVZgB4AExRsO8ga8hoAAAAAElFTkSuQmCC"
+            }
+          ],
+          "SubFolders": []
+        },
+        {
+          "Title": "Folder B",
+          "AddDate": "2025-05-07T18:46:07",
+          "LastModified": "2025-05-14T16:45:37",
+          "Bookmarks": [
+            {
+              "Title": "Sitio oficial de Xbox: Consolas, juegos y comunidad | Xbox",
+              "Url": "https://www.xbox.com/es-MX",
+              "AddDate": "2025-05-07T18:46:19",
+              "Icon": ""
+            },
+            {
+              "Title": "Usuario discusión:Daneel~eswiki - Wikipedia, la enciclopedia libre",
+              "Url": "https://es.wikipedia.org/wiki/Usuario_discusi%C3%B3n:Daneel~eswiki",
+              "AddDate": "2025-05-14T16:45:28",
+              "Icon": ""
+            },
+            {
+              "Title": "Wikipedia:Los cinco pilares - Wikipedia, la enciclopedia libre",
+              "Url": "https://es.wikipedia.org/wiki/Wikipedia:Los_cinco_pilares",
+              "AddDate": "2025-05-14T16:45:34",
+              "Icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABO0lEQVQ4jaWTMaoCMRCG/wnvDtELmHaxdAmIXcheZA9hYeMNxNZqsc81lu0X+2VLTzBj8V5C8uQ9UAcG5k+YP5kvhPATzCx4IZRSBAD0TnNuQu82J5NPmgFADcMAay2UUjifzwAA733S8zzDWgtrLeZ5xvV6xXK5hPcet9vte/5pmoSIJIQgURtj5HQ6CTOLc06maRJmFmaWuq5TjVg454qNrutEay0hBDkej8V6NC4M+r4XANL3fdo0xogxJul4UK4TxPV6Decc9vt9ArTb7XC/35MehgFVVZUUc7cQghCRjOOYTtNaS9d1wszStm3BgpnlKzfz3mO1WuFyuWCz2aBpGlhrcTgcsN1uAQCLxeLvG0RIRJRmjS9U13XB5wlinlrrgnTbtk/w/jWIDPL8PXvMzz9TzuLVZgB4AExRsO8ga8hoAAAAAElFTkSuQmCC"
+            }
+          ],
+          "SubFolders": []
+        }
+      ]
+    },
+    {
+      "Title": "Multiinformacion",
+      "AddDate": "2025-05-14T16:41:46",
+      "LastModified": "2025-05-14T16:43:24",
+      "Bookmarks": [
+        {
+          "Title": "Wikipedia discusión:Portada - Wikipedia, la enciclopedia libre",
+          "Url": "https://es.wikipedia.org/wiki/Wikipedia_discusi%C3%B3n:Portada",
+          "AddDate": "2025-05-14T16:42:53",
+          "Icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABO0lEQVQ4jaWTMaoCMRCG/wnvDtELmHaxdAmIXcheZA9hYeMNxNZqsc81lu0X+2VLTzBj8V5C8uQ9UAcG5k+YP5kvhPATzCx4IZRSBAD0TnNuQu82J5NPmgFADcMAay2UUjifzwAA733S8zzDWgtrLeZ5xvV6xXK5hPcet9vte/5pmoSIJIQgURtj5HQ6CTOLc06maRJmFmaWuq5TjVg454qNrutEay0hBDkej8V6NC4M+r4XANL3fdo0xogxJul4UK4TxPV6Decc9vt9ArTb7XC/35MehgFVVZUUc7cQghCRjOOYTtNaS9d1wszStm3BgpnlKzfz3mO1WuFyuWCz2aBpGlhrcTgcsN1uAQCLxeLvG0RIRJRmjS9U13XB5wlinlrrgnTbtk/w/jWIDPL8PXvMzz9TzuLVZgB4AExRsO8ga8hoAAAAAElFTkSuQmCC"
+        },
+        {
+          "Title": "Help:What links here - MediaWiki",
+          "Url": "https://www.mediawiki.org/wiki/Help:What_links_here",
+          "AddDate": "2025-05-14T16:43:14",
+          "Icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACsklEQVQ4jW2TT2tcZRSHn3PeO38yM7mZO0kmkxgjRWqpLS0SbQWLG7+AoBtdlLpwUdSVILh0KQhF6CcoLSgYKfgF3CgtYtVoXYiMQw3tBJK5M3ecyWTmve9xUSqY9ln/nsPh/BGegL12bIWqW2PDVSg4ZUUy1Hblo9+7R7PyPxFKPHvs/dB0ExL3MnWJWHCQqNfY3aLu5ijtX5V3OpPHCszYeEXQdU3cG6EZ1jVxE0tkmYYzWdA96q4sdbdDVbeohh259PN3ABHAL6xUR0irgntdUjslyNQgQcyhwQxpYf4Q4ZSY5aBbdu1MVS5uj6KHbSxc2iN/NcFOzxO8S6Uk5H+Ykzs4EHjBTI+beg/RGSEoWmgBV6MtNld7hJAzflrxhwLFecJXUTr8TNNeBmDnG7Hp0oegb1rw05C7DednZp+eWNMxEqeUzmeUxwOK5T6ucx+7IjyUAeR2L8uG0yuShTYZJR36cRjaOfJirPu0lofMRX3Ki32K2qPw6zPcS4+uK/m207c0bDPI1XosMgiR3/fNaARjR8UMiQLqAipH5f9IgxJw5EQIFsFIUxq+R836VLoZc35I+ew3bC49dlw8tShdztLDS2pdehboHnp3khdnzoVywL0kGGDLgq29ReOnL9kdATygtVym/LEccI7A2CJwYjfR6W0BeLd0+YM4TC7U/T/P1+0gX2BcnGeyEzO+22BiNfzpBvl6DFPFIhJ3VxP7Xtrtzx1AnNfuxIW1gyA0MVaBCdiSICfAnlOoGXYAoVjEbcsk/0LTv258AsEBdOiE46ULsRDaJm5VjArQE6wEeCN0wUTJ/yyQX48IDyKyHQD3aEi/zW7d38w3O+NCsREZPwSThmK7QuiCDsBuKvm9Ge2vm2R/P/EbH/EeFxcjwlKLtFbCZIX9geDTt/lx72j2XyhzMNUM3J0EAAAAAElFTkSuQmCC"
+        }
+      ],
+      "SubFolders": [
+        {
+          "Title": "Multi Folder B",
+          "AddDate": "2025-05-14T16:42:27",
+          "LastModified": "2025-05-14T16:46:10",
+          "Bookmarks": [
+            {
+              "Title": "Páginas que enlazan con «Wikipedia discusión:Portada» - Wikipedia, la enciclopedia libre",
+              "Url": "https://es.wikipedia.org/wiki/Especial:LoQueEnlazaAqu%C3%AD/Wikipedia_discusi%C3%B3n:Portada",
+              "AddDate": "2025-05-14T16:43:03",
+              "Icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABO0lEQVQ4jaWTMaoCMRCG/wnvDtELmHaxdAmIXcheZA9hYeMNxNZqsc81lu0X+2VLTzBj8V5C8uQ9UAcG5k+YP5kvhPATzCx4IZRSBAD0TnNuQu82J5NPmgFADcMAay2UUjifzwAA733S8zzDWgtrLeZ5xvV6xXK5hPcet9vte/5pmoSIJIQgURtj5HQ6CTOLc06maRJmFmaWuq5TjVg454qNrutEay0hBDkej8V6NC4M+r4XANL3fdo0xogxJul4UK4TxPV6Decc9vt9ArTb7XC/35MehgFVVZUUc7cQghCRjOOYTtNaS9d1wszStm3BgpnlKzfz3mO1WuFyuWCz2aBpGlhrcTgcsN1uAQCLxeLvG0RIRJRmjS9U13XB5wlinlrrgnTbtk/w/jWIDPL8PXvMzz9TzuLVZgB4AExRsO8ga8hoAAAAAElFTkSuQmCC"
+            },
+            {
+              "Title": "Manual:pagelinks table - MediaWiki",
+              "Url": "https://www.mediawiki.org/wiki/Manual:Pagelinks_table",
+              "AddDate": "2025-05-14T16:43:24",
+              "Icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACsklEQVQ4jW2TT2tcZRSHn3PeO38yM7mZO0kmkxgjRWqpLS0SbQWLG7+AoBtdlLpwUdSVILh0KQhF6CcoLSgYKfgF3CgtYtVoXYiMQw3tBJK5M3ecyWTmve9xUSqY9ln/nsPh/BGegL12bIWqW2PDVSg4ZUUy1Hblo9+7R7PyPxFKPHvs/dB0ExL3MnWJWHCQqNfY3aLu5ijtX5V3OpPHCszYeEXQdU3cG6EZ1jVxE0tkmYYzWdA96q4sdbdDVbeohh259PN3ABHAL6xUR0irgntdUjslyNQgQcyhwQxpYf4Q4ZSY5aBbdu1MVS5uj6KHbSxc2iN/NcFOzxO8S6Uk5H+Ykzs4EHjBTI+beg/RGSEoWmgBV6MtNld7hJAzflrxhwLFecJXUTr8TNNeBmDnG7Hp0oegb1rw05C7DednZp+eWNMxEqeUzmeUxwOK5T6ucx+7IjyUAeR2L8uG0yuShTYZJR36cRjaOfJirPu0lofMRX3Ki32K2qPw6zPcS4+uK/m207c0bDPI1XosMgiR3/fNaARjR8UMiQLqAipH5f9IgxJw5EQIFsFIUxq+R836VLoZc35I+ew3bC49dlw8tShdztLDS2pdehboHnp3khdnzoVywL0kGGDLgq29ReOnL9kdATygtVym/LEccI7A2CJwYjfR6W0BeLd0+YM4TC7U/T/P1+0gX2BcnGeyEzO+22BiNfzpBvl6DFPFIhJ3VxP7Xtrtzx1AnNfuxIW1gyA0MVaBCdiSICfAnlOoGXYAoVjEbcsk/0LTv258AsEBdOiE46ULsRDaJm5VjArQE6wEeCN0wUTJ/yyQX48IDyKyHQD3aEi/zW7d38w3O+NCsREZPwSThmK7QuiCDsBuKvm9Ge2vm2R/P/EbH/EeFxcjwlKLtFbCZIX9geDTt/lx72j2XyhzMNUM3J0EAAAAAElFTkSuQmCC"
+            }
+          ],
+          "SubFolders": [
+            {
+              "Title": "Multi Folder BB",
+              "AddDate": "2025-05-14T16:46:06",
+              "LastModified": "2025-05-14T16:46:15",
+              "Bookmarks": [
+                {
+                  "Title": "Wikipedia:Derechos de autor - Wikipedia, la enciclopedia libre",
+                  "Url": "https://es.wikipedia.org/wiki/Wikipedia:Derechos_de_autor",
+                  "AddDate": "2025-05-14T16:46:10",
+                  "Icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABO0lEQVQ4jaWTMaoCMRCG/wnvDtELmHaxdAmIXcheZA9hYeMNxNZqsc81lu0X+2VLTzBj8V5C8uQ9UAcG5k+YP5kvhPATzCx4IZRSBAD0TnNuQu82J5NPmgFADcMAay2UUjifzwAA733S8zzDWgtrLeZ5xvV6xXK5hPcet9vte/5pmoSIJIQgURtj5HQ6CTOLc06maRJmFmaWuq5TjVg454qNrutEay0hBDkej8V6NC4M+r4XANL3fdo0xogxJul4UK4TxPV6Decc9vt9ArTb7XC/35MehgFVVZUUc7cQghCRjOOYTtNaS9d1wszStm3BgpnlKzfz3mO1WuFyuWCz2aBpGlhrcTgcsN1uAQCLxeLvG0RIRJRmjS9U13XB5wlinlrrgnTbtk/w/jWIDPL8PXvMzz9TzuLVZgB4AExRsO8ga8hoAAAAAElFTkSuQmCC"
+                },
+                {
+                  "Title": "Derecho de autor - Wikipedia, la enciclopedia libre",
+                  "Url": "https://es.wikipedia.org/wiki/Derecho_de_autor",
+                  "AddDate": "2025-05-14T16:46:15",
+                  "Icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABO0lEQVQ4jaWTMaoCMRCG/wnvDtELmHaxdAmIXcheZA9hYeMNxNZqsc81lu0X+2VLTzBj8V5C8uQ9UAcG5k+YP5kvhPATzCx4IZRSBAD0TnNuQu82J5NPmgFADcMAay2UUjifzwAA733S8zzDWgtrLeZ5xvV6xXK5hPcet9vte/5pmoSIJIQgURtj5HQ6CTOLc06maRJmFmaWuq5TjVg454qNrutEay0hBDkej8V6NC4M+r4XANL3fdo0xogxJul4UK4TxPV6Decc9vt9ArTb7XC/35MehgFVVZUUc7cQghCRjOOYTtNaS9d1wszStm3BgpnlKzfz3mO1WuFyuWCz2aBpGlhrcTgcsN1uAQCLxeLvG0RIRJRmjS9U13XB5wlinlrrgnTbtk/w/jWIDPL8PXvMzz9TzuLVZgB4AExRsO8ga8hoAAAAAElFTkSuQmCC"
+                }
+              ],
+              "SubFolders": []
+            }
+          ]
+        },
+        {
+          "Title": "Multi Folder A",
+          "AddDate": "2025-05-14T16:41:53",
+          "LastModified": "2025-05-14T16:42:53",
+          "Bookmarks": [
+            {
+              "Title": "Wikipedia, la enciclopedia libre",
+              "Url": "https://es.wikipedia.org/wiki/Wikipedia:Portada",
+              "AddDate": "2025-05-07T18:44:40",
+              "Icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABO0lEQVQ4jaWTMaoCMRCG/wnvDtELmHaxdAmIXcheZA9hYeMNxNZqsc81lu0X+2VLTzBj8V5C8uQ9UAcG5k+YP5kvhPATzCx4IZRSBAD0TnNuQu82J5NPmgFADcMAay2UUjifzwAA733S8zzDWgtrLeZ5xvV6xXK5hPcet9vte/5pmoSIJIQgURtj5HQ6CTOLc06maRJmFmaWuq5TjVg454qNrutEay0hBDkej8V6NC4M+r4XANL3fdo0xogxJul4UK4TxPV6Decc9vt9ArTb7XC/35MehgFVVZUUc7cQghCRjOOYTtNaS9d1wszStm3BgpnlKzfz3mO1WuFyuWCz2aBpGlhrcTgcsN1uAQCLxeLvG0RIRJRmjS9U13XB5wlinlrrgnTbtk/w/jWIDPL8PXvMzz9TzuLVZgB4AExRsO8ga8hoAAAAAElFTkSuQmCC"
+            },
+            {
+              "Title": "Haz tu donación ahora - Wikimedia Foundation",
+              "Url": "https://donate.wikimedia.org/w/index.php?title=Special:LandingPage&country=MX&uselang=es&wmf_medium=sidebar&wmf_source=donate&wmf_campaign=es.wikipedia.org",
+              "AddDate": "2025-05-14T16:42:40",
+              "Icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABTElEQVQ4jaWTP0uCURTGf+e666hDlKUhLtEmhTREa0t70CZ+lL5En8BVQxzKiBaXaOx9CSRIiGaXhtPQc+UiLxJ04YFzn3ue8+d9eM3djYJjZlvAla437v5RlIe72zqAKrAAXFgA1aLckHQsm1ld1wuglvSpicPM6mZWjg9BZAAGwINGXxYMu9TbPTCQ5ncFoK9R7zR+G5glK8zEVYGpuL67WyyQAd9AAxgC7xKcC21grreGcrNoQEsVb4GjpOsc2AV2FEe+A4wV7wdgTzu+AMfJzttAFzhRHE8XeFbcDPzzBOBN8QHw9AfNI3CoOA/u/grkwBnwCYw2iEfAF3AK5O6er9s4lVVD3S8FF5fa2EttLAGTpEhDjrSEjrgongClVQEVqSRFvmXVtTAWF8WVlW7tJyppnSzxPSIDerFzhG34nZtAM35td8+L8n4AKbW5ya5mf+8AAAAASUVORK5CYII="
+            }
+          ],
+          "SubFolders": []
+        }
+      ]
+    }
+  ]
+}

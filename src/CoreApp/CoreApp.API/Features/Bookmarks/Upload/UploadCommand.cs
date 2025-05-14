@@ -8,6 +8,7 @@ using CoreApp.API.Domain;
 using CoreApp.API.Features.Bookmarks.Dtos;
 using CoreApp.API.Infrastructure;
 using CoreApp.API.Infrastructure.Data;
+using CoreApp.API.Infrastructure.ExternalServices.Dto;
 using FluentValidation;
 using HtmlAgilityPack;
 using MediatR;
@@ -19,7 +20,7 @@ public record UploadCommand(UploadRequest File) : IRequest;
 
 public class UploadCommandHandler
 {
- 
+
   public class UploadValidator : AbstractValidator<UploadRequest>
   {
     public UploadValidator()
@@ -65,13 +66,34 @@ public class UploadCommandHandler
       // Remove all <p> nodes
       string cleanedHtml = CleanHtml(htmlContentString);
 
-      // TODO: Map to model of html content
-      BookmarkFolderDto rootFolder = ParseBookmarks(cleanedHtml);
+      List<BookmarkDto> uploadedBookmarks = ParseAllBookmarks(cleanedHtml);
+
+      // Remove duplicates
+      uploadedBookmarks = RemoveDuplicateBookmarksByUrl(uploadedBookmarks);
+
+      var requestAI = uploadedBookmarks.Select(x =>
+         {
+
+           var routes = SearchForCurrentFolderRoute(x.Url);
+
+           return new ProcessBookmarkGroupingDto
+           {
+             Title = x.Title,
+             Url = x.Url,
+             CurrentStructure = new CurrentStructure
+             {
+               RouteIds = routes.HasValue ? routes.Value.idRoute : "",
+               RouteNames = routes.HasValue ? routes.Value.idRoute : ""
+             }
+           };
+         })
+          .ToList();
+
+
+      // TODO: Call Ollama API
+
 
       // Iterate all folders
-      // TODO: the method its not mapping correctly, use an iterate method and then AI to generate suggested folders?
-      await SaveFoldersAndBookmarksToDatabase(rootFolder, 0, _context, cancellationToken);
-
       /* TODO: Processes content
 
       1- Remove duplicates
@@ -79,78 +101,45 @@ public class UploadCommandHandler
       3- Order
       4- Add to database (store folders and its corresponding bookmarks
       5- Add to database (store file content table / metrics)
-
       */
 
-    }
-  }
 
-  public static string CleanHtml(string htmlContent)
-  {
-
-    return htmlContent.Replace("<p>", string.Empty)
-                      .Replace("<P>", string.Empty)
-                      .Replace("</P>", string.Empty)
-                      .Replace("</p>", string.Empty);
-
-  }
-
-
-  private static BookmarkFolderDto ParseBookmarks(string html)
-  {
-    var document = new HtmlDocument();
-    document.LoadHtml(html);
-
-    var rootFolder = new BookmarkFolderDto
-    {
-      Title = "Root"
-    };
-    var dlNode = document.DocumentNode.SelectSingleNode("//dl");
-    if (dlNode != null)
-    {
-      ParseFolder(dlNode, rootFolder);
-    }
-
-    return rootFolder;
-  }
-
-  private static void ParseFolder(HtmlNode dlNode, BookmarkFolderDto parentFolder)
-  {
-    foreach (var node in dlNode.ChildNodes)
-    {
-      if (node.Name == "dt")
+      var options = new System.Text.Json.JsonSerializerOptions
       {
-        var h3Node = node.SelectSingleNode("h3");
-        if (h3Node != null)
+        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        WriteIndented = true // optional, for pretty print
+      };
+      string json = System.Text.Json.JsonSerializer.Serialize(uploadedBookmarks, options);
+
+      // Save in DB
+      // await SaveFoldersAndBookmarksToDatabase(rootFolder, 0, _context, cancellationToken);
+
+
+    }
+
+
+    public static string CleanHtml(string htmlContent)
+    {
+
+      return htmlContent.Replace("<p>", string.Empty)
+                        .Replace("<P>", string.Empty)
+                        .Replace("</P>", string.Empty)
+                        .Replace("</p>", string.Empty);
+
+    }
+
+
+    public static List<BookmarkDto> ParseAllBookmarks(string html)
+    {
+      var document = new HtmlDocument();
+      document.LoadHtml(html);
+      var bookmarks = new List<BookmarkDto>();
+      var aNodes = document.DocumentNode.SelectNodes("//a");
+      if (aNodes != null)
+      {
+        foreach (var aNode in aNodes)
         {
-          // Parse folder
-          string addDateValue = h3Node.GetAttributeValue("add_date", string.Empty);
-          string lastModifiedDateValue = h3Node.GetAttributeValue("last_modified", string.Empty);
-
-          var folder = new BookmarkFolderDto
-          {
-            Title = h3Node.InnerText,
-            AddDate = string.IsNullOrWhiteSpace(addDateValue) ? null : ParseUnixTimestamp(addDateValue),
-            LastModified = string.IsNullOrWhiteSpace(lastModifiedDateValue) ? null : ParseUnixTimestamp(lastModifiedDateValue),
-          };
-
-          var subDlNode = node.ChildNodes
-           .FirstOrDefault(n => string.Equals(n.Name, "dl", StringComparison.OrdinalIgnoreCase));
-
-          if (subDlNode != null)
-          {
-            ParseFolder(subDlNode, folder);
-          }
-
-          parentFolder.SubFolders.Add(folder);
-        }
-
-        var aNode = node.SelectSingleNode("a");
-        if (aNode != null)
-        {
-          // Parse bookmark
           string addDateValue = aNode.GetAttributeValue("add_date", string.Empty);
-
           var bookmark = new BookmarkDto
           {
             Title = aNode.InnerText,
@@ -158,64 +147,104 @@ public class UploadCommandHandler
             AddDate = string.IsNullOrWhiteSpace(addDateValue) ? null : ParseUnixTimestamp(addDateValue),
             Icon = aNode.GetAttributeValue("icon", string.Empty)
           };
-
-          parentFolder.Bookmarks.Add(bookmark);
+          bookmarks.Add(bookmark);
         }
       }
-    }
-  }
-
-  private static DateTime? ParseUnixTimestamp(string timestamp)
-  {
-    if (long.TryParse(timestamp, out var unixTime))
-    {
-      return DateTimeOffset.FromUnixTimeSeconds(unixTime).DateTime;
+      return bookmarks;
     }
 
-    return null;
-  }
-
-  private static async Task SaveFoldersAndBookmarksToDatabase(
-    BookmarkFolderDto folder,
-    int fatherId,
-    CoreAppContext context,
-    CancellationToken cancellationToken)
-  {
-    // Save the folder
-    var dbFolder = new BookmarkFolder
+    public static List<BookmarkDto> RemoveDuplicateBookmarksByUrl(List<BookmarkDto> bookmarks)
     {
-      Title = folder.Title,
-      AddDate = folder.AddDate,
-      LastModified = folder.LastModified,
-      IsPersonalToolbarFolder = false
-    };
+      return bookmarks
+        .GroupBy(b => b.Url?.Trim().ToLowerInvariant())
+        .Select(g => g.First())
+        .ToList();
+    }
 
-    await context.BookmarkFolders.AddAsync(dbFolder, cancellationToken);
-    await context.SaveChangesAsync(cancellationToken);
-
-    // Save the bookmarks in the folder
-    foreach (var bookmark in folder.Bookmarks)
+    private static DateTime? ParseUnixTimestamp(string timestamp)
     {
-      var dbBookmark = new Bookmark
+      if (long.TryParse(timestamp, out var unixTime))
       {
-        Title = bookmark.Title,
-        Url = bookmark.Url,
-        AddDate = bookmark.AddDate,
-        Icon = bookmark.Icon,
-        BookmarkFolderId = dbFolder.Id,
+        return DateTimeOffset.FromUnixTimeSeconds(unixTime).DateTime;
+      }
+
+      return null;
+    }
+
+    private (string idRoute, string nameRoute)? SearchForCurrentFolderRoute(string url)
+    {
+      // Find the bookmark in the DB by URL (case-insensitive, trimmed)
+      var bookmark = _context.Bookmarks
+        .FirstOrDefault(b => b.Url.Trim().Equals(url.Trim().ToLower(), StringComparison.CurrentCultureIgnoreCase));
+
+      if (bookmark == null)
+        return null;
+
+      // Traverse up the folder tree to build the route
+      var folderIds = new List<int>();
+      var folderNames = new List<string>();
+
+      BookmarkFolder? folder = _context.BookmarkFolders.First(f => f.Id == bookmark.BookmarkFolderId);
+
+      while (folder != null)
+      {
+
+        // Insert(0, ...), which ensures the path is built in the correct order from root to leaf, rather than leaf to root.}
+        // Inserts the new value at the very beginning (index 0) of the list, pushing all existing elements one position to the right.
+        // If you used Add() instead, the order would be reversed.
+        folderIds.Insert(0, folder.Id);
+        folderNames.Insert(0, folder.Title);
+        if (folder.ParentFolderId.HasValue)
+          folder = _context.BookmarkFolders.FirstOrDefault(f => f.Id == folder.ParentFolderId.Value);
+        else
+          folder = null;
+      }
+      string idRoute = string.Join("/", folderIds);
+      string nameRoute = string.Join("/", folderNames);
+      return (idRoute, nameRoute);
+    }
+
+    private static async Task SaveFoldersAndBookmarksToDatabase(
+      BookmarkFolderDto folder,
+      int fatherId,
+      CoreAppContext context,
+      CancellationToken cancellationToken)
+    {
+      // Save the folder
+      var dbFolder = new BookmarkFolder
+      {
+        Title = folder.Title,
+        AddDate = folder.AddDate,
+        LastModified = folder.LastModified,
+        ParentFolderId = fatherId,
       };
 
-      await context.Bookmarks.AddAsync(dbBookmark, cancellationToken);
+      await context.BookmarkFolders.AddAsync(dbFolder, cancellationToken);
+      await context.SaveChangesAsync(cancellationToken);
+
+      // Save the bookmarks in the folder
+      foreach (var bookmark in folder.Bookmarks)
+      {
+        var dbBookmark = new Bookmark
+        {
+          Title = bookmark.Title,
+          Url = bookmark.Url,
+          AddDate = bookmark.AddDate,
+          Icon = bookmark.Icon,
+          BookmarkFolderId = dbFolder.Id,
+        };
+
+        await context.Bookmarks.AddAsync(dbBookmark, cancellationToken);
+      }
+
+      await context.SaveChangesAsync(cancellationToken);
+
+      // Recursively save subfolders
+      foreach (var subFolder in folder.SubFolders)
+      {
+        await SaveFoldersAndBookmarksToDatabase(subFolder, dbFolder.Id, context, cancellationToken);
+      }
     }
 
-    await context.SaveChangesAsync(cancellationToken);
-
-    // Recursively save subfolders
-    foreach (var subFolder in folder.SubFolders)
-    {
-      await SaveFoldersAndBookmarksToDatabase(subFolder, dbFolder.Id, context, cancellationToken);
-    }
   }
-
-
 }

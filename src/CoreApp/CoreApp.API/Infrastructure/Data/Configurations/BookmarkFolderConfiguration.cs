@@ -25,9 +25,6 @@ public class BookmarkFolderConfiguration : IEntityTypeConfiguration<BookmarkFold
     builder.Property(f => f.LastModified)
         .HasColumnType("datetime");
 
-    builder.Property(f => f.IsPersonalToolbarFolder)
-        .IsRequired();
-
     // Relationships
     builder.HasMany(f => f.SubFolders)
         .WithOne(f => f.ParentFolder)

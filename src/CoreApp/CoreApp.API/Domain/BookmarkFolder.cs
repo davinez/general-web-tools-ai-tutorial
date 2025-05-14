@@ -9,7 +9,6 @@ public class BookmarkFolder : BaseEntity
   public required string Title { get; set; }
   public DateTime? AddDate { get; set; }
   public DateTime? LastModified { get; set; }
-  public bool IsPersonalToolbarFolder { get; set; }
 
   // Foreign Key
   public int? ParentFolderId { get; set; }
