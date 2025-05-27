@@ -1,0 +1,15 @@
+<mat-sidenav-container class="app-container">
+  <mat-sidenav class="app-sidenav" [mode]="isSmallScreen() ? 'over' : 'side'" [opened]="isSidebarOpened()">
+    <app-layout-sidebar></app-layout-sidebar>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="app-content">
+    <app-layout-header (toggleSidebar)="toggleSidebar()"></app-layout-header>
+
+    <section class="content">
+      <router-outlet></router-outlet>
+    </section>
+
+    <app-layout-footer></app-layout-footer>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,0 +1,90 @@
+@* <nav class="navbar navbar-expand navbar-dark bg-dark">
+	<div class="container-fluid">
+		<a class="navbar-brand" href="/">GWTAI</a>
+
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+				<li class="nav-item">
+					<NavLink href="/" Match="NavLinkMatch.All" class="nav-item nav-link">Home</NavLink>
+				</li>
+				<li class="nav-item">
+					<NavLink href="/bookmark/bulkupload" class="nav-item nav-link">Upload Bookmarks</NavLink>
+				</li>
+				<li class="nav-item">
+					<NavLink href="/swagger/index.html" class="nav-item nav-link" target="_blank">API</NavLink>
+				</li>
+			</ul>
+
+			<div class="navbar-auth-container">
+				@if (LoggedIn)
+				{
+					<NavLink href="/user/logout" class="nav-item nav-link">Logout</NavLink>
+				}
+				else
+				{
+					<NavLink href="/user/login" class="nav-item nav-link">Login</NavLink>
+				}
+			</div>
+		</div>
+	</div>
+
+</nav> *@
+
+<nav class="nav-menu">
+	<div class="nav-left">
+		<a href="/" class="nav-brand">GWTAI</a>
+	</div>
+	<div class="nav-center">
+		<ul class="nav-items">
+			<li><NavLink href="/" class="nav-link">Home</NavLink></li>
+			<li><NavLink href="/bookmark/bulkupload" class="nav-link">Upload Bookmarks</NavLink></li>
+			<li><NavLink href="/swagger/index.html" class="nav-link" target="_blank">API</NavLink></li>
+		</ul>
+	</div>
+	<div class="nav-right">
+		@if (LoggedIn)
+		{
+			<NavLink href="/user/logout" class="nav-link login-button">Logout</NavLink>
+		}
+		else
+		{
+			<NavLink href="/user/login" class="nav-link login-button">Login</NavLink>
+		}
+		<button class="menu-toggle" @onclick="ToggleMenu">☰</button>
+	</div>
+</nav>
+
+<div class="collapsible-menu" style="@MenuStyle">
+	<ul class="nav-items">
+		<li><NavLink href="/" class="nav-link">Home</NavLink></li>
+		<li><NavLink href="/bookmark/bulkupload" class="nav-link">Upload Bookmarks</NavLink></li>
+		<li><NavLink href="/swagger/index.html" class="nav-link" target="_blank">API</NavLink></li>
+	</ul>
+	<div class="menu-footer">
+		<NavLink href="/user/login" class="nav-link">Login</NavLink>
+	</div>
+</div>
+
+@code {
+	private bool IsMenuOpen { get; set; } = false;
+
+	private string MenuStyle => IsMenuOpen ? "display: block;" : "display: none;";
+
+	private void ToggleMenu()
+	{
+		IsMenuOpen = !IsMenuOpen;
+	}
+
+		public bool LoggedIn
+	{
+		//get {return UserService.User != null;} PENDING to implement
+		get { return false; }
+	}
+}
+
+

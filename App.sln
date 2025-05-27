@@ -1,0 +1,62 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34622.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7C288D93-2148-4679-9890-DBFCA0C59BCC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9F832627-4D82-4B5B-84A7-244E8480845E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{E0DF0CFA-3DF6-4E15-A3ED-ED68DBB4BE4E}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreApp.IntegrationTests", "tests\CoreApp.IntegrationTests\CoreApp.IntegrationTests.csproj", "{2762D9BE-D439-44F9-9D15-A10B000692B5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CoreApp", "CoreApp", "{2602206B-A365-45B7-BBA4-BA3C602AEE58}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreApp.API", "src\CoreApp\CoreApp.API\CoreApp.API.csproj", "{6D52F4F1-FDEE-4AD0-93C1-BE5C123A7BCA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{31331F64-3D32-4669-B599-80DF34D9F230}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GWTAI.Blazor.Client", "src\GWTAI.Blazor\GWTAI.Blazor.Client\GWTAI.Blazor.Client.csproj", "{FFB523FD-DF3D-646C-6E1E-2FAB14997473}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2762D9BE-D439-44F9-9D15-A10B000692B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2762D9BE-D439-44F9-9D15-A10B000692B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2762D9BE-D439-44F9-9D15-A10B000692B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2762D9BE-D439-44F9-9D15-A10B000692B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D52F4F1-FDEE-4AD0-93C1-BE5C123A7BCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D52F4F1-FDEE-4AD0-93C1-BE5C123A7BCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D52F4F1-FDEE-4AD0-93C1-BE5C123A7BCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D52F4F1-FDEE-4AD0-93C1-BE5C123A7BCA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFB523FD-DF3D-646C-6E1E-2FAB14997473}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFB523FD-DF3D-646C-6E1E-2FAB14997473}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFB523FD-DF3D-646C-6E1E-2FAB14997473}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFB523FD-DF3D-646C-6E1E-2FAB14997473}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E0DF0CFA-3DF6-4E15-A3ED-ED68DBB4BE4E} = {31331F64-3D32-4669-B599-80DF34D9F230}
+		{2762D9BE-D439-44F9-9D15-A10B000692B5} = {9F832627-4D82-4B5B-84A7-244E8480845E}
+		{2602206B-A365-45B7-BBA4-BA3C602AEE58} = {7C288D93-2148-4679-9890-DBFCA0C59BCC}
+		{6D52F4F1-FDEE-4AD0-93C1-BE5C123A7BCA} = {2602206B-A365-45B7-BBA4-BA3C602AEE58}
+		{FFB523FD-DF3D-646C-6E1E-2FAB14997473} = {7C288D93-2148-4679-9890-DBFCA0C59BCC}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A1A58E70-7B26-4846-90A8-F5AE8E4BD418}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,126 @@
+/* Navbar styles */
+.nav-menu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #333;
+  color: white;
+}
+
+.nav-left {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.nav-center {
+  flex: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-right {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.nav-brand {
+  font-size: 1.5rem;
+  color: white;
+  text-decoration: none;
+}
+
+.nav-items {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+  .nav-items li {
+    margin: 0 0.5rem;
+  }
+
+::deep .nav-link {
+  color: white;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+  ::deep .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+::deep .login-button {
+  display: block;
+}
+
+/* Collapsible menu styles */
+.collapsible-menu {
+  display: none;
+  flex-direction: column;
+  background-color: #333;
+  padding: 1rem;
+  width: 100%;
+}
+
+  .collapsible-menu .nav-items {
+    flex-direction: column;
+  }
+
+    .collapsible-menu .nav-items li {
+      margin: 0.5rem 0;
+    }
+
+.menu-footer {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .nav-center {
+    display: none;
+  }
+
+  .menu-toggle {
+    display: block;
+  }
+
+  ::deep .login-button {
+    display: none;
+  }
+
+  .collapsible-menu {
+    display: flex;
+  }
+}
+
+@media (min-width: 769px) {
+  .menu-toggle {
+    display: none;
+  }
+
+  .collapsible-menu {
+    display: none !important;
+  }
+
+  ::deep .login-button {
+    display: block;
+  }
+}

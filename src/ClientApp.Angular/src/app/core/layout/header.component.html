@@ -1,0 +1,51 @@
+<mat-toolbar color="primary" class="app-header dark-theme">
+
+  <!-- Left Side: Authenticated -->
+  <ng-container *ifAuthenticated="true">
+    <button mat-icon-button (click)="onToggleSidebar()">
+      <mat-icon>menu</mat-icon>
+    </button>
+
+    <a mat-button class="header-link" routerLink="/">Home</a>
+  </ng-container>
+
+  <!-- Left Side: Not Authenticated -->
+  <ng-container *ifAuthenticated="false">
+    <a mat-button class="header-link" routerLink="/">Home</a>
+  </ng-container>
+
+  <span class="spacer"></span>
+
+  <!-- Right Side: Not Authenticated -->
+  <ng-container *ifAuthenticated="false">
+    <a mat-button routerLink="/login">Sign In</a>
+    <a mat-button routerLink="/register">Sign Up</a>
+  </ng-container>
+
+  <!-- Right Side: Authenticated -->
+  <ng-container *ifAuthenticated="true">
+    @if (currentUser$ | async; as currentUser) {
+      <button mat-button [matMenuTriggerFor]="userMenu">
+        <img
+          *ngIf="currentUser.image"
+          [src]="currentUser.image"
+          class="user-avatar"
+          alt="User"
+        />
+        <mat-icon *ngIf="!currentUser.image">account_circle</mat-icon>
+      </button>
+
+      <mat-menu #userMenu="matMenu">
+        <button mat-menu-item routerLink="/settings">
+          <mat-icon>settings</mat-icon>
+          Settings
+        </button>
+        <button mat-menu-item (click)="onLogout()">
+          <mat-icon>logout</mat-icon>
+          Log out
+        </button>
+      </mat-menu>
+    }
+  </ng-container>
+
+</mat-toolbar>

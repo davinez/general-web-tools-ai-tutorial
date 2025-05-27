@@ -1,0 +1,129 @@
+@page "/bookmark/bulkupload"
+@using Blazored.FluentValidation
+@using GWTAI.Blazor.Client.Models.Bookmarks
+@using GWTAI.Blazor.Client.Models.Bookmarks.Dtos
+@using GWTAI.Blazor.Client.Services.Contracts
+@* @attribute [Authorize] *@
+@inject IAlertService AlertService
+@inject IBookmarkService BookmarkService
+@inject NavigationManager navManager
+@inject PageHistoryState PageHistoryState
+
+
+<h1 class="page-title">Upload</h1>
+
+<EditForm Model="@upload" OnValidSubmit="@CreateUpload" class="form-container">
+	<FluentValidationValidator />
+	<ValidationSummary class="validation-summary" />
+
+	<div class="form-group">
+		<label for="file-name" class="form-label">File Name:</label>
+		<div>
+			<InputText id="file-name" @bind-Value="@upload.FileName" class="form-input" />
+			<ValidationMessage For="@(() => upload.FileName)" class="validation-message" />
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label for="file-upload" class="form-label">File:</label>
+		<div>
+			<InputFile id="file-upload" accept=".html" class="form-input-file" type="file" OnChange="HandleSelection" />
+			<ValidationMessage For="@(() => upload.FileContent)" class="validation-message" />
+		</div>
+	</div>
+
+	<div class="form-group btns-group">
+		<button disabled="@loading" class="btn btn-primary">
+			@if (loading)
+			{
+				<span class="spinner"></span>
+				<span>Uploading...</span>
+
+			}
+			else
+			{
+				<span>Save File</span>
+			}
+		</button>
+		@if (PageHistoryState.CanGoBack())
+		{
+			<NavLink href="@PageHistoryState.GetGoBackPage()" class="btn btn-secondary">Back</NavLink>
+		}
+		else
+		{
+			<NavLink href="/upload/1" class="btn btn-secondary">Back</NavLink>
+		}
+	</div>
+</EditForm>
+
+<p class="status-message">@status</p>
+
+
+@code {
+	[Parameter]
+	public EventCallback OnValidSubmit { get; set; }
+	bool loading = false;
+	string status = "File pending upload...";
+	// Initialize the upload property to avoid null reference issues
+	BulkUploadDto upload = new BulkUploadDto
+		{
+			FileName = string.Empty,
+			FileContent = Array.Empty<byte>()
+		};
+
+	async Task HandleSelection(InputFileChangeEventArgs e)
+	{
+		var file = e.File;
+		if (file != null)
+		{
+			// Load into memory
+			var buffer = new byte[file.Size];
+			await file.OpenReadStream().ReadAsync(buffer);
+			status = $"Finished loading {file.Size} bytes from {file.Name}";
+
+			// Update the upload property with the file details
+			upload.FileName = file.Name;
+			upload.FileContent = buffer;
+
+		}
+	}
+
+	async Task CreateUpload()
+	{
+		loading = true;
+		try
+		{
+			await BookmarkService.UploadBookmarks(upload);
+			AlertService.Success("Upload added successfully", keepAfterRouteChange: true);
+			if (PageHistoryState.CanGoBack())
+			{
+				navManager.NavigateTo(PageHistoryState.GetGoBackPage());
+			}
+			else
+			{
+				// navManager.NavigateTo("/upload/1");
+				ResetForm();
+			}
+		}
+		catch (Exception ex)
+		{
+			AlertService.Error(ex.Message);
+			ResetForm();
+		}
+
+	}
+
+	void ResetForm()
+	{
+		upload = new BulkUploadDto
+			{
+				FileName = string.Empty,
+				FileContent = Array.Empty<byte>()
+			};
+		status = "File pending upload...";
+		loading = false;
+		StateHasChanged();
+	}
+
+
+}
