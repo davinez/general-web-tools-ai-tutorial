@@ -1,0 +1,62 @@
+meta {
+  name: show model
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/show
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "name":"mario:latest"
+  }
+}
+
+tests {
+  test("Response status code is 200", function () {
+      expect(res.getStatus()).to.equal(200);
+  });
+  
+  
+  test("Response has the required fields", function () {
+      const responseData = res.getBody();
+      
+      expect(responseData).to.have.property('license');
+      expect(responseData).to.have.property('modelfile');
+      expect(responseData).to.have.property('parameters');
+      expect(responseData).to.have.property('template');
+      expect(responseData).to.have.property('system');
+      expect(responseData).to.have.property('details');
+      expect(responseData).to.have.property('model_info');
+  });
+  
+  
+  test("Details object and its properties have the correct format", function () {
+      const responseData = res.getBody();
+      
+      expect(responseData.details).to.be.an('object');
+      expect(responseData.details.parent_model).to.be.a('string');
+      expect(responseData.details.format).to.be.a('string');
+      expect(responseData.details.family).to.be.a('string');
+      expect(responseData.details.families).to.be.an('array');
+      responseData.details.families.forEach(function(family) {
+          expect(family).to.be.a('string');
+      });
+      expect(responseData.details.parameter_size).to.be.a('string');
+      expect(responseData.details.quantization_level).to.be.a('string');
+  });
+  
+  
+  test("Response time is less than 200ms", function () {
+    expect(res.getResponseTime()).to.be.below(200);
+  });
+  
+}
+
+docs {
+  Show information about a model including details, modelfile, template, parameters, license, system prompt.
+}

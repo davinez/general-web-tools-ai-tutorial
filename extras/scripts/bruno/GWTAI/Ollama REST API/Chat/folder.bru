@@ -1,0 +1,25 @@
+meta {
+  name: Chat
+}
+
+auth {
+  mode: none
+}
+
+docs {
+  The `/chat` endpoint is used for **multi-turn conversations**. It maintains a context or conversation history, allowing for more interactive, dynamic exchanges.
+  
+  #### **Key Characteristics:**
+  
+  - **Stateful**: Keeps track of the conversation's history, so the model can provide contextually aware responses.
+      
+  - **Input and Output**:
+      
+      - You provide the current message and (optionally) the conversation history.
+          
+      - The model generates a response considering the entire conversation.
+          
+  - **Use Case**:
+      
+      - Best for applications involving dialogue systems, customer support bots, or assistants requiring memory of previous exchanges.
+}

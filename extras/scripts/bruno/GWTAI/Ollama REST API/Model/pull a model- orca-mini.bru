@@ -1,0 +1,58 @@
+meta {
+  name: pull a model: orca-mini
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/api/pull
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "name": "gemma3:1b",
+      "stream": false
+  }
+}
+
+tests {
+  test("Response status code is 200", function () {
+      expect(res.getStatus()).to.equal(200);
+  });
+  
+  
+  test("Content-Type header is application/json", function () {
+      expect(res.getHeader("Content-Type")).to.include("application/json");
+  });
+  
+  
+  test("Response body has the required field 'status'", function () {
+      const responseData = res.getBody();
+      
+      expect(responseData).to.be.an('object');
+      expect(responseData.status).to.exist;
+  });
+  
+  
+  test("Status field is a non-empty string", function () {
+    const responseData = res.getBody();
+    
+    expect(responseData).to.be.an('object');
+    expect(responseData.status).to.be.a('string').and.to.have.lengthOf.at.least(1, "Status field should be a non-empty string");
+  });
+  
+}
+
+docs {
+  Pull a model from the [Ollama library. ](https://ollama.ai/library) Cancelled pulls are resumed from where they left off, and multiple calls will share the same download progress.
+  
+  **Pulling a model** refers to **downloading the model** from a remote source (such as Ollama’s model library) to your local machine.
+  
+  Once a model is pulled, it is available for use locally without needing to download it again.
+  
+  **Parameters**
+  
+  You can add `"stream": false` to the body to get a chunked response instead of streamed
+}

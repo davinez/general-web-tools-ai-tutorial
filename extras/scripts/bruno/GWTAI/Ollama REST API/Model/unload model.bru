@@ -1,0 +1,63 @@
+meta {
+  name: unload model
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/generate
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "model": "{{model}}",
+    "keep_alive": 0
+  }
+}
+
+tests {
+  test("Response status code is 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  
+  test("Response has the required fields", function () {
+      const responseData = res.getBody();
+      
+      expect(responseData).to.be.an('object');
+      expect(responseData).to.have.property('model');
+      expect(responseData).to.have.property('created_at');
+      expect(responseData).to.have.property('response');
+      expect(responseData).to.have.property('done');
+      expect(responseData).to.have.property('done_reason');
+  });
+  
+  
+  
+  test("Response time is within an acceptable range", function () {
+    expect(res.getResponseTime()).to.be.below(500);
+  });
+  
+  
+  test("Done is a boolean value", function () {
+      const responseData = res.getBody();
+      
+      expect(responseData.done).to.be.a('boolean');
+  });
+  
+}
+
+docs {
+  ### **Why Unload a Model from Memory?**
+  
+  - To optimize resource usage on the machine.
+      
+  - To switch to a different model without overwhelming system memory.
+      
+  - To ensure the server remains performant when multiple models are used.
+      
+  
+  If an empty prompt is provided and the `keep_alive` parameter is set to `0`, a model will be unloaded from memory.
+}

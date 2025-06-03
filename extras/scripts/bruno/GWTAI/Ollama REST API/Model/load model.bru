@@ -1,0 +1,60 @@
+meta {
+  name: load model
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/generate
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "model": "{{model}}"
+  }
+}
+
+tests {
+  test("Response status code is 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  
+  test("Response time is within an acceptable range", function () {
+    expect(res.getResponseTime()).to.be.below(300);
+  });
+  
+  
+  test("Response has the required fields", function () {
+      const responseData = res.getBody();
+      
+      expect(responseData).to.be.an('object');
+      expect(responseData).to.have.property('model');
+      expect(responseData).to.have.property('created_at');
+      expect(responseData).to.have.property('response');
+      expect(responseData).to.have.property('done');
+      expect(responseData).to.have.property('done_reason');
+  });
+  
+  
+  test("Done is a boolean value", function () {
+      const responseData = res.getBody();
+      expect(responseData.done).to.be.a('boolean');
+  });
+  
+  test("Done_reason is a string or empty", function () {
+      const responseData = res.getBody();
+      if (responseData.done_reason) {
+          expect(responseData.done_reason).to.be.a('string');
+      }
+  });
+  
+}
+
+docs {
+  Activates the model in memory (RAM) so it can be used via an API call.
+  
+  If an empty prompt is provided, the model will be loaded into memory.
+}

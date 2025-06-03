@@ -1,0 +1,42 @@
+meta {
+  name: Generate: codellama (with suffix)
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/generate
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "model": "codellama:code",
+    "prompt": "def compute_gcd(a, b):",
+    "suffix": "    return result",
+    "options": {
+      "temperature": 0
+    },
+    "stream": false
+  }
+}
+
+script:pre-request {
+  // Initialize a collection variable to store the cumulative response
+  bru.setVar("cumulativeResponse", "");
+}
+
+tests {
+  // Test to check if the response code is 200
+  test("Status code is 200", function () {
+      expect(res.getStatus()).to.equal(200);
+  });
+  
+}
+
+docs {
+  The **`suffix`** parameter in the Ollama `/generate` endpoint provides a **hint or a constraint** to the model about how the generated output should end or be framed. It specifies the desired text or structure that should appear at the <u><b>end</b></u> of the generated content.
+  
+  In this example, the generated code should end with `return result`
+}

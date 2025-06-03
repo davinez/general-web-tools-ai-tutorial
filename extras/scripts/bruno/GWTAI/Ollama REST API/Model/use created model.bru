@@ -1,0 +1,70 @@
+meta {
+  name: use created model
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/generate
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "model": "mario",
+      "prompt": "what is the meaning of life?",
+      "stream": false
+  }
+}
+
+tests {
+  test("Response status code is 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  
+  
+  test("Response has the required fields", function () {
+      const responseData = res.getBody();
+      
+      expect(responseData).to.be.an('object');
+      expect(responseData.model).to.exist;
+      expect(responseData.created_at).to.exist;
+      expect(responseData.response).to.exist;
+      expect(responseData.done).to.exist;
+      expect(responseData.context).to.exist;
+      expect(responseData.total_duration).to.exist;
+      expect(responseData.load_duration).to.exist;
+      expect(responseData.prompt_eval_count).to.exist;
+      expect(responseData.prompt_eval_duration).to.exist;
+      expect(responseData.eval_count).to.exist;
+      expect(responseData.eval_duration).to.exist;
+  });
+  
+  
+  test("Context is an array", function () {
+      const responseData = res.getBody();
+      
+      expect(responseData.context).to.be.an('array');
+  });
+  
+}
+
+docs {
+  You can use your custom created model by name, the same way you use other downloaded models from the `/api/generate` endpoint
+  
+  The example shown here uses a model built with the following Modelfile:
+  
+  ```
+  FROM llama2
+  # sets the temperature to 1 [higher is more creative, lower is more coherent]
+  PARAMETER temperature 1
+  # sets the context window size to 4096, this controls how many tokens the LLM can use as context to generate the next token
+  PARAMETER num_ctx 4096
+  # sets a custom system prompt to specify the behavior of the chat assistant
+  SYSTEM You are Mario from super mario bros, acting as an assistant.
+  
+  
+   ```
+}

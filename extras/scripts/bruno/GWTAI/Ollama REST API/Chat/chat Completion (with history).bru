@@ -1,0 +1,36 @@
+meta {
+  name: chat Completion (with history)
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/chat
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "model": "{{model}}",
+    "stream": false,
+    "messages": [
+      {
+        "role": "user",
+        "content": "why is the sky blue?"
+      },
+      {
+        "role": "assistant",
+        "content": "due to rayleigh scattering."
+      },
+      {
+        "role": "user",
+        "content": "how is that different than mie scattering?"
+      }
+    ]
+  }
+}
+
+docs {
+  Send a chat message with a conversation history. You can use this same approach to start the conversation using multi-shot or chain-of-thought prompting.
+}

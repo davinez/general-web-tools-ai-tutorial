@@ -8,10 +8,11 @@ using CoreApp.API.Domain;
 using CoreApp.API.Features.Bookmarks.Dtos;
 using CoreApp.API.Infrastructure;
 using CoreApp.API.Infrastructure.Data;
-using CoreApp.API.Infrastructure.ExternalServices.Dto;
+using CoreApp.API.Infrastructure.ExternalServices.ollama.Dto;
 using FluentValidation;
 using HtmlAgilityPack;
 using MediatR;
+using NJsonSchema;
 
 namespace CoreApp.API.Features.Bookmarks.Upload;
 
@@ -74,20 +75,25 @@ public class UploadCommandHandler
       var requestAI = uploadedBookmarks.Select(x =>
          {
 
-           var routes = SearchForCurrentFolderRoute(x.Url);
+           var route = SearchForCurrentFolderRoute(x.Url);
 
-           return new ProcessBookmarkGroupingDto
+           return new ProcessBookmarkGroupingRequest
            {
              Title = x.Title,
              Url = x.Url,
              CurrentStructure = new CurrentStructure
              {
-               RouteIds = routes.HasValue ? routes.Value.idRoute : "",
-               RouteNames = routes.HasValue ? routes.Value.idRoute : ""
+               RouteIds = route.HasValue ? route.Value.idRoute : "",
+               RouteNames = route.HasValue ? route.Value.idRoute : ""
              }
            };
          })
           .ToList();
+
+      var requestAISchemaResponse = JsonSchema.FromType<ProcessBookmarkGroupingRequest>();
+      Console.WriteLine(requestAISchemaResponse.ToJson());
+
+
 
 
       // TODO: Call Ollama API

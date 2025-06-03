@@ -1,0 +1,127 @@
+meta {
+  name: Ollama REST API
+}
+
+auth {
+  mode: none
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:11434
+  model: llama3.1
+  cumulativeResponse: 
+  finalResponse: 
+}
+
+docs {
+  <img src="https://content.pstmn.io/d776e89b-2248-4c3f-a942-2eef03064755/b2xsYW1hLmpwZw==">
+  
+  Welcome to the Ollama Collection! This collection was created to get you started with running Ollama APIs locally and quickly. It provides a comprehensive set of examples to help you utilize Ollama APIs based on the [official Ollama API docs.](https://github.com/jmorganca/ollama/blob/main/docs/api.md)
+  
+  > **Note**: This collection is part of a workspace curated by the Postman team to help you explore and work with useful APIs. Learn how to contribute to this collaborative space and its collections [here](https://learning.postman.com/docs/collaborating-in-postman/using-version-control/version-control-overview/#creating-pull-requests). 
+    
+  
+  # Run Ollama Locally
+  
+  [Ollama](https://ollama.ai/) allows you to run powerful LLM models locally on your machine, and exposes a REST API to interact with them on localhost. Before starting, you must download Ollama and the models you want to use. We'll go through this step by step below.
+  
+  ### Step 1: Fork the collection
+  
+  Fork the collection manually or by clicking the Run in Postman button below[<img src="https://run.pstmn.io/button.svg" alt="Run In Postman">](https://app.getpostman.com/run-collection/21521806-f48dc31a-a9f1-4dad-9082-fd07f5cd2fda?action=collection%2Ffork&source=rip_markdown&collection-url=entityId%3D21521806-f48dc31a-a9f1-4dad-9082-fd07f5cd2fda%26entityType%3Dcollection%26workspaceId%3Dac33d3d9-3983-4da3-8120-dd0fea768a68)
+  
+  ### Step 2: Download and install Ollama
+  
+  [Download Ollama and install Ollama for Mac, Linux, and Windows](https://ollama.com/)
+  
+  ### Step 3: Download the models
+  
+  Download a model from the Ollama library to your local machine. To start, we'll download `Llama 3.1` using the `ollama pull` command. On your favorite terminal run `$ ollama pull Llama3.1:Latest` (this will take a little bit of time, the smallest Llama3.1 model is >4G). Repeat this step for the following models:
+  
+  - `ollama pull codellama:code`
+      
+  - `ollama pull mistral`
+      
+  - `ollama pull llama3.2`
+      
+  - `ollama pull qwen2.5`
+      
+  
+  See all models available via the [Ollama library](https://github.com/ollama/ollama?tab=readme-ov-file#model-library).
+  
+  **(optional)** If you want to run and interact with `Llama3.1:Latest`in the terminal, run the following command:`$ ollama run llama3.1:latest` and ask it a question.
+  
+  ### Step 4: Start the Ollama server
+  
+  To run the API and use in Postman, run `ollama serve` in your terminal to start a new server.
+  
+  If you get an error stating port `11434` is already in use, step 3 may have already started the server for you. By default, Ollama listens on port `11434`.
+  
+  - Run `ollama list` in your terminal to see if it is running. If yes, a list of your downloaded models will be returned.
+      
+  - **NOTE**: If you update Ollama to listen on a different port, be sure to update the `baseUrl` collection level variable accordingly.
+      
+  
+  ### Step 5: Make your first API request
+  
+  _Since you are running the LLMs locally, depending on your hardware, API requests may take some time to complete._
+  
+  ##### Streaming
+  
+  Some example requests state _streaming_ or _no streaming_. For example, try running the [Completion Generate (streaming)](https://postman-student-programs.postman.co/workspace/%5Bcbrehm%5D-development~405d2045-e0ed-4f1a-85c1-29458effd58e/request/41346167-8962d9f9-1cde-4edc-953b-d286249c4123?action=share&source=copy-link&creator=41346167&ctx=documentation) request - it will stream the response. There is a post-request script that collects the stream and outputs it as a `console.log`. (See image below)
+  
+  The only difference between streaming and non-streaming is including the param `"stream": false` as part of the request body.
+  
+  <img src="https://content.pstmn.io/108ab116-fec9-45be-a5ec-a8ce5407fa0c/U2NyZWVuc2hvdCAyMDI1LTAxLTIyIGF0IDMuMDEuNDTigK9QTS5wbmc=">
+  
+  ---
+  
+  ## There are three folders in this Collection:
+  
+  - **Completion** - Generate text completions from a local model using the `/generate` endpoint (used for **single-turn text generation)**. It generates output based on the input prompt without maintaining context or conversation history.
+      
+  - **Model** - You can think of the APIs in this folder as "Admin" APIs that are used for managing the local models on your machine.
+      
+  - **Chat** - Generate text completions from a local model using the `/chat` endpoint (used for **multi-turn conversations)**. It maintains a context or conversation history, allowing for more interactive, dynamic exchanges.
+      
+  
+  ---
+  
+  ---
+  
+  ## Getting Support
+  
+  We want you to get the best support you can when working with this workspace. If you're stuck and you need help regarding Ollama specific issues, we recommend that you explore the following channels.
+  
+  - [Ollama Discord Community](https://discord.com/invite/ollama)
+      
+  - [Ollama Github](https://github.com/ollama/ollama)
+      
+  
+  For Postman specific questions or feedback about this workspace:
+  
+  - [Postman's Community Forum](https://community.postman.com/t/ai-provider-workspaces-and-collections/74143) - Provide feedback and ask questions about this workspace, ask general Postman questions, understand how to use a feature, how to build a workflow, etc.
+      
+  
+  For Postman specific issues:
+  
+  - [Postman Github Issues](https://github.com/postmanlabs/postman-app-support) - Submit feature requests, bug reports, etc here
+      
+  
+  ---
+  
+  ---
+  
+  # Troubleshooting
+  
+  - Error: `command not found: ollama`
+      
+      - Solution: If you've downloaded the app, you likely need to move it out from the downloads folder to your Applications (or similar) folder
+          
+  - Error: `$ Error: listen tcp 127.0.0.1:11434: bind: address already in use` after running `ollama serve`
+      
+      - Solution: run `$ export OLLAMA_HOST=127.0.0.1:3000` then run `ollama serve` again.
+          
+      - **NOTE**: If you update Ollama to listen on a different port, be sure to update the `baseUrl` collection level variable accordingly.
+          
+  - `ollama serve --help` is your best friend.
+}

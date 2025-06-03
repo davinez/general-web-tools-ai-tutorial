@@ -1,0 +1,36 @@
+meta {
+  name: Generate: QWEN (no streaming)
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/generate
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "model": "qwen2.5", //any models pulled from Ollama can be replaced here
+    "prompt": "Why is the sky blue?", //The prompt should be written here
+    "stream": false
+  }
+}
+
+script:pre-request {
+  // Initialize a collection variable to store the cumulative response
+  bru.setVar("cumulativeResponse", "");
+}
+
+tests {
+  // Test to check if the response code is 200
+  test("Status code is 200", function () {
+      expect(res.getStatus()).to.equal(200);
+  });
+  
+}
+
+docs {
+  Generate a chat interaction without streaming output. This example specifically uses a mistral model.
+}

@@ -1,0 +1,57 @@
+meta {
+  name: JSON mode
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/api/generate
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "model": "{{model}}",
+    "prompt": "What color is the sky at different times of the day? Respond using JSON",
+    "format": "json",
+    "stream": false
+  }
+}
+
+tests {
+  test("Response status code is 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response has the required fields", function () {
+      const responseData = res.getBody();
+      
+      expect(responseData).to.be.an('object');
+      expect(responseData.model).to.exist;
+      expect(responseData.created_at).to.exist;
+      expect(responseData.response).to.exist;
+      expect(responseData.done).to.exist;
+      expect(responseData.done_reason).to.exist;
+      expect(responseData.context).to.exist;
+      expect(responseData.total_duration).to.exist;
+      expect(responseData.load_duration).to.exist;
+      expect(responseData.prompt_eval_count).to.exist;
+      expect(responseData.prompt_eval_duration).to.exist;
+      expect(responseData.eval_count).to.exist;
+      expect(responseData.eval_duration).to.exist;
+  });
+  
+  
+  test("Model is a non-empty string", function () {
+      const responseData = res.getBody();
+      
+      expect(responseData).to.be.an('object');
+      expect(responseData.model).to.be.a('string').and.to.have.lengthOf.at.least(1, "Model should not be empty");
+  });
+  
+}
+
+docs {
+  When `format` is set to `json`, the output will always be a well-formed JSON object. It's **important** to also instruct the model to respond in JSON via the `prompt`.
+}

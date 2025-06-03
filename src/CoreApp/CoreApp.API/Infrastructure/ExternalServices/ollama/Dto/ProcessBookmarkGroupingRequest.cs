@@ -1,8 +1,8 @@
 using System;
 
-namespace CoreApp.API.Infrastructure.ExternalServices.Dto;
+namespace CoreApp.API.Infrastructure.ExternalServices.ollama.Dto;
 
-public class ProcessBookmarkGroupingDto
+public class ProcessBookmarkGroupingRequest
 {
   public required string Title { get; set; }
   public required string Url { get; set; }

@@ -448,3 +448,5 @@ Thumbs.db
 # Custom
 
 .env.dev.core-app
+/extras/ai/open-webui
+/extras/ai/ollama_data

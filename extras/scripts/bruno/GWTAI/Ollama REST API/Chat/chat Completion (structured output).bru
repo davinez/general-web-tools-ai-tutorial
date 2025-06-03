@@ -1,0 +1,87 @@
+meta {
+  name: chat Completion (structured output)
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/chat
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "model": "{{model}}",
+    "messages": [{"role": "user", "content": "Ollama is 22 years old and busy saving the world. Return a JSON object with the age and availability."}],
+    "stream": false,
+    "format": {
+      "type": "object",
+      "properties": {
+        "age": {
+          "type": "integer"
+        },
+        "available": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "age",
+        "available"
+      ]
+    },
+    "options": {
+      "temperature": 0
+    }
+  }
+}
+
+tests {
+  test("Response status code is 200", function () {
+      expect(res.getStatus()).to.equal(200);
+  });
+  
+  
+  test("Response has the required fields", function () {
+      const responseData = res.getBody();
+      
+      expect(responseData).to.be.an('object');
+      expect(responseData.model).to.exist;
+      expect(responseData.created_at).to.exist;
+      expect(responseData.message).to.exist;
+      expect(responseData.done_reason).to.exist;
+      expect(responseData.done).to.exist;
+      expect(responseData.total_duration).to.exist;
+      expect(responseData.load_duration).to.exist;
+      expect(responseData.prompt_eval_count).to.exist;
+      expect(responseData.prompt_eval_duration).to.exist;
+      expect(responseData.eval_count).to.exist;
+      expect(responseData.eval_duration).to.exist;
+  });
+  
+  
+  test("Message role and content are not empty strings", function () {
+      const responseData = res.getBody();
+      
+      expect(responseData).to.be.an('object');
+      expect(responseData.message.role).to.be.a('string').and.to.have.lengthOf.at.least(1, "Value should not be empty");
+      expect(responseData.message.content).to.be.a('string').and.to.have.lengthOf.at.least(1, "Value should not be empty");
+  });
+  
+  
+  test("Total duration, load duration, prompt eval count, prompt eval duration, eval count, and eval duration are non-negative integers", function () {
+      const responseData = res.getBody();
+      
+      expect(responseData.total_duration).to.be.a('number').and.to.be.at.least(0);
+      expect(responseData.load_duration).to.be.a('number').and.to.be.at.least(0);
+      expect(responseData.prompt_eval_count).to.be.a('number').and.to.be.at.least(0);
+      expect(responseData.prompt_eval_duration).to.be.a('number').and.to.be.at.least(0);
+      expect(responseData.eval_count).to.be.a('number').and.to.be.at.least(0);
+      expect(responseData.eval_duration).to.be.a('number').and.to.be.at.least(0);
+  });
+  
+}
+
+docs {
+  Structured outputs are supported by providing a JSON schema in the `format` parameter. The model will generate a response that matches the schema.
+}

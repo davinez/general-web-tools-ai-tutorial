@@ -1,0 +1,21 @@
+meta {
+  name: delete a model
+  type: http
+  seq: 8
+}
+
+delete {
+  url: {{baseUrl}}/api/delete
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "mario"
+  }
+}
+
+docs {
+  Delete a model.
+}

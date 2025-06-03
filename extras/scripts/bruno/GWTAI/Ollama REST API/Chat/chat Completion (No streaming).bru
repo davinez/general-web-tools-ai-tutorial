@@ -1,0 +1,104 @@
+meta {
+  name: chat Completion (No streaming)
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/chat
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "model": "{{model}}", //insert any models from Ollama that are on your local machine
+    "messages": [
+      {
+        "role": "system", //"system" is a prompt to define how the model should act.
+        "content": "you are a salty pirate" //system prompt should be written here
+      },
+      {
+        "role": "user", //"user" is a prompt provided by the user.
+        "content": "why is the sky blue" //user prompt should be written here
+      }
+    ],
+    "stream": false //returns as a full message rather than a streamed response
+  }
+}
+
+tests {
+  test("Response status code is 200", function () {
+      expect(res.getStatus()).to.equal(200);
+  });
+  
+  
+  test("Response has the required fields", function () {
+      const responseData = res.getBody();
+      
+      expect(responseData).to.be.an('object');
+      expect(responseData).to.have.property('model');
+      expect(responseData).to.have.property('created_at');
+      expect(responseData).to.have.property('message');
+      expect(responseData).to.have.property('done_reason');
+      expect(responseData).to.have.property('done');
+      expect(responseData).to.have.property('total_duration');
+      expect(responseData).to.have.property('load_duration');
+      expect(responseData).to.have.property('prompt_eval_count');
+      expect(responseData).to.have.property('prompt_eval_duration');
+      expect(responseData).to.have.property('eval_count');
+      expect(responseData).to.have.property('eval_duration');
+  });
+  
+  
+  test("Message role and content are non-empty strings", function () {
+    const responseData = res.getBody();
+    
+    expect(responseData).to.be.an('object');
+    expect(responseData.message).to.be.an('object');
+    expect(responseData.message.role).to.be.a('string').and.to.have.lengthOf.at.least(1, "Role should not be empty");
+    expect(responseData.message.content).to.be.a('string').and.to.have.lengthOf.at.least(1, "Content should not be empty");
+  });
+  
+  
+  test("Total duration is a non-negative integer", function () {
+      const responseData = res.getBody();
+      expect(responseData.total_duration).to.be.a('number');
+      expect(responseData.total_duration).to.be.at.least(0);
+  });
+  
+  test("Load duration is a non-negative integer", function () {
+      const responseData = res.getBody();
+      expect(responseData.load_duration).to.be.a('number');
+      expect(responseData.load_duration).to.be.at.least(0);
+  });
+  
+  test("Prompt evaluation count is a non-negative integer", function () {
+      const responseData = res.getBody();
+      expect(responseData.prompt_eval_count).to.be.a('number');
+      expect(responseData.prompt_eval_count).to.be.at.least(0);
+  });
+  
+  test("Prompt evaluation duration is a non-negative integer", function () {
+      const responseData = res.getBody();
+      expect(responseData.prompt_eval_duration).to.be.a('number');
+      expect(responseData.prompt_eval_duration).to.be.at.least(0);
+  });
+  
+  test("Evaluation count is a non-negative integer", function () {
+      const responseData = res.getBody();
+      expect(responseData.eval_count).to.be.a('number');
+      expect(responseData.eval_count).to.be.at.least(0);
+  });
+  
+  test("Evaluation duration is a non-negative integer", function () {
+      const responseData = res.getBody();
+      expect(responseData.eval_duration).to.be.a('number');
+      expect(responseData.eval_duration).to.be.at.least(0);
+  });
+  
+}
+
+docs {
+  Generate a multi-turn converstaion without streaming.
+}

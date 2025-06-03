@@ -1,0 +1,22 @@
+meta {
+  name: copy a model
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/api/copy
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "source": "{{model}}",
+      "destination": "llama3-backup"
+  }
+}
+
+docs {
+  Copy a model. Creates a model with another name from an existing model.
+}

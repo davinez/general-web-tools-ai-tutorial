@@ -1,0 +1,86 @@
+meta {
+  name: Structured output
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/generate
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "model": "{{model}}",
+    "prompt": "Ollama is 22 years old and is busy saving the world. Respond using JSON",
+    "stream": false,
+    "format": {
+      "type": "object",
+      "properties": {
+        "age": {
+          "type": "integer"
+        },
+        "available": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "age",
+        "available"
+      ]
+    }
+  }
+}
+
+tests {
+  // Test to check if the response code is 200
+  test("Status code is 200", function () {
+      expect(res.getStatus()).to.equal(200);
+  });
+  
+  
+  test("Response has the required fields", function () {
+      const responseData = res.getBody();
+      
+      expect(responseData).to.be.an('object');
+      expect(responseData.model).to.exist;
+      expect(responseData.created_at).to.exist;
+      expect(responseData.response).to.exist;
+      expect(responseData.done).to.exist;
+      expect(responseData.done_reason).to.exist;
+      expect(responseData.context).to.exist;
+      expect(responseData.total_duration).to.exist;
+      expect(responseData.load_duration).to.exist;
+      expect(responseData.prompt_eval_count).to.exist;
+      expect(responseData.prompt_eval_duration).to.exist;
+      expect(responseData.eval_count).to.exist;
+      expect(responseData.eval_duration).to.exist;
+  });
+  
+  
+  test("Model is a non-empty string", function () {
+      const responseData = res.getBody();
+      
+      expect(responseData).to.be.an('object');
+      expect(responseData.model).to.be.a('string').and.to.have.lengthOf.at.least(1, "Model should not be empty");
+  });
+  
+  
+  test("Done is a boolean value", function () {
+      const responseData = res.getBody();
+      
+      expect(responseData).to.be.an('object');
+      expect(responseData.done).to.be.a('boolean');
+  });
+  
+  
+}
+
+docs {
+  See Ollama's [blog](https://ollama.com/blog/structured-outputs) about Structured Outputs.
+  
+  The `format` field in the request body allows you to constrain a model’s output to a specific format defined by a JSON schema.
+  
+  It's **important** to also instruct the model to respond in JSON via the `prompt` field.
+}

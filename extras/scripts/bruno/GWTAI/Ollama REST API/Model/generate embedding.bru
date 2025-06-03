@@ -1,0 +1,65 @@
+meta {
+  name: generate embedding
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{baseUrl}}/api/embed
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "model": "{{model}}",
+      "input": "Why is the sky blue?"
+  }
+}
+
+tests {
+  test("Response status code is 200", function () {
+      expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response has the required fields", function () {
+      const responseData = res.getBody();
+      
+      expect(responseData).to.be.an('object');
+      expect(responseData.model).to.exist;
+      expect(responseData.embeddings).to.exist;
+      expect(responseData.total_duration).to.exist;
+      expect(responseData.load_duration).to.exist;
+      expect(responseData.prompt_eval_count).to.exist;
+  });
+  
+  
+  test("Model field is a non-empty string", function () {
+      const responseData = res.getBody();
+      
+      expect(responseData.model).to.be.a('string').and.to.have.lengthOf.at.least(1, "Model field should be a non-empty string");
+  });
+  
+  test("Embeddings field is an array of arrays with numerical values", function () {
+      const responseData = res.getBody();
+      
+      expect(responseData.embeddings).to.be.an('array');
+      responseData.embeddings.forEach(function(embedding) {
+          expect(embedding).to.be.an('array');
+          embedding.forEach(function(value) {
+              expect(value).to.be.a('number');
+          });
+      });
+  });
+  
+}
+
+docs {
+  In LLMs, embeddings are numerical representations of words, phrases, or sentences that capture their meaning and context
+  
+  ### Parameters
+  
+  - `model`: name of model to generate embeddings from
+      
+  - `input`: text to generate embeddings for
+}

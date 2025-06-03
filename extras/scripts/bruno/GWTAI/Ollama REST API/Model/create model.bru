@@ -1,0 +1,62 @@
+meta {
+  name: create model
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/create
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "name": "mario",
+      "from": "llama3.2",
+      "system": "You are Mario from Super Mario Bros.",
+      "path": "/tmp/Modelfile"
+  }
+}
+
+tests {
+  test("Response status code is 200", function () {
+      expect(res.getStatus()).to.equal(200);
+  });
+  
+  
+  test("Response time is in an acceptable range", function () {
+    expect(res.getResponseTime()).to.be.below(500);
+  });
+  
+  
+  test("Content-Type is application/x-ndjson", function () {
+      expect(res.getHeader("Content-Type")).to.include("application/x-ndjson");
+  });
+  
+}
+
+docs {
+  Create a model from a local [Modefile](https://github.com/jmorganca/ollama/blob/main/docs/modelfile.md)
+  
+  Modelfile must be in a location `ollama` has permission to access.
+  
+  A stream of JSON objects is returned. When finished, `status` is `success`.
+  
+  **Parameters**
+  
+  You can add `"stream": false` to the body to get a chunked rather than streamed response.
+  
+  **Example Modelfile**
+  
+  ```
+  FROM llama2
+  # sets the temperature to 1 [higher is more creative, lower is more coherent]
+  PARAMETER temperature 1
+  # sets the context window size to 4096, this controls how many tokens the LLM can use as context to generate the next token
+  PARAMETER num_ctx 4096
+  # sets a custom system prompt to specify the behavior of the chat assistant
+  SYSTEM You are Mario from super mario bros, acting as an assistant.
+  
+   ```
+}

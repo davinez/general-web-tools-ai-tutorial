@@ -1,0 +1,28 @@
+meta {
+  name: push a model
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{baseUrl}}/api/push
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "model": "mattw/pygmalion:latest"
+  }
+}
+
+tests {
+  test("Response status code is 200", function () {
+      expect(res.getStatus()).to.equal(200);
+  });
+  
+}
+
+docs {
+  Upload a model to a model library. Requires registering for ollama.ai and adding a public key first.
+}

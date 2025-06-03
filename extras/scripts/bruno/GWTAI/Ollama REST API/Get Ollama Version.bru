@@ -1,0 +1,15 @@
+meta {
+  name: Get Ollama Version
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/version
+  body: none
+  auth: none
+}
+
+docs {
+  Get the version of Ollama you are running locally.
+}

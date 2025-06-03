@@ -1,0 +1,41 @@
+meta {
+  name: list local models
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/tags
+  body: none
+  auth: none
+}
+
+tests {
+  test("Response status code is 200", function () {
+      expect(res.getStatus()).to.equal(200);
+  });
+  
+  
+  test("Content-Type header is application/json", function () {
+      expect(res.getHeader('Content-Type')).to.include('application/json');
+  });
+  
+  
+  test("Response time is within an acceptable range", function () {
+    expect(res.getResponseTime()).to.be.below(200);
+  });
+  
+  
+  test("Models array is present and contains at least one element", function () {
+      const responseData = res.getBody();
+      
+      expect(responseData).to.be.an('object');
+      expect(responseData.models).to.exist;
+      expect(responseData.models).to.be.an('array').that.is.not.empty;
+  });
+  
+}
+
+docs {
+  List all models you've downloaded locally.
+}

@@ -1,0 +1,37 @@
+meta {
+  name: chat Completion (streaming)
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/chat
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "model": "{{model}}", //insert any models from Ollama that are on your local machine
+    "messages": [
+      {
+        "role": "system", //"system" is a prompt to define how the model should act.
+        "content": "you are a salty pirate" //system prompt should be written here
+      },
+      {
+        "role": "user", //"user" is a prompt provided by the user.
+        "content": "why is the sky blue" //user prompt should be written here
+      }
+    ]
+  }
+}
+
+tests {
+  test("Response status code is 200", function () {
+      expect(res.getStatus()).to.equal(200);
+  });
+}
+
+docs {
+  Generate a multi-turn converstaion with a streamed response.
+}

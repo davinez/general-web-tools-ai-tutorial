@@ -1,0 +1,68 @@
+meta {
+  name: list running models
+  type: http
+  seq: 12
+}
+
+get {
+  url: {{baseUrl}}/api/ps
+  body: none
+  auth: none
+}
+
+tests {
+  test("Response status code is 200", function () {
+      expect(res.getStatus()).to.equal(200);
+  });
+  
+  
+  test("Response has the required fields", function () {
+      const responseData = res.getBody();
+  
+      expect(responseData).to.be.an('object');
+      expect(responseData.models).to.be.an('array').that.is.not.empty;
+  
+      responseData.models.forEach(function(model) {
+          expect(model).to.have.property('name');
+          expect(model).to.have.property('model');
+          expect(model).to.have.property('size');
+          expect(model).to.have.property('digest');
+          expect(model).to.have.property('details');
+          expect(model).to.have.property('expires_at');
+          expect(model).to.have.property('size_vram');
+      });
+  });
+  
+  
+  test("Ensure details object contains all expected properties", function () {
+      const responseData = res.getBody();
+      
+      expect(responseData.models).to.be.an('array').that.is.not.empty;
+      
+      responseData.models.forEach(model => {
+          expect(model.details).to.be.an('object');
+          expect(model.details).to.have.property('parent_model');
+          expect(model.details).to.have.property('format');
+          expect(model.details).to.have.property('family');
+          expect(model.details).to.have.property('families');
+          expect(model.details).to.have.property('parameter_size');
+          expect(model.details).to.have.property('quantization_level');
+      });
+  });
+  
+  
+  test("Families array is present and contains expected number of elements", function () {
+      const responseData = res.getBody();
+      
+      expect(responseData.models).to.be.an('array');
+      
+      responseData.models.forEach(function(model) {
+          expect(model.details.families).to.be.an('array').and.to.have.lengthOf(1);
+      });
+  });
+  
+}
+
+docs {
+  List models that are currently loaded into memory.
+}

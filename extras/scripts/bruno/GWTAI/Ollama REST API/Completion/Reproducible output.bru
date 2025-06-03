@@ -1,0 +1,43 @@
+meta {
+  name: Reproducible output
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/api/generate
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "model": "{{model}}",
+    "prompt": "Why is the sky blue?",
+    "stream": false,
+    "options": {
+      "seed": 123
+    }
+  }
+}
+
+tests {
+  test("Response status code is 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+}
+
+docs {
+  - The `seed` parameter fixes the randomness in the text generation process.
+      
+  - If the same `seed` value is used with the same model, prompt, and settings (e.g., temperature, top_p), the output will always be the same.
+      
+  - **Controlling Randomness**:
+      
+      - Without specifying a `seed`, the model uses a randomly generated seed, resulting in slightly different outputs for the same input each time.
+          
+      - By providing a fixed `seed`, you ensure that the model generates the same response every time (so long as everything else stays the same).
+          
+  
+  Make this request two times in a row to generate the same response.
+}

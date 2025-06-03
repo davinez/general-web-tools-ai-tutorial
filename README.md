@@ -14,21 +14,29 @@ dotnet ef migrations add InitialCreate
 dotnet ef database update
 ```
 
+```ps1
+# Create a new migration	
+Add-Migration [MigrationName]
 
-Create a new migration	Add-Migration [MigrationName]
+# Remove the latest migration	
+Remove-Migration
 
-Remove the latest migration	Remove-Migration
+# Update the database to the latest migration	
+Update-Database
 
-Update the database to the latest migration	Update-Database
+# Update the database to a specific migration	
+Update-Database -Migration [MigrationName]
 
-Update the database to a specific migration	Update-Database -Migration [MigrationName]
+# List all available migrations	
+Get-Migrations
 
-List all available migrations	Get-Migrations
+# Generate SQL script for all migrations	
+Script-Migration
 
-Generate SQL script for all migrations	Script-Migration
+#Drop the database	
+Drop-Database
 
-Drop the database	Drop-Database
-
+```
 
 
 

@@ -1,0 +1,54 @@
+meta {
+  name: Generate(streaming)
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/generate
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "model": "{{model}}", //any models pulled from Ollama can be replaced here
+    "prompt": "Why is the sky blue?" //The prompt should be written here
+  }
+}
+
+script:pre-request {
+  // Initialize a collection variable to store the cumulative response
+  bru.setVar("cumulativeResponse", "");
+}
+
+tests {
+  // Extract the raw response body
+  let rawResponse = res.getBody()?.toString();
+  
+  // Split the raw response into individual JSON objects
+  let responseObjects = rawResponse.trim().split('\n').map(line => JSON.parse(line));
+  
+  // Get the current cumulative response
+  let cumulativeResponse = bru.getVar("cumulativeResponse");
+  
+  // Iterate over each response object and concatenate the response text
+  responseObjects.forEach(obj => {
+      cumulativeResponse += obj.response;
+  });
+  
+  // Update the cumulative response in the collection variable
+  bru.setVar("cumulativeResponse", cumulativeResponse);
+  
+  // Check if the last response object indicates the end of the response
+  if (responseObjects[responseObjects.length - 1].done) {
+      console.log("Final Response:", cumulativeResponse);
+      bru.setVar("finalResponse", cumulativeResponse);
+      // You can perform additional actions here, such as saving the response to a file or making a subsequent request
+  }
+  
+}
+
+docs {
+  Generate a chat interaction with streaming output.
+}

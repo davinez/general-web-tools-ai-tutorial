@@ -1,0 +1,107 @@
+meta {
+  name: Request with options
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{baseUrl}}/api/generate
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "model": "{{model}}",
+    "prompt": "Why is the sky blue?",
+    "stream": false,
+    "options": {
+      "num_keep": 5,
+      "seed": 42,
+      "num_predict": 100,
+      "top_k": 20,
+      "top_p": 0.9,
+      "min_p": 0.0,
+      "typical_p": 0.7,
+      "repeat_last_n": 33,
+      "temperature": 0.8,
+      "repeat_penalty": 1.2,
+      "presence_penalty": 1.5,
+      "frequency_penalty": 1.0,
+      "mirostat": 1,
+      "mirostat_tau": 0.8,
+      "mirostat_eta": 0.6,
+      "penalize_newline": true,
+      "stop": ["\n", "user:"],
+      "numa": false,
+      "num_ctx": 1024,
+      "num_batch": 2,
+      "num_gpu": 1,
+      "main_gpu": 0,
+      "low_vram": false,
+      "vocab_only": false,
+      "use_mmap": true,
+      "use_mlock": false,
+      "num_thread": 8
+    }
+  }
+}
+
+tests {
+  test("Response status code is 200", function () {
+      expect(res.getStatus()).to.equal(200);
+  });
+  
+  
+  test("Response has the required fields", function () {
+      const responseData = res.getBody();
+      
+      expect(responseData).to.be.an('object');
+      expect(responseData.model).to.exist;
+      expect(responseData.created_at).to.exist;
+      expect(responseData.response).to.exist;
+      expect(responseData.done).to.exist;
+      expect(responseData.done_reason).to.exist;
+      expect(responseData.context).to.exist;
+      expect(responseData.total_duration).to.exist;
+      expect(responseData.load_duration).to.exist;
+      expect(responseData.prompt_eval_count).to.exist;
+      expect(responseData.prompt_eval_duration).to.exist;
+      expect(responseData.eval_count).to.exist;
+      expect(responseData.eval_duration).to.exist;
+  });
+  
+  
+  test("Model should be a non-empty string", function () {
+      const responseData = res.getBody();
+      
+      expect(responseData.model).to.be.a('string').and.to.have.lengthOf.at.least(1, "Model should not be empty");
+  });
+  
+  test("Created_at should be in a valid date format", function () {
+      const responseData = res.getBody();
+      const createdAt = new Date(responseData.created_at);
+      
+      expect(createdAt).to.be.a('Date').and.not.to.be.NaN;
+  });
+  
+  test("Response should be a non-empty string", function () {
+      const responseData = res.getBody();
+      
+      expect(responseData.response).to.be.a('string').and.to.have.lengthOf.at.least(1, "Response should not be empty");
+  });
+  
+  
+  test("Verify that 'done' is a boolean and 'context' is an array with at least one element", function () {
+      const responseData = res.getBody();
+      
+      expect(responseData).to.be.an('object');
+      expect(responseData.done).to.be.a('boolean');
+      expect(responseData.context).to.be.an('array').and.to.have.lengthOf.at.least(1);
+  });
+  
+}
+
+docs {
+  If you want to set custom options for the model at runtime rather than in the Modelfile, you can do so with the `options` parameter. This example sets multiple options, but you can set any of them individually and omit the ones you do not want to override
+}

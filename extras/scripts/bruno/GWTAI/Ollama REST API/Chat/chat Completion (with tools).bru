@@ -1,0 +1,112 @@
+meta {
+  name: chat Completion (with tools)
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/chat
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "model": "{{model}}",
+    "messages": [
+      {
+        "role": "user",
+        "content": "What is the weather today in Paris?"
+      }
+    ],
+    "stream": false,
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_current_weather",
+          "description": "Get the current weather for a location",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "location": {
+                "type": "string",
+                "description": "The location to get the weather for, e.g. San Francisco, CA"
+              },
+              "format": {
+                "type": "string",
+                "description": "The format to return the weather in, e.g. 'celsius' or 'fahrenheit'",
+                "enum": ["celsius", "fahrenheit"]
+              }
+            },
+            "required": ["location", "format"]
+          }
+        }
+      }
+    ]
+  }
+}
+
+tests {
+  test("Response status code is 200", function () {
+      expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Validate the presence of required fields", function () {
+      const responseData = res.getBody();
+  
+      expect(responseData).to.be.an('object');
+      expect(responseData).to.have.property('model');
+      expect(responseData).to.have.property('created_at');
+      expect(responseData).to.have.property('message');
+      expect(responseData).to.have.property('done_reason');
+      expect(responseData).to.have.property('done');
+      expect(responseData).to.have.property('total_duration');
+      expect(responseData).to.have.property('load_duration');
+      expect(responseData).to.have.property('prompt_eval_count');
+      expect(responseData).to.have.property('prompt_eval_duration');
+      expect(responseData).to.have.property('eval_count');
+      expect(responseData).to.have.property('eval_duration');
+  });
+  
+  
+  test("Message object and its nested properties structure is valid", function () {
+      const responseData = res.getBody();
+      
+      expect(responseData).to.be.an('object');
+      expect(responseData.message).to.exist.and.to.be.an('object');
+      expect(responseData.message.role).to.exist.and.to.be.a('string');
+      expect(responseData.message.content).to.exist.and.to.be.a('string');
+      
+      responseData.message.tool_calls.forEach(function(toolCall) {
+          expect(toolCall).to.be.an('object');
+          expect(toolCall.function).to.exist.and.to.be.an('object');
+          expect(toolCall.function.name).to.exist.and.to.be.a('string');
+          expect(toolCall.function.arguments).to.exist.and.to.be.an('object');
+          expect(toolCall.function.arguments.format).to.exist.and.to.be.a('string');
+          expect(toolCall.function.arguments.location).to.exist.and.to.be.a('string');
+      });
+  });
+  
+  
+  test("Ensure tool_calls array contains expected elements and structure", function () {
+      const responseData = res.getBody();
+  
+      expect(responseData).to.be.an('object');
+      expect(responseData.message.tool_calls).to.be.an('array');
+  
+      responseData.message.tool_calls.forEach(function(toolCall) {
+          expect(toolCall).to.be.an('object');
+          expect(toolCall.function).to.be.an('object');
+          expect(toolCall.function.name).to.be.a('string');
+          expect(toolCall.function.arguments).to.be.an('object');
+          expect(toolCall.function.arguments.format).to.be.a('string');
+          expect(toolCall.function.arguments.location).to.be.a('string');
+      });
+  });
+  
+}
+
+docs {
+  Generate a chat using tools (function calling)
+}

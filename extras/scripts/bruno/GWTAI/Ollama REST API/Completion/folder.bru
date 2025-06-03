@@ -1,0 +1,23 @@
+meta {
+  name: Completion
+}
+
+auth {
+  mode: none
+}
+
+docs {
+  Generate text completions from a local model. The `/generate` endpoint is used for **single-turn text generation**. It generates output based on the input prompt without maintaining context or conversation history.
+  
+  #### **Key Characteristics:**
+  
+  - **Stateless**: The endpoint does not keep track of previous interactions or conversation context.
+      
+  - **Input and Output**:
+      
+      - You send a prompt, and the model generates a response based solely on that prompt.
+          
+  - **Use Case**:
+      
+      - Best suited for tasks where conversation history isn't needed, such as text summarization, code generation, or generating responses to individual queries.
+}

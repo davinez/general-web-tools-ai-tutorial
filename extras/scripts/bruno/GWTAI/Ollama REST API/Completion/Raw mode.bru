@@ -1,0 +1,65 @@
+meta {
+  name: Raw mode
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/api/generate
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "model": "{{model}}",
+      "prompt": "[INST] why is the sky blue? [/INST]",
+      "raw": true,
+      "stream": false
+  }
+}
+
+tests {
+  test("Response status code is 200", function () {
+      expect(res.getStatus()).to.equal(200);
+  });
+  
+  
+  test("Response has the required fields", function () {
+      const responseData = res.getBody();
+      
+      const requiredFields = [
+          "model", "created_at", "response", "done", "done_reason",
+          "total_duration", "load_duration", "prompt_eval_count",
+          "prompt_eval_duration", "eval_count", "eval_duration"
+      ];
+  
+      requiredFields.forEach(field => {
+          expect(responseData).to.have.property(field);
+      });
+  });
+  
+  
+  test("Model is a non-empty string", function () {
+      const responseData = res.getBody();
+      expect(responseData.model).to.be.a('string').and.to.have.lengthOf.at.least(1, "Model should not be empty");
+  });
+  
+  test("Done is a boolean value", function () {
+      const responseData = res.getBody();
+      expect(responseData.done).to.be.a('boolean', "Done should be a boolean value");
+  });
+  
+}
+
+docs {
+  In some cases, you may wish to bypass the templating system and provide a full prompt. In this case, you can use the `raw` parameter to disable templating. Also note that raw mode will not return a context.
+  
+  **When to Use "Raw Mode"**
+  
+  - **Debugging**: When you need to see the exact output the model generates, including any internal tokens or structures.
+      
+  - **Custom Processing**: If you're building a custom application that processes the model's output in a specific way, raw mode gives you the full text to work with.
+      
+  - **Advanced Use Cases**: For developers who want to handle special tokenization or control sequences in the output.
+}
