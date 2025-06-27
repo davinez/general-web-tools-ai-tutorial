@@ -1,5 +1,5 @@
 meta {
-  name: Generate: codellama (with suffix)
+  name: Generate: (with suffix)
   type: http
   seq: 4
 }
@@ -12,7 +12,7 @@ post {
 
 body:json {
   {
-    "model": "codellama:code",
+    "model": "{{model}}", //any models pulled from Ollama can be replaced here
     "prompt": "def compute_gcd(a, b):",
     "suffix": "    return result",
     "options": {

@@ -39,4 +39,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Config\ollama\" />
+    </ItemGroup>
 </Project>

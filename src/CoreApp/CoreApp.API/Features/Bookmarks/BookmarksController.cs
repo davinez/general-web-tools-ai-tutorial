@@ -6,6 +6,9 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using CoreApp.API.Features.Bookmarks.Upload;
+using CoreApp.API.Features.Bookmarks.Dtos;
+using System.Collections.Generic;
+using CoreApp.API.Features.Bookmarks.CreateFolders;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -37,6 +40,20 @@ namespace CoreApp.API.Features.Bookmarks
 
       return Ok();
     }
+
+    // POST: api/bookmarks/create-folders
+    [Route("create-folders")]
+    [HttpPost]
+    // [Authorize(AuthenticationSchemes = JwtIssuerOptions.Schemes)]
+    public async Task<IActionResult> CreateFolders([FromBody] CreateFoldersRequest request)
+    {
+
+      await mediator.Send(new CreateFoldersCommand(request));
+
+      return Ok();
+    }
+
+    /* Reference Endpoints */
 
     // GET api/<BookmarksController>/5
     [HttpGet("{id}")]

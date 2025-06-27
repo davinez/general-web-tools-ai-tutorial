@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using CoreApp.API.Infrastructure.Errors;
 using System.Text;
+using System.IO;
 
 namespace CoreApp.API.Infrastructure.ExternalServices.ollama;
 
@@ -26,7 +27,7 @@ public class OllamaService: IOllamaService
     _options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, PropertyNameCaseInsensitive = false };
   }
 
-  public async Task<ProcessBookmarkGroupingRequest> ProcessBookmarksGrouping(
+  public async Task<ProcessBookmarkGroupingResponse> ProcessBookmarksGroupingAsync(
         ProcessBookmarkGroupingRequest request,
         CancellationToken cancellationToken
     )
@@ -46,7 +47,7 @@ public class OllamaService: IOllamaService
 
     var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
 
-    var data = JsonSerializer.Deserialize<ProcessBookmarkGroupingRequest>(responseJson, _options) ?? throw new RemoteServiceException(nameof(OllamaService), $"Error in deserialize response for {responseJson}");
+    var data = JsonSerializer.Deserialize<ProcessBookmarkGroupingResponse>(responseJson, _options) ?? throw new RemoteServiceException(nameof(OllamaService), $"Error in deserialize response for {responseJson}");
 
     return data ?? throw new RemoteServiceException(nameof(OllamaService), $"Null Data Api Response for request {requestJson}");
   }

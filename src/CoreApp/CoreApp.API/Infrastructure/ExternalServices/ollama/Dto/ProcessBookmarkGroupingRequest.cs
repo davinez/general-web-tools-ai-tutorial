@@ -1,23 +1,16 @@
-using System;
+using System.Collections.Generic;
+using CoreApp.API.Features.Bookmarks.Dtos;
 
 namespace CoreApp.API.Infrastructure.ExternalServices.ollama.Dto;
 
 public class ProcessBookmarkGroupingRequest
 {
-  public required string Title { get; set; }
-  public required string Url { get; set; }
-  public SuggestionsAI? SuggestionsAI { get; set; }
-  public required CurrentStructure CurrentStructure { get; set; }
+  public string Model { get; set; } = "llama3.2";
+  public string Prompt { get; set; } = "Organize the following bookmarks into folders. Respond using JSON";
+  public bool Stream { get; set; } = false;
+  public string Format { get; set; } = string.Empty;
+
+  //public required List<BookmarkDto> Bookmarks { get; set; }
 }
 
-public class CurrentStructure
-{
-  public required string RouteIds { get; set; }
-  public required string RouteNames { get; set; }
-}
 
-public class SuggestionsAI
-{
-  public string? Route { get; set; }
-  public string[] PossibleDuplicate { get; set; } = Array.Empty<string>();
-}

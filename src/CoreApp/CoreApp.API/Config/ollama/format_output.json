@@ -1,0 +1,72 @@
+{
+  "type": "object",
+  "properties": {
+    "Folder": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Title": { "type": "string" },
+          "AddDate": {
+            "type": [ "string", "null" ],
+            "format": "date-time"
+          },
+          "Bookmarks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "Title": { "type": "string" },
+                "Url": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "AddDate": {
+                  "type": [ "string", "null" ],
+                  "format": "date-time"
+                },
+                "Icon": { "type": [ "string", "null" ] }
+              },
+              "required": [ "Title", "Url" ]
+            }
+          },
+          "SubFolders": {
+            "type": "array",
+            "items": { "$ref": "#" }
+          }
+        },
+        "required": [ "Title", "Bookmarks", "SubFolders" ]
+      }
+    },
+    "Bookmarks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Title": { "type": "string" },
+          "Url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "AddDate": {
+            "type": [ "string", "null" ],
+            "format": "date-time"
+          },
+          "Icon": { "type": [ "string", "null" ] }
+        },
+        "required": [ "Title", "Url" ]
+      }
+    },
+    "SuggestionsAI": {
+      "type": "object",
+      "properties": {
+        "PossibleDuplicate": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": [ "PossibleDuplicate" ]
+    }
+  },
+  "required": [ "Folder", "Bookmarks" ]
+}

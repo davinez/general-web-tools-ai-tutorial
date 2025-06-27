@@ -1,0 +1,17 @@
+meta {
+  name: UploadBookmarksFile
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrlCoreApp}}/api/bookmarks/bulk-upload
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  FileContent: @file(C:\Users\6134483\projects\local-dev\general-web-tools-ai-tutorial\extras\mocks\chrome_real.html)
+  FileName: test
+  UploadTimestamp: 2025-06-27T20:25:00.0000000+00:00
+}

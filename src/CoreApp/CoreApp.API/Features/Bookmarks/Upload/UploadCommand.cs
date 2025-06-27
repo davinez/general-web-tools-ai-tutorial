@@ -8,6 +8,7 @@ using CoreApp.API.Domain;
 using CoreApp.API.Features.Bookmarks.Dtos;
 using CoreApp.API.Infrastructure;
 using CoreApp.API.Infrastructure.Data;
+using CoreApp.API.Infrastructure.ExternalServices.ollama;
 using CoreApp.API.Infrastructure.ExternalServices.ollama.Dto;
 using FluentValidation;
 using HtmlAgilityPack;
@@ -44,11 +45,14 @@ public class UploadCommandHandler
     private readonly CoreAppContext _context;
     private readonly ICurrentUserAccessor _currentUserAccessor;
 
+    private readonly IOllamaService _ollamaService;
 
-    public Handler(CoreAppContext context, ICurrentUserAccessor currentUserAccessor)
+
+    public Handler(CoreAppContext context, ICurrentUserAccessor currentUserAccessor, IOllamaService ollamaService)
     {
       _context = context;
       _currentUserAccessor = currentUserAccessor;
+      _ollamaService = ollamaService;
     }
 
 
@@ -72,54 +76,35 @@ public class UploadCommandHandler
       // Remove duplicates
       uploadedBookmarks = RemoveDuplicateBookmarksByUrl(uploadedBookmarks);
 
-      var requestAI = uploadedBookmarks.Select(x =>
-         {
 
-           var route = SearchForCurrentFolderRoute(x.Url);
+      // Read json file to obtain the desired output structure
+      string pathToJson = Path.Combine(AppContext.BaseDirectory, "Config", "ollama", "format_output.json");
+      string json = File.ReadAllText(pathToJson);
 
-           return new ProcessBookmarkGroupingRequest
-           {
-             Title = x.Title,
-             Url = x.Url,
-             CurrentStructure = new CurrentStructure
-             {
-               RouteIds = route.HasValue ? route.Value.idRoute : "",
-               RouteNames = route.HasValue ? route.Value.idRoute : ""
-             }
-           };
-         })
-          .ToList();
+      //var requestAISchemaResponse = JsonSchema.FromType<ProcessBookmarkGroupingRequest>();
+      //Console.WriteLine(requestAISchemaResponse.ToJson());
 
-      var requestAISchemaResponse = JsonSchema.FromType<ProcessBookmarkGroupingRequest>();
-      Console.WriteLine(requestAISchemaResponse.ToJson());
-
-
-
-
-      // TODO: Call Ollama API
-
-
-      // Iterate all folders
-      /* TODO: Processes content
-
-      1- Remove duplicates
-      2- Group by similars (create folders and add same page / content to that folder)
-      3- Order
-      4- Add to database (store folders and its corresponding bookmarks
-      5- Add to database (store file content table / metrics)
-      */
-
-
+      // Test
       var options = new System.Text.Json.JsonSerializerOptions
       {
         Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
         WriteIndented = true // optional, for pretty print
       };
-      string json = System.Text.Json.JsonSerializer.Serialize(uploadedBookmarks, options);
+      string jsonData = System.Text.Json.JsonSerializer.Serialize(uploadedBookmarks, options);
 
-      // Save in DB
-      // await SaveFoldersAndBookmarksToDatabase(rootFolder, 0, _context, cancellationToken);
+      var requestAI = new ProcessBookmarkGroupingRequest()
+      {
+        Model = "llama3.2",
+        Prompt = "With the provided data that is structured in json " + jsonData + " organize the bookmarks by grouping them if applies into folders. Respond using the provided JSON format",
+        Stream = false,
+        Format = json,
+      };
 
+      var responseOllama = await _ollamaService.ProcessBookmarksGroupingAsync(requestAI, cancellationToken);
+
+      // Add to database (store file content table / metrics)
+
+      // Convert response to html file with import format
 
     }
 
@@ -175,81 +160,6 @@ public class UploadCommandHandler
       }
 
       return null;
-    }
-
-    private (string idRoute, string nameRoute)? SearchForCurrentFolderRoute(string url)
-    {
-      // Find the bookmark in the DB by URL (case-insensitive, trimmed)
-      var bookmark = _context.Bookmarks
-        .FirstOrDefault(b => b.Url.Trim().Equals(url.Trim().ToLower(), StringComparison.CurrentCultureIgnoreCase));
-
-      if (bookmark == null)
-        return null;
-
-      // Traverse up the folder tree to build the route
-      var folderIds = new List<int>();
-      var folderNames = new List<string>();
-
-      BookmarkFolder? folder = _context.BookmarkFolders.First(f => f.Id == bookmark.BookmarkFolderId);
-
-      while (folder != null)
-      {
-
-        // Insert(0, ...), which ensures the path is built in the correct order from root to leaf, rather than leaf to root.}
-        // Inserts the new value at the very beginning (index 0) of the list, pushing all existing elements one position to the right.
-        // If you used Add() instead, the order would be reversed.
-        folderIds.Insert(0, folder.Id);
-        folderNames.Insert(0, folder.Title);
-        if (folder.ParentFolderId.HasValue)
-          folder = _context.BookmarkFolders.FirstOrDefault(f => f.Id == folder.ParentFolderId.Value);
-        else
-          folder = null;
-      }
-      string idRoute = string.Join("/", folderIds);
-      string nameRoute = string.Join("/", folderNames);
-      return (idRoute, nameRoute);
-    }
-
-    private static async Task SaveFoldersAndBookmarksToDatabase(
-      BookmarkFolderDto folder,
-      int fatherId,
-      CoreAppContext context,
-      CancellationToken cancellationToken)
-    {
-      // Save the folder
-      var dbFolder = new BookmarkFolder
-      {
-        Title = folder.Title,
-        AddDate = folder.AddDate,
-        LastModified = folder.LastModified,
-        ParentFolderId = fatherId,
-      };
-
-      await context.BookmarkFolders.AddAsync(dbFolder, cancellationToken);
-      await context.SaveChangesAsync(cancellationToken);
-
-      // Save the bookmarks in the folder
-      foreach (var bookmark in folder.Bookmarks)
-      {
-        var dbBookmark = new Bookmark
-        {
-          Title = bookmark.Title,
-          Url = bookmark.Url,
-          AddDate = bookmark.AddDate,
-          Icon = bookmark.Icon,
-          BookmarkFolderId = dbFolder.Id,
-        };
-
-        await context.Bookmarks.AddAsync(dbBookmark, cancellationToken);
-      }
-
-      await context.SaveChangesAsync(cancellationToken);
-
-      // Recursively save subfolders
-      foreach (var subFolder in folder.SubFolders)
-      {
-        await SaveFoldersAndBookmarksToDatabase(subFolder, dbFolder.Id, context, cancellationToken);
-      }
     }
 
   }

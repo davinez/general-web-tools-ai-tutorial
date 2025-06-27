@@ -1,7 +1,7 @@
 meta {
-  name: Generate: Llama (streaming)
+  name: Generate: (no streaming)
   type: http
-  seq: 5
+  seq: 2
 }
 
 post {
@@ -12,8 +12,9 @@ post {
 
 body:json {
   {
-    "model": "llama3.2", //any models pulled from Ollama can be replaced here
-    "prompt": "Why is the sky blue?" //The prompt can be written here, or made to be a variable
+    "model": "{{model}}", //any models pulled from Ollama can be replaced here
+    "prompt": "Why is the sky blue?", //The prompt should be written here
+    "stream": false
   }
 }
 
@@ -31,5 +32,5 @@ tests {
 }
 
 docs {
-  Generate a chat with streaming. This example uses a Llama model.
+  Generate a chat interaction without streaming output. This example specifically uses a mistral model.
 }

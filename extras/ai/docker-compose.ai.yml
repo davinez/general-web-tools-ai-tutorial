@@ -19,7 +19,7 @@ services:
   #   environment:
   #     - 'OLLAMA_BASE_URL=http://ollama:11434'
   #     - 'WEBUI_SECRET_KEY='
-  #     #- SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+  #     - SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
   #   volumes:
   #     - ./open-webui:/app/backend/data
   #   ports:

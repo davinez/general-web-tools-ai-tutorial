@@ -6,6 +6,6 @@ namespace CoreApp.API.Infrastructure.ExternalServices.ollama;
 
 public interface IOllamaService
 {
-  public Task<ProcessBookmarkGroupingRequest> ProcessBookmarksGrouping(ProcessBookmarkGroupingRequest request);
+  public Task<ProcessBookmarkGroupingResponse> ProcessBookmarksGroupingAsync(ProcessBookmarkGroupingRequest request, CancellationToken cancellationToken);
 
 }

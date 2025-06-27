@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CoreApp.API.Features.Profiles;
 using CoreApp.API.Infrastructure;
 using CoreApp.API.Infrastructure.Data;
+using CoreApp.API.Infrastructure.ExternalServices.ollama;
 using CoreApp.API.Infrastructure.Security;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -42,9 +43,12 @@ public static class ServicesExtensions
         services.AddScoped<ICurrentUserAccessor, CurrentUserAccessor>();
         services.AddScoped<IProfileReader, ProfileReader>();
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-    }
 
-    public static void AddJwt(this IServiceCollection services)
+       services.AddHttpClient<IOllamaService, OllamaService>();
+
+  }
+
+  public static void AddJwt(this IServiceCollection services)
     {
         services.AddOptions();
 
