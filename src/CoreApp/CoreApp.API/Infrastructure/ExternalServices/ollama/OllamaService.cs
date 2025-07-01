@@ -1,18 +1,17 @@
-using CoreApp.API.Features.Bookmarks.Upload;
-using System.Threading.Tasks;
-using System.Threading;
-using CoreApp.API.Infrastructure.ExternalServices.ollama.Dto;
-using System.Net.Http;
-using System.Text.Json;
-using Microsoft.Extensions.Configuration;
 using System;
-using CoreApp.API.Infrastructure.Errors;
+using System.Net.Http;
 using System.Text;
-using System.IO;
+using System.Text.Json;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using CoreApp.API.Infrastructure.Errors;
+using CoreApp.API.Infrastructure.ExternalServices.ollama.Dto;
+using Microsoft.Extensions.Configuration;
 
 namespace CoreApp.API.Infrastructure.ExternalServices.ollama;
 
-public class OllamaService: IOllamaService
+public class OllamaService : IOllamaService
 {
 
   private readonly HttpClient _client;
@@ -21,7 +20,7 @@ public class OllamaService: IOllamaService
   public OllamaService(IConfiguration configuration, HttpClient client)
   {
     _client = client;
-    _client.BaseAddress = new Uri(configuration["OllamaService:BaseAddress"] ?? throw new CoreAppException($"Empty config section in {nameof(CoreAppException)} BaseAdress"));
+    _client.BaseAddress = new Uri(configuration["OllamaService:BaseAddress"] ?? throw new CoreAppException($"Empty config section in {nameof(OllamaService)} BaseAdress"));
     // _client.Timeout = new TimeSpan(0, 0, 30);
 
     _options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, PropertyNameCaseInsensitive = false };
@@ -32,7 +31,15 @@ public class OllamaService: IOllamaService
         CancellationToken cancellationToken
     )
   {
-    var requestJson = JsonSerializer.Serialize(request);
+
+    var options = new JsonSerializerOptions
+    {
+      PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+      WriteIndented = false,
+      Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+    };
+
+    string requestJson = System.Text.Json.JsonSerializer.Serialize(request, options);
 
     using StringContent jsonContent = new(
     requestJson,
@@ -40,14 +47,18 @@ public class OllamaService: IOllamaService
     "application/json"
     );
 
-    using var response = await _client.PostAsync("/api/generate", jsonContent, cancellationToken);
+    using var response = await _client.PostAsync("api/generate", jsonContent, cancellationToken);
 
     if (!response.IsSuccessStatusCode)
       throw new RemoteServiceException(nameof(OllamaService), $"Error: {response.StatusCode} Message: {response.ReasonPhrase} Request: {requestJson}");
 
     var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
 
-    var data = JsonSerializer.Deserialize<ProcessBookmarkGroupingResponse>(responseJson, _options) ?? throw new RemoteServiceException(nameof(OllamaService), $"Error in deserialize response for {responseJson}");
+    using var doc = JsonDocument.Parse(responseJson);
+    var dataElement = doc.RootElement.GetProperty("response");
+    var responseNode = dataElement.GetString() ?? throw new RemoteServiceException(nameof(OllamaService), $"Error in deserialize response for {responseJson}");
+
+    var data = JsonSerializer.Deserialize<ProcessBookmarkGroupingResponse>(responseNode, _options) ?? throw new RemoteServiceException(nameof(OllamaService), $"Error in deserialize response node for {responseJson}");
 
     return data ?? throw new RemoteServiceException(nameof(OllamaService), $"Null Data Api Response for request {requestJson}");
   }

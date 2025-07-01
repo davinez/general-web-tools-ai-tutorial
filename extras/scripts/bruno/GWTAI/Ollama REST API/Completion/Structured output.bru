@@ -11,26 +11,7 @@ post {
 }
 
 body:json {
-  {
-    "model": "{{model}}",
-    "prompt": "Ollama is 22 years old and is busy saving the world. Respond using JSON",
-    "stream": false,
-    "format": {
-      "type": "object",
-      "properties": {
-        "age": {
-          "type": "integer"
-        },
-        "available": {
-          "type": "boolean"
-        }
-      },
-      "required": [
-        "age",
-        "available"
-      ]
-    }
-  }
+  {"model":"gemma3:1b","prompt":"With the provided data that is structured in json [{\"Id\":1,\"Title\":\"Wikipedia:Wikipedia no es un diccionario - Wikipedia, la enciclopedia libre\",\"Url\":\"https://es.wikipedia.org/wiki/Wikipedia:Wikipedia_no_es_un_diccionario\"},{\"Id\":2,\"Title\":\"Wikipedia:Consenso - Wikipedia, la enciclopedia libre\",\"Url\":\"https://es.wikipedia.org/wiki/Wikipedia:Consenso\"},{\"Id\":3,\"Title\":\"Sitio oficial de Xbox: Consolas, juegos y comunidad | Xbox\",\"Url\":\"https://www.xbox.com/es-MX\"},{\"Id\":4,\"Title\":\"Usuario discusión:Daneel~eswiki - Wikipedia, la enciclopedia libre\",\"Url\":\"https://es.wikipedia.org/wiki/Usuario_discusi%C3%B3n:Daneel~eswiki\"},{\"Id\":5,\"Title\":\"Wikipedia:Los cinco pilares - Wikipedia, la enciclopedia libre\",\"Url\":\"https://es.wikipedia.org/wiki/Wikipedia:Los_cinco_pilares\"},{\"Id\":6,\"Title\":\"Manual:linktarget table - MediaWiki\",\"Url\":\"https://www.mediawiki.org/wiki/Manual:Linktarget_table\"},{\"Id\":7,\"Title\":\"Manual:$wgTemplateLinksSchemaMigrationStage - MediaWiki\",\"Url\":\"https://www.mediawiki.org/wiki/Manual:$wgTemplateLinksSchemaMigrationStage\"},{\"Id\":8,\"Title\":\"Páginas que enlazan con «Wikipedia discusión:Portada» - Wikipedia, la enciclopedia libre\",\"Url\":\"https://es.wikipedia.org/wiki/Especial:LoQueEnlazaAqu%C3%AD/Wikipedia_discusi%C3%B3n:Portada\"},{\"Id\":9,\"Title\":\"Manual:pagelinks table - MediaWiki\",\"Url\":\"https://www.mediawiki.org/wiki/Manual:Pagelinks_table\"},{\"Id\":10,\"Title\":\"Wikipedia:Derechos de autor - Wikipedia, la enciclopedia libre\",\"Url\":\"https://es.wikipedia.org/wiki/Wikipedia:Derechos_de_autor\"},{\"Id\":11,\"Title\":\"Derecho de autor - Wikipedia, la enciclopedia libre\",\"Url\":\"https://es.wikipedia.org/wiki/Derecho_de_autor\"},{\"Id\":12,\"Title\":\"Wikipedia, la enciclopedia libre\",\"Url\":\"https://es.wikipedia.org/wiki/Wikipedia:Portada\"},{\"Id\":13,\"Title\":\"Haz tu donación ahora - Wikimedia Foundation\",\"Url\":\"https://donate.wikimedia.org/w/index.php?title=Special:LandingPage&country=MX&uselang=es&wmf_medium=sidebar&wmf_source=donate&wmf_campaign=es.wikipedia.org\"},{\"Id\":14,\"Title\":\"Wikipedia discusión:Portada - Wikipedia, la enciclopedia libre\",\"Url\":\"https://es.wikipedia.org/wiki/Wikipedia_discusi%C3%B3n:Portada\"},{\"Id\":15,\"Title\":\"Help:What links here - MediaWiki\",\"Url\":\"https://www.mediawiki.org/wiki/Help:What_links_here\"},{\"Id\":16,\"Title\":\"Manual:FAQ - MediaWiki\",\"Url\":\"https://www.mediawiki.org/wiki/Manual:FAQ\"},{\"Id\":17,\"Title\":\"Download from Git - MediaWiki\",\"Url\":\"https://www.mediawiki.org/wiki/Download_from_Git\"}] organize the bookmarks by grouping them if applies into folders. Respond using the provided JSON format","stream":false,"format":{"type":"object","properties":{"withFolder":{"type":"array","items":{"$ref":"#/definitions/BookmarkFolderDto"}},"withoutFolder":{"type":"array","items":{"$ref":"#/definitions/BookmarkDto"}},"suggestionsAI":{"type":["object","null"]}},"required":["withFolder","withoutFolder"],"definitions":{"BookmarkFolderDto":{"type":"object","properties":{"title":{"type":"string"},"bookmarks":{"type":"array","items":{"$ref":"#/definitions/BookmarkDto"}},"subFolders":{"type":"array","items":{"$ref":"#/definitions/BookmarkFolderDto"}}},"required":["title","bookmarks","subFolders"]},"BookmarkDto":{"type":"object","properties":{"id":{"type":"integer"},"title":{"type":"string"},"url":{"type":"string"}},"required":["id","title","url"]}}}}
 }
 
 tests {

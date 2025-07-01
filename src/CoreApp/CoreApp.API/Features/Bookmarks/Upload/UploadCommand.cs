@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Azure;
 using CoreApp.API.Domain;
 using CoreApp.API.Features.Bookmarks.Dtos;
 using CoreApp.API.Infrastructure;
@@ -76,31 +78,70 @@ public class UploadCommandHandler
       // Remove duplicates
       uploadedBookmarks = RemoveDuplicateBookmarksByUrl(uploadedBookmarks);
 
+      // Add Id to each bookmark
+      for (int i = 0; i < uploadedBookmarks.Count; i++)
+      {
+        uploadedBookmarks[i].Id = i + 1;
+      }
+
+      // Store bookmarks icon property in a dictionary with the key set using the Id
+      var iconsDictionary = uploadedBookmarks.ToDictionary(b => b.Id, b => b.Icon);
 
       // Read json file to obtain the desired output structure
       string pathToJson = Path.Combine(AppContext.BaseDirectory, "Config", "ollama", "format_output.json");
-      string json = File.ReadAllText(pathToJson);
+      string jsonFormatOutput = File.ReadAllText(pathToJson);
+      JsonElement formatElement = JsonSerializer.Deserialize<JsonElement>(jsonFormatOutput);
 
-      //var requestAISchemaResponse = JsonSchema.FromType<ProcessBookmarkGroupingRequest>();
-      //Console.WriteLine(requestAISchemaResponse.ToJson());
-
-      // Test
       var options = new System.Text.Json.JsonSerializerOptions
       {
         Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-        WriteIndented = true // optional, for pretty print
+        WriteIndented = false
       };
-      string jsonData = System.Text.Json.JsonSerializer.Serialize(uploadedBookmarks, options);
+
+      var simplified = uploadedBookmarks.Select(b => new { b.Id, b.Title, b.Url }).ToList();
+      var jsonData = JsonSerializer.Serialize(simplified, options);
+
+    var prompt = @$"I have a list of bookmarks in JSON format. Each bookmark has the following properties:
+
+Id: a unique identifier
+Title: the title of the bookmark
+Url: the full URL
+Please organize these bookmarks into folders based on domain or content similarity.
+If there is a large group of closely related bookmarks within a folder,
+you may optionally create subfolders for more granular organization.
+
+Constraints:
+Uniqueness: Each bookmark must appear only once in the final result. Use the Id to ensure no duplicates across folders or collections.
+Folder Assignment:
+If a bookmark has related bookmarks (by domain or topic), group them together in a folder.
+If a bookmark has no related items, place it in a separate collection called withoutFolder.
+Subfolders:
+Only create subfolders if there are enough related bookmarks (e.g., 3 or more) that justify a more detailed grouping.
+Output Format: Return the result as a JSON object.
+Here is the data: {jsonData}";
 
       var requestAI = new ProcessBookmarkGroupingRequest()
       {
-        Model = "llama3.2",
-        Prompt = "With the provided data that is structured in json " + jsonData + " organize the bookmarks by grouping them if applies into folders. Respond using the provided JSON format",
+        Model = "llama3.2:3b",
+        Prompt = prompt,
         Stream = false,
-        Format = json,
+        Format = formatElement
       };
 
       var responseOllama = await _ollamaService.ProcessBookmarksGroupingAsync(requestAI, cancellationToken);
+
+      foreach (var bookmark in responseOllama.WithoutFolder)
+      {
+        if (iconsDictionary.TryGetValue(bookmark.Id, out var icon))
+        {
+          bookmark.Icon = icon;
+        }
+      }
+
+      foreach (var folder in responseOllama.WithFolder)
+      {
+        SetIconsInFolder(folder, iconsDictionary);
+      }
 
       // Add to database (store file content table / metrics)
 
@@ -160,6 +201,22 @@ public class UploadCommandHandler
       }
 
       return null;
+    }
+
+    private static void SetIconsInFolder(BookmarkFolderDto folder, Dictionary<int, string?> iconsDictionary)
+    {
+      foreach (var bookmark in folder.Bookmarks)
+      {
+        if (iconsDictionary.TryGetValue(bookmark.Id, out var icon))
+        {
+          bookmark.Icon = icon;
+        }
+      }
+
+      foreach (var subFolder in folder.SubFolders)
+      {
+        SetIconsInFolder(subFolder, iconsDictionary);
+      }
     }
 
   }

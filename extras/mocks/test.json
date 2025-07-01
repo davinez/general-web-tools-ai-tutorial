@@ -1,6 +1,136 @@
 {
-  "Model": "llama3.2",
-  "Prompt": "With the provided data that is structured in json [\r\n  {\r\n    \u0022Title\u0022: \u0022Wikipedia:Wikipedia no es un diccionario - Wikipedia, la enciclopedia libre\u0022,\r\n    \u0022Url\u0022: \u0022https://es.wikipedia.org/wiki/Wikipedia:Wikipedia_no_es_un_diccionario\u0022,\r\n    \u0022AddDate\u0022: \u00222025-05-14T16:45:37\u0022,\r\n    \u0022Icon\u0022: \u0022data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABO0lEQVQ4jaWTMaoCMRCG/wnvDtELmHaxdAmIXcheZA9hYeMNxNZqsc81lu0X\u002B2VLTzBj8V5C8uQ9UAcG5k\u002BYP5kvhPATzCx4IZRSBAD0TnNuQu82J5NPmgFADcMAay2UUjifzwAA733S8zzDWgtrLeZ5xvV6xXK5hPcet9vte/5pmoSIJIQgURtj5HQ6CTOLc06maRJmFmaWuq5TjVg454qNrutEay0hBDkej8V6NC4M\u002Br4XANL3fdo0xogxJul4UK4TxPV6Decc9vt9ArTb7XC/35MehgFVVZUUc7cQghCRjOOYTtNaS9d1wszStm3BgpnlKzfz3mO1WuFyuWCz2aBpGlhrcTgcsN1uAQCLxeLvG0RIRJRmjS9U13XB5wlinlrrgnTbtk/w/jWIDPL8PXvMzz9TzuLVZgB4AExRsO8ga8hoAAAAAElFTkSuQmCC\u0022\r\n  },\r\n  {\r\n    \u0022Title\u0022: \u0022Wikipedia:Consenso - Wikipedia, la enciclopedia libre\u0022,\r\n    \u0022Url\u0022: \u0022https://es.wikipedia.org/wiki/Wikipedia:Consenso\u0022,\r\n    \u0022AddDate\u0022: \u00222025-05-14T16:45:41\u0022,\r\n    \u0022Icon\u0022: \u0022data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABO0lEQVQ4jaWTMaoCMRCG/wnvDtELmHaxdAmIXcheZA9hYeMNxNZqsc81lu0X\u002B2VLTzBj8V5C8uQ9UAcG5k\u002BYP5kvhPATzCx4IZRSBAD0TnNuQu82J5NPmgFADcMAay2UUjifzwAA733S8zzDWgtrLeZ5xvV6xXK5hPcet9vte/5pmoSIJIQgURtj5HQ6CTOLc06maRJmFmaWuq5TjVg454qNrutEay0hBDkej8V6NC4M\u002Br4XANL3fdo0xogxJul4UK4TxPV6Decc9vt9ArTb7XC/35MehgFVVZUUc7cQghCRjOOYTtNaS9d1wszStm3BgpnlKzfz3mO1WuFyuWCz2aBpGlhrcTgcsN1uAQCLxeLvG0RIRJRmjS9U13XB5wlinlrrgnTbtk/w/jWIDPL8PXvMzz9TzuLVZgB4AExRsO8ga8hoAAAAAElFTkSuQmCC\u0022\r\n  },\r\n  {\r\n    \u0022Title\u0022: \u0022Sitio oficial de Xbox: Consolas, juegos y comunidad | Xbox\u0022,\r\n    \u0022Url\u0022: \u0022https://www.xbox.com/es-MX\u0022,\r\n    \u0022AddDate\u0022: \u00222025-05-07T18:46:19\u0022,\r\n    \u0022Icon\u0022: \u0022\u0022\r\n  },\r\n  {\r\n    \u0022Title\u0022: \u0022Usuario discusi\u00F3n:Daneel~eswiki - Wikipedia, la enciclopedia libre\u0022,\r\n    \u0022Url\u0022: \u0022https://es.wikipedia.org/wiki/Usuario_discusi%C3%B3n:Daneel~eswiki\u0022,\r\n    \u0022AddDate\u0022: \u00222025-05-14T16:45:28\u0022,\r\n    \u0022Icon\u0022: \u0022\u0022\r\n  },\r\n  {\r\n    \u0022Title\u0022: \u0022Wikipedia:Los cinco pilares - Wikipedia, la enciclopedia libre\u0022,\r\n    \u0022Url\u0022: \u0022https://es.wikipedia.org/wiki/Wikipedia:Los_cinco_pilares\u0022,\r\n    \u0022AddDate\u0022: \u00222025-05-14T16:45:34\u0022,\r\n    \u0022Icon\u0022: \u0022data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABO0lEQVQ4jaWTMaoCMRCG/wnvDtELmHaxdAmIXcheZA9hYeMNxNZqsc81lu0X\u002B2VLTzBj8V5C8uQ9UAcG5k\u002BYP5kvhPATzCx4IZRSBAD0TnNuQu82J5NPmgFADcMAay2UUjifzwAA733S8zzDWgtrLeZ5xvV6xXK5hPcet9vte/5pmoSIJIQgURtj5HQ6CTOLc06maRJmFmaWuq5TjVg454qNrutEay0hBDkej8V6NC4M\u002Br4XANL3fdo0xogxJul4UK4TxPV6Decc9vt9ArTb7XC/35MehgFVVZUUc7cQghCRjOOYTtNaS9d1wszStm3BgpnlKzfz3mO1WuFyuWCz2aBpGlhrcTgcsN1uAQCLxeLvG0RIRJRmjS9U13XB5wlinlrrgnTbtk/w/jWIDPL8PXvMzz9TzuLVZgB4AExRsO8ga8hoAAAAAElFTkSuQmCC\u0022\r\n  },\r\n  {\r\n    \u0022Title\u0022: \u0022Manual:linktarget table - MediaWiki\u0022,\r\n    \u0022Url\u0022: \u0022https://www.mediawiki.org/wiki/Manual:Linktarget_table\u0022,\r\n    \u0022AddDate\u0022: \u00222025-05-14T16:43:34\u0022,\r\n    \u0022Icon\u0022: \u0022data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACsklEQVQ4jW2TT2tcZRSHn3PeO38yM7mZO0kmkxgjRWqpLS0SbQWLG7\u002BAoBtdlLpwUdSVILh0KQhF6CcoLSgYKfgF3CgtYtVoXYiMQw3tBJK5M3ecyWTmve9xUSqY9ln/nsPh/BGegL12bIWqW2PDVSg4ZUUy1Hblo9\u002B7R7PyPxFKPHvs/dB0ExL3MnWJWHCQqNfY3aLu5ijtX5V3OpPHCszYeEXQdU3cG6EZ1jVxE0tkmYYzWdA96q4sdbdDVbeohh259PN3ABHAL6xUR0irgntdUjslyNQgQcyhwQxpYf4Q4ZSY5aBbdu1MVS5uj6KHbSxc2iN/NcFOzxO8S6Uk5H\u002BYkzs4EHjBTI\u002Bbeg/RGSEoWmgBV6MtNld7hJAzflrxhwLFecJXUTr8TNNeBmDnG7Hp0oegb1rw05C7DednZp\u002BeWNMxEqeUzmeUxwOK5T6ucx\u002B7IjyUAeR2L8uG0yuShTYZJR36cRjaOfJirPu0lofMRX3Ki32K2qPw6zPcS4\u002BuK/m207c0bDPI1XosMgiR3/fNaARjR8UMiQLqAipH5f9IgxJw5EQIFsFIUxq\u002BR836VLoZc35I\u002Bew3bC49dlw8tShdztLDS2pdehboHnp3khdnzoVywL0kGGDLgq29ReOnL9kdATygtVym/LEccI7A2CJwYjfR6W0BeLd0\u002BYM4TC7U/T/P1\u002B0gX2BcnGeyEzO\u002B22BiNfzpBvl6DFPFIhJ3VxP7Xtrtzx1AnNfuxIW1gyA0MVaBCdiSICfAnlOoGXYAoVjEbcsk/0LTv258AsEBdOiE46ULsRDaJm5VjArQE6wEeCN0wUTJ/yyQX48IDyKyHQD3aEi/zW7d38w3O\u002BNCsREZPwSThmK7QuiCDsBuKvm9Ge2vm2R/P/EbH/EeFxcjwlKLtFbCZIX9geDTt/lx72j2XyhzMNUM3J0EAAAAAElFTkSuQmCC\u0022\r\n  },\r\n  {\r\n    \u0022Title\u0022: \u0022Manual:$wgTemplateLinksSchemaMigrationStage - MediaWiki\u0022,\r\n    \u0022Url\u0022: \u0022https://www.mediawiki.org/wiki/Manual:$wgTemplateLinksSchemaMigrationStage\u0022,\r\n    \u0022AddDate\u0022: \u00222025-05-14T16:43:49\u0022,\r\n    \u0022Icon\u0022: \u0022data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACsklEQVQ4jW2TT2tcZRSHn3PeO38yM7mZO0kmkxgjRWqpLS0SbQWLG7\u002BAoBtdlLpwUdSVILh0KQhF6CcoLSgYKfgF3CgtYtVoXYiMQw3tBJK5M3ecyWTmve9xUSqY9ln/nsPh/BGegL12bIWqW2PDVSg4ZUUy1Hblo9\u002B7R7PyPxFKPHvs/dB0ExL3MnWJWHCQqNfY3aLu5ijtX5V3OpPHCszYeEXQdU3cG6EZ1jVxE0tkmYYzWdA96q4sdbdDVbeohh259PN3ABHAL6xUR0irgntdUjslyNQgQcyhwQxpYf4Q4ZSY5aBbdu1MVS5uj6KHbSxc2iN/NcFOzxO8S6Uk5H\u002BYkzs4EHjBTI\u002Bbeg/RGSEoWmgBV6MtNld7hJAzflrxhwLFecJXUTr8TNNeBmDnG7Hp0oegb1rw05C7DednZp\u002BeWNMxEqeUzmeUxwOK5T6ucx\u002B7IjyUAeR2L8uG0yuShTYZJR36cRjaOfJirPu0lofMRX3Ki32K2qPw6zPcS4\u002BuK/m207c0bDPI1XosMgiR3/fNaARjR8UMiQLqAipH5f9IgxJw5EQIFsFIUxq\u002BR836VLoZc35I\u002Bew3bC49dlw8tShdztLDS2pdehboHnp3khdnzoVywL0kGGDLgq29ReOnL9kdATygtVym/LEccI7A2CJwYjfR6W0BeLd0\u002BYM4TC7U/T/P1\u002B0gX2BcnGeyEzO\u002B22BiNfzpBvl6DFPFIhJ3VxP7Xtrtzx1AnNfuxIW1gyA0MVaBCdiSICfAnlOoGXYAoVjEbcsk/0LTv258AsEBdOiE46ULsRDaJm5VjArQE6wEeCN0wUTJ/yyQX48IDyKyHQD3aEi/zW7d38w3O\u002BNCsREZPwSThmK7QuiCDsBuKvm9Ge2vm2R/P/EbH/EeFxcjwlKLtFbCZIX9geDTt/lx72j2XyhzMNUM3J0EAAAAAElFTkSuQmCC\u0022\r\n  },\r\n  {\r\n    \u0022Title\u0022: \u0022P\u00E1ginas que enlazan con \u00ABWikipedia discusi\u00F3n:Portada\u00BB - Wikipedia, la enciclopedia libre\u0022,\r\n    \u0022Url\u0022: \u0022https://es.wikipedia.org/wiki/Especial:LoQueEnlazaAqu%C3%AD/Wikipedia_discusi%C3%B3n:Portada\u0022,\r\n    \u0022AddDate\u0022: \u00222025-05-14T16:43:03\u0022,\r\n    \u0022Icon\u0022: \u0022data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABO0lEQVQ4jaWTMaoCMRCG/wnvDtELmHaxdAmIXcheZA9hYeMNxNZqsc81lu0X\u002B2VLTzBj8V5C8uQ9UAcG5k\u002BYP5kvhPATzCx4IZRSBAD0TnNuQu82J5NPmgFADcMAay2UUjifzwAA733S8zzDWgtrLeZ5xvV6xXK5hPcet9vte/5pmoSIJIQgURtj5HQ6CTOLc06maRJmFmaWuq5TjVg454qNrutEay0hBDkej8V6NC4M\u002Br4XANL3fdo0xogxJul4UK4TxPV6Decc9vt9ArTb7XC/35MehgFVVZUUc7cQghCRjOOYTtNaS9d1wszStm3BgpnlKzfz3mO1WuFyuWCz2aBpGlhrcTgcsN1uAQCLxeLvG0RIRJRmjS9U13XB5wlinlrrgnTbtk/w/jWIDPL8PXvMzz9TzuLVZgB4AExRsO8ga8hoAAAAAElFTkSuQmCC\u0022\r\n  },\r\n  {\r\n    \u0022Title\u0022: \u0022Manual:pagelinks table - MediaWiki\u0022,\r\n    \u0022Url\u0022: \u0022https://www.mediawiki.org/wiki/Manual:Pagelinks_table\u0022,\r\n    \u0022AddDate\u0022: \u00222025-05-14T16:43:24\u0022,\r\n    \u0022Icon\u0022: \u0022data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACsklEQVQ4jW2TT2tcZRSHn3PeO38yM7mZO0kmkxgjRWqpLS0SbQWLG7\u002BAoBtdlLpwUdSVILh0KQhF6CcoLSgYKfgF3CgtYtVoXYiMQw3tBJK5M3ecyWTmve9xUSqY9ln/nsPh/BGegL12bIWqW2PDVSg4ZUUy1Hblo9\u002B7R7PyPxFKPHvs/dB0ExL3MnWJWHCQqNfY3aLu5ijtX5V3OpPHCszYeEXQdU3cG6EZ1jVxE0tkmYYzWdA96q4sdbdDVbeohh259PN3ABHAL6xUR0irgntdUjslyNQgQcyhwQxpYf4Q4ZSY5aBbdu1MVS5uj6KHbSxc2iN/NcFOzxO8S6Uk5H\u002BYkzs4EHjBTI\u002Bbeg/RGSEoWmgBV6MtNld7hJAzflrxhwLFecJXUTr8TNNeBmDnG7Hp0oegb1rw05C7DednZp\u002BeWNMxEqeUzmeUxwOK5T6ucx\u002B7IjyUAeR2L8uG0yuShTYZJR36cRjaOfJirPu0lofMRX3Ki32K2qPw6zPcS4\u002BuK/m207c0bDPI1XosMgiR3/fNaARjR8UMiQLqAipH5f9IgxJw5EQIFsFIUxq\u002BR836VLoZc35I\u002Bew3bC49dlw8tShdztLDS2pdehboHnp3khdnzoVywL0kGGDLgq29ReOnL9kdATygtVym/LEccI7A2CJwYjfR6W0BeLd0\u002BYM4TC7U/T/P1\u002B0gX2BcnGeyEzO\u002B22BiNfzpBvl6DFPFIhJ3VxP7Xtrtzx1AnNfuxIW1gyA0MVaBCdiSICfAnlOoGXYAoVjEbcsk/0LTv258AsEBdOiE46ULsRDaJm5VjArQE6wEeCN0wUTJ/yyQX48IDyKyHQD3aEi/zW7d38w3O\u002BNCsREZPwSThmK7QuiCDsBuKvm9Ge2vm2R/P/EbH/EeFxcjwlKLtFbCZIX9geDTt/lx72j2XyhzMNUM3J0EAAAAAElFTkSuQmCC\u0022\r\n  },\r\n  {\r\n    \u0022Title\u0022: \u0022Wikipedia:Derechos de autor - Wikipedia, la enciclopedia libre\u0022,\r\n    \u0022Url\u0022: \u0022https://es.wikipedia.org/wiki/Wikipedia:Derechos_de_autor\u0022,\r\n    \u0022AddDate\u0022: \u00222025-05-14T16:46:10\u0022,\r\n    \u0022Icon\u0022: \u0022data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABO0lEQVQ4jaWTMaoCMRCG/wnvDtELmHaxdAmIXcheZA9hYeMNxNZqsc81lu0X\u002B2VLTzBj8V5C8uQ9UAcG5k\u002BYP5kvhPATzCx4IZRSBAD0TnNuQu82J5NPmgFADcMAay2UUjifzwAA733S8zzDWgtrLeZ5xvV6xXK5hPcet9vte/5pmoSIJIQgURtj5HQ6CTOLc06maRJmFmaWuq5TjVg454qNrutEay0hBDkej8V6NC4M\u002Br4XANL3fdo0xogxJul4UK4TxPV6Decc9vt9ArTb7XC/35MehgFVVZUUc7cQghCRjOOYTtNaS9d1wszStm3BgpnlKzfz3mO1WuFyuWCz2aBpGlhrcTgcsN1uAQCLxeLvG0RIRJRmjS9U13XB5wlinlrrgnTbtk/w/jWIDPL8PXvMzz9TzuLVZgB4AExRsO8ga8hoAAAAAElFTkSuQmCC\u0022\r\n  },\r\n  {\r\n    \u0022Title\u0022: \u0022Derecho de autor - Wikipedia, la enciclopedia libre\u0022,\r\n    \u0022Url\u0022: \u0022https://es.wikipedia.org/wiki/Derecho_de_autor\u0022,\r\n    \u0022AddDate\u0022: \u00222025-05-14T16:46:15\u0022,\r\n    \u0022Icon\u0022: \u0022data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABO0lEQVQ4jaWTMaoCMRCG/wnvDtELmHaxdAmIXcheZA9hYeMNxNZqsc81lu0X\u002B2VLTzBj8V5C8uQ9UAcG5k\u002BYP5kvhPATzCx4IZRSBAD0TnNuQu82J5NPmgFADcMAay2UUjifzwAA733S8zzDWgtrLeZ5xvV6xXK5hPcet9vte/5pmoSIJIQgURtj5HQ6CTOLc06maRJmFmaWuq5TjVg454qNrutEay0hBDkej8V6NC4M\u002Br4XANL3fdo0xogxJul4UK4TxPV6Decc9vt9ArTb7XC/35MehgFVVZUUc7cQghCRjOOYTtNaS9d1wszStm3BgpnlKzfz3mO1WuFyuWCz2aBpGlhrcTgcsN1uAQCLxeLvG0RIRJRmjS9U13XB5wlinlrrgnTbtk/w/jWIDPL8PXvMzz9TzuLVZgB4AExRsO8ga8hoAAAAAElFTkSuQmCC\u0022\r\n  },\r\n  {\r\n    \u0022Title\u0022: \u0022Wikipedia, la enciclopedia libre\u0022,\r\n    \u0022Url\u0022: \u0022https://es.wikipedia.org/wiki/Wikipedia:Portada\u0022,\r\n    \u0022AddDate\u0022: \u00222025-05-07T18:44:40\u0022,\r\n    \u0022Icon\u0022: \u0022data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABO0lEQVQ4jaWTMaoCMRCG/wnvDtELmHaxdAmIXcheZA9hYeMNxNZqsc81lu0X\u002B2VLTzBj8V5C8uQ9UAcG5k\u002BYP5kvhPATzCx4IZRSBAD0TnNuQu82J5NPmgFADcMAay2UUjifzwAA733S8zzDWgtrLeZ5xvV6xXK5hPcet9vte/5pmoSIJIQgURtj5HQ6CTOLc06maRJmFmaWuq5TjVg454qNrutEay0hBDkej8V6NC4M\u002Br4XANL3fdo0xogxJul4UK4TxPV6Decc9vt9ArTb7XC/35MehgFVVZUUc7cQghCRjOOYTtNaS9d1wszStm3BgpnlKzfz3mO1WuFyuWCz2aBpGlhrcTgcsN1uAQCLxeLvG0RIRJRmjS9U13XB5wlinlrrgnTbtk/w/jWIDPL8PXvMzz9TzuLVZgB4AExRsO8ga8hoAAAAAElFTkSuQmCC\u0022\r\n  },\r\n  {\r\n    \u0022Title\u0022: \u0022Haz tu donaci\u00F3n ahora - Wikimedia Foundation\u0022,\r\n    \u0022Url\u0022: \u0022https://donate.wikimedia.org/w/index.php?title=Special:LandingPage\u0026country=MX\u0026uselang=es\u0026wmf_medium=sidebar\u0026wmf_source=donate\u0026wmf_campaign=es.wikipedia.org\u0022,\r\n    \u0022AddDate\u0022: \u00222025-05-14T16:42:40\u0022,\r\n    \u0022Icon\u0022: \u0022data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABTElEQVQ4jaWTP0uCURTGf\u002Be666hDlKUhLtEmhTREa0t70CZ\u002BlL5En8BVQxzKiBaXaOx9CSRIiGaXhtPQc\u002BUiLxJ04YFzn3ue8\u002Bd9eM3djYJjZlvAla437v5RlIe72zqAKrAAXFgA1aLckHQsm1ld1wuglvSpicPM6mZWjg9BZAAGwINGXxYMu9TbPTCQ5ncFoK9R7zR\u002BG5glK8zEVYGpuL67WyyQAd9AAxgC7xKcC21grreGcrNoQEsVb4GjpOsc2AV2FEe\u002BA4wV7wdgTzu\u002BAMfJzttAFzhRHE8XeFbcDPzzBOBN8QHw9AfNI3CoOA/u/grkwBnwCYw2iEfAF3AK5O6er9s4lVVD3S8FF5fa2EttLAGTpEhDjrSEjrgongClVQEVqSRFvmXVtTAWF8WVlW7tJyppnSzxPSIDerFzhG34nZtAM35td8\u002BL8n4AKbW5ya5mf\u002B8AAAAASUVORK5CYII=\u0022\r\n  },\r\n  {\r\n    \u0022Title\u0022: \u0022Wikipedia discusi\u00F3n:Portada - Wikipedia, la enciclopedia libre\u0022,\r\n    \u0022Url\u0022: \u0022https://es.wikipedia.org/wiki/Wikipedia_discusi%C3%B3n:Portada\u0022,\r\n    \u0022AddDate\u0022: \u00222025-05-14T16:42:53\u0022,\r\n    \u0022Icon\u0022: \u0022data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABO0lEQVQ4jaWTMaoCMRCG/wnvDtELmHaxdAmIXcheZA9hYeMNxNZqsc81lu0X\u002B2VLTzBj8V5C8uQ9UAcG5k\u002BYP5kvhPATzCx4IZRSBAD0TnNuQu82J5NPmgFADcMAay2UUjifzwAA733S8zzDWgtrLeZ5xvV6xXK5hPcet9vte/5pmoSIJIQgURtj5HQ6CTOLc06maRJmFmaWuq5TjVg454qNrutEay0hBDkej8V6NC4M\u002Br4XANL3fdo0xogxJul4UK4TxPV6Decc9vt9ArTb7XC/35MehgFVVZUUc7cQghCRjOOYTtNaS9d1wszStm3BgpnlKzfz3mO1WuFyuWCz2aBpGlhrcTgcsN1uAQCLxeLvG0RIRJRmjS9U13XB5wlinlrrgnTbtk/w/jWIDPL8PXvMzz9TzuLVZgB4AExRsO8ga8hoAAAAAElFTkSuQmCC\u0022\r\n  },\r\n  {\r\n    \u0022Title\u0022: \u0022Help:What links here - MediaWiki\u0022,\r\n    \u0022Url\u0022: \u0022https://www.mediawiki.org/wiki/Help:What_links_here\u0022,\r\n    \u0022AddDate\u0022: \u00222025-05-14T16:43:14\u0022,\r\n    \u0022Icon\u0022: \u0022data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACsklEQVQ4jW2TT2tcZRSHn3PeO38yM7mZO0kmkxgjRWqpLS0SbQWLG7\u002BAoBtdlLpwUdSVILh0KQhF6CcoLSgYKfgF3CgtYtVoXYiMQw3tBJK5M3ecyWTmve9xUSqY9ln/nsPh/BGegL12bIWqW2PDVSg4ZUUy1Hblo9\u002B7R7PyPxFKPHvs/dB0ExL3MnWJWHCQqNfY3aLu5ijtX5V3OpPHCszYeEXQdU3cG6EZ1jVxE0tkmYYzWdA96q4sdbdDVbeohh259PN3ABHAL6xUR0irgntdUjslyNQgQcyhwQxpYf4Q4ZSY5aBbdu1MVS5uj6KHbSxc2iN/NcFOzxO8S6Uk5H\u002BYkzs4EHjBTI\u002Bbeg/RGSEoWmgBV6MtNld7hJAzflrxhwLFecJXUTr8TNNeBmDnG7Hp0oegb1rw05C7DednZp\u002BeWNMxEqeUzmeUxwOK5T6ucx\u002B7IjyUAeR2L8uG0yuShTYZJR36cRjaOfJirPu0lofMRX3Ki32K2qPw6zPcS4\u002BuK/m207c0bDPI1XosMgiR3/fNaARjR8UMiQLqAipH5f9IgxJw5EQIFsFIUxq\u002BR836VLoZc35I\u002Bew3bC49dlw8tShdztLDS2pdehboHnp3khdnzoVywL0kGGDLgq29ReOnL9kdATygtVym/LEccI7A2CJwYjfR6W0BeLd0\u002BYM4TC7U/T/P1\u002B0gX2BcnGeyEzO\u002B22BiNfzpBvl6DFPFIhJ3VxP7Xtrtzx1AnNfuxIW1gyA0MVaBCdiSICfAnlOoGXYAoVjEbcsk/0LTv258AsEBdOiE46ULsRDaJm5VjArQE6wEeCN0wUTJ/yyQX48IDyKyHQD3aEi/zW7d38w3O\u002BNCsREZPwSThmK7QuiCDsBuKvm9Ge2vm2R/P/EbH/EeFxcjwlKLtFbCZIX9geDTt/lx72j2XyhzMNUM3J0EAAAAAElFTkSuQmCC\u0022\r\n  },\r\n  {\r\n    \u0022Title\u0022: \u0022Manual:FAQ - MediaWiki\u0022,\r\n    \u0022Url\u0022: \u0022https://www.mediawiki.org/wiki/Manual:FAQ\u0022,\r\n    \u0022AddDate\u0022: \u00222025-05-14T16:43:56\u0022,\r\n    \u0022Icon\u0022: \u0022data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACsklEQVQ4jW2TT2tcZRSHn3PeO38yM7mZO0kmkxgjRWqpLS0SbQWLG7\u002BAoBtdlLpwUdSVILh0KQhF6CcoLSgYKfgF3CgtYtVoXYiMQw3tBJK5M3ecyWTmve9xUSqY9ln/nsPh/BGegL12bIWqW2PDVSg4ZUUy1Hblo9\u002B7R7PyPxFKPHvs/dB0ExL3MnWJWHCQqNfY3aLu5ijtX5V3OpPHCszYeEXQdU3cG6EZ1jVxE0tkmYYzWdA96q4sdbdDVbeohh259PN3ABHAL6xUR0irgntdUjslyNQgQcyhwQxpYf4Q4ZSY5aBbdu1MVS5uj6KHbSxc2iN/NcFOzxO8S6Uk5H\u002BYkzs4EHjBTI\u002Bbeg/RGSEoWmgBV6MtNld7hJAzflrxhwLFecJXUTr8TNNeBmDnG7Hp0oegb1rw05C7DednZp\u002BeWNMxEqeUzmeUxwOK5T6ucx\u002B7IjyUAeR2L8uG0yuShTYZJR36cRjaOfJirPu0lofMRX3Ki32K2qPw6zPcS4\u002BuK/m207c0bDPI1XosMgiR3/fNaARjR8UMiQLqAipH5f9IgxJw5EQIFsFIUxq\u002BR836VLoZc35I\u002Bew3bC49dlw8tShdztLDS2pdehboHnp3khdnzoVywL0kGGDLgq29ReOnL9kdATygtVym/LEccI7A2CJwYjfR6W0BeLd0\u002BYM4TC7U/T/P1\u002B0gX2BcnGeyEzO\u002B22BiNfzpBvl6DFPFIhJ3VxP7Xtrtzx1AnNfuxIW1gyA0MVaBCdiSICfAnlOoGXYAoVjEbcsk/0LTv258AsEBdOiE46ULsRDaJm5VjArQE6wEeCN0wUTJ/yyQX48IDyKyHQD3aEi/zW7d38w3O\u002BNCsREZPwSThmK7QuiCDsBuKvm9Ge2vm2R/P/EbH/EeFxcjwlKLtFbCZIX9geDTt/lx72j2XyhzMNUM3J0EAAAAAElFTkSuQmCC\u0022\r\n  },\r\n  {\r\n    \u0022Title\u0022: \u0022Download from Git - MediaWiki\u0022,\r\n    \u0022Url\u0022: \u0022https://www.mediawiki.org/wiki/Download_from_Git\u0022,\r\n    \u0022AddDate\u0022: \u00222025-05-14T16:44:22\u0022,\r\n    \u0022Icon\u0022: \u0022data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACsklEQVQ4jW2TT2tcZRSHn3PeO38yM7mZO0kmkxgjRWqpLS0SbQWLG7\u002BAoBtdlLpwUdSVILh0KQhF6CcoLSgYKfgF3CgtYtVoXYiMQw3tBJK5M3ecyWTmve9xUSqY9ln/nsPh/BGegL12bIWqW2PDVSg4ZUUy1Hblo9\u002B7R7PyPxFKPHvs/dB0ExL3MnWJWHCQqNfY3aLu5ijtX5V3OpPHCszYeEXQdU3cG6EZ1jVxE0tkmYYzWdA96q4sdbdDVbeohh259PN3ABHAL6xUR0irgntdUjslyNQgQcyhwQxpYf4Q4ZSY5aBbdu1MVS5uj6KHbSxc2iN/NcFOzxO8S6Uk5H\u002BYkzs4EHjBTI\u002Bbeg/RGSEoWmgBV6MtNld7hJAzflrxhwLFecJXUTr8TNNeBmDnG7Hp0oegb1rw05C7DednZp\u002BeWNMxEqeUzmeUxwOK5T6ucx\u002B7IjyUAeR2L8uG0yuShTYZJR36cRjaOfJirPu0lofMRX3Ki32K2qPw6zPcS4\u002BuK/m207c0bDPI1XosMgiR3/fNaARjR8UMiQLqAipH5f9IgxJw5EQIFsFIUxq\u002BR836VLoZc35I\u002Bew3bC49dlw8tShdztLDS2pdehboHnp3khdnzoVywL0kGGDLgq29ReOnL9kdATygtVym/LEccI7A2CJwYjfR6W0BeLd0\u002BYM4TC7U/T/P1\u002B0gX2BcnGeyEzO\u002B22BiNfzpBvl6DFPFIhJ3VxP7Xtrtzx1AnNfuxIW1gyA0MVaBCdiSICfAnlOoGXYAoVjEbcsk/0LTv258AsEBdOiE46ULsRDaJm5VjArQE6wEeCN0wUTJ/yyQX48IDyKyHQD3aEi/zW7d38w3O\u002BNCsREZPwSThmK7QuiCDsBuKvm9Ge2vm2R/P/EbH/EeFxcjwlKLtFbCZIX9geDTt/lx72j2XyhzMNUM3J0EAAAAAElFTkSuQmCC\u0022\r\n  }\r\n] organize the bookmarks by grouping them if applies into folders. Respond using the provided JSON format",
-  "Stream": false,
-  "Format": "{\r\n  \u0022type\u0022: \u0022object\u0022,\r\n  \u0022properties\u0022: {\r\n    \u0022Folder\u0022: {\r\n      \u0022type\u0022: \u0022array\u0022,\r\n      \u0022items\u0022: {\r\n        \u0022type\u0022: \u0022object\u0022,\r\n        \u0022properties\u0022: {\r\n          \u0022Title\u0022: { \u0022type\u0022: \u0022string\u0022 },\r\n          \u0022AddDate\u0022: {\r\n            \u0022type\u0022: [ \u0022string\u0022, \u0022null\u0022 ],\r\n            \u0022format\u0022: \u0022date-time\u0022\r\n          },\r\n          \u0022Bookmarks\u0022: {\r\n            \u0022type\u0022: \u0022array\u0022,\r\n            \u0022items\u0022: {\r\n              \u0022type\u0022: \u0022object\u0022,\r\n              \u0022properties\u0022: {\r\n                \u0022Title\u0022: { \u0022type\u0022: \u0022string\u0022 },\r\n                \u0022Url\u0022: {\r\n                  \u0022type\u0022: \u0022string\u0022,\r\n                  \u0022format\u0022: \u0022uri\u0022\r\n                },\r\n                \u0022AddDate\u0022: {\r\n                  \u0022type\u0022: [ \u0022string\u0022, \u0022null\u0022 ],\r\n                  \u0022format\u0022: \u0022date-time\u0022\r\n                },\r\n                \u0022Icon\u0022: { \u0022type\u0022: [ \u0022string\u0022, \u0022null\u0022 ] }\r\n              },\r\n              \u0022required\u0022: [ \u0022Title\u0022, \u0022Url\u0022 ]\r\n            }\r\n          },\r\n          \u0022SubFolders\u0022: {\r\n            \u0022type\u0022: \u0022array\u0022,\r\n            \u0022items\u0022: { \u0022$ref\u0022: \u0022#\u0022 }\r\n          }\r\n        },\r\n        \u0022required\u0022: [ \u0022Title\u0022, \u0022Bookmarks\u0022, \u0022SubFolders\u0022 ]\r\n      }\r\n    },\r\n    \u0022Bookmarks\u0022: {\r\n      \u0022type\u0022: \u0022array\u0022,\r\n      \u0022items\u0022: {\r\n        \u0022type\u0022: \u0022object\u0022,\r\n        \u0022properties\u0022: {\r\n          \u0022Title\u0022: { \u0022type\u0022: \u0022string\u0022 },\r\n          \u0022Url\u0022: {\r\n            \u0022type\u0022: \u0022string\u0022,\r\n            \u0022format\u0022: \u0022uri\u0022\r\n          },\r\n          \u0022AddDate\u0022: {\r\n            \u0022type\u0022: [ \u0022string\u0022, \u0022null\u0022 ],\r\n            \u0022format\u0022: \u0022date-time\u0022\r\n          },\r\n          \u0022Icon\u0022: { \u0022type\u0022: [ \u0022string\u0022, \u0022null\u0022 ] }\r\n        },\r\n        \u0022required\u0022: [ \u0022Title\u0022, \u0022Url\u0022 ]\r\n      }\r\n    },\r\n    \u0022SuggestionsAI\u0022: {\r\n      \u0022type\u0022: \u0022object\u0022,\r\n      \u0022properties\u0022: {\r\n        \u0022PossibleDuplicate\u0022: {\r\n          \u0022type\u0022: \u0022array\u0022,\r\n          \u0022items\u0022: { \u0022type\u0022: \u0022string\u0022 }\r\n        }\r\n      },\r\n      \u0022required\u0022: [ \u0022PossibleDuplicate\u0022 ]\r\n    }\r\n  },\r\n  \u0022required\u0022: [ \u0022Folder\u0022, \u0022Bookmarks\u0022 ]\r\n}\r\n"
+  "withFolder": [
+    {
+      "title": "Wikipedia",
+      "bookmarks": [
+        {
+          "id": 1,
+          "title": "Wikipedia:Wikipedia no es un diccionario - Wikipedia, la enciclopedia libre",
+          "url": "https://es.wikipedia.org/wiki/Wikipedia:Wikipedia_no_es_un_diccionario"
+        },
+        {
+          "id": 2,
+          "title": "Wikipedia:Consenso - Wikipedia, la enciclopedia libre",
+          "url": "https://es.wikipedia.org/wiki/Wikipedia:Consenso"
+        },
+        {
+          "id": 5,
+          "title": "Wikipedia:Los cinco pilares - Wikipedia, la enciclopedia libre",
+          "url": "https://es.wikipedia.org/wiki/Wikipedia:Los_cinco_pilares"
+        },
+        {
+          "id": 12,
+          "title": "Wikipedia, la enciclopedia libre",
+          "url": "https://es.wikipedia.org/wiki/Wikipedia:Portada"
+        },
+        {
+          "id": 10,
+          "title": "Wikipedia:Derechos de autor - Wikipedia, la enciclopedia libre",
+          "url": "https://es.wikipedia.org/wiki/Wikipedia:Derechos_de_autor"
+        },
+        {
+          "id": 11,
+          "title": "Derecho de autor - Wikipedia, la enciclopedia libre",
+          "url": "https://es.wikipedia.org/wiki/Derecho_de_autor"
+        }
+      ],
+      "subFolders": []
+    },
+    {
+      "title": "Xbox",
+      "bookmarks": [
+        {
+          "id": 3,
+          "title": "Sitio oficial de Xbox: Consolas, juegos y comunidad | Xbox",
+          "url": "https://www.xbox.com/es-MX"
+        },
+        {
+          "id": 15,
+          "title": "Help:What links here - MediaWiki",
+          "url": "https://www.mediawiki.org/wiki/Help:What_links_here"
+        },
+        {
+          "id": 16,
+          "title": "Manual:FAQ - MediaWiki",
+          "url": "https://www.mediawiki.org/wiki/Manual:FAQ"
+        }
+      ],
+      "subFolders": []
+    },
+    {
+      "title": "Mediawiki",
+      "bookmarks": [
+        {
+          "id": 6,
+          "title": "Manual:linktarget table - MediaWiki",
+          "url": "https://www.mediawiki.org/wiki/Manual:Linktarget_table"
+        },
+        {
+          "id": 7,
+          "title": "Manual:$wgTemplateLinksSchemaMigrationStage - MediaWiki",
+          "url": "https://www.mediawiki.org/wiki/Manual:$wgTemplateLinksSchemaMigrationStage"
+        },
+        {
+          "id": 9,
+          "title": "Manual:pagelinks table - MediaWiki",
+          "url": "https://www.mediawiki.org/wiki/Manual:Pagelinks_table"
+        },
+        {
+          "id": 14,
+          "title": "Wikipedia discusión:Portada - Wikipedia, la enciclopedia libre",
+          "url": "https://es.wikipedia.org/wiki/Wikipedia_discusi%C3%B3n:Portada"
+        },
+        {
+          "id": 8,
+          "title": "Páginas que enlazan con «Wikipedia discusión:Portada» - Wikipedia, la enciclopedia libre",
+          "url": "https://es.wikipedia.org/wiki/Especial:LoQueEnlazaAqu%C3%AD/Wikipedia_discusi%C3%B3n:Portada"
+        },
+        {
+          "id": 17,
+          "title": "Download from Git - MediaWiki",
+          "url": "https://www.mediawiki.org/wiki/Download_from_Git"
+        }
+      ],
+      "subFolders": []
+    },
+    {
+      "title": "withoutFolder",
+      "bookmarks": [
+        {
+          "id": 4,
+          "title": "Usuario discusión:Daneel~eswiki - Wikipedia, la enciclopedia libre",
+          "url": "https://es.wikipedia.org/wiki/Usuario_discusi%C3%B3n:Daneel~eswiki"
+        }
+      ],
+      "subFolders": []
+    }
+  ],
+  "withoutFolder": [
+    {
+      "id": 13,
+      "title": "Haz tu donación ahora - Wikimedia Foundation",
+      "url": "https://donate.wikimedia.org/w/index.php?title=Special:LandingPage&country=MX&uselang=es&wmf_medium=sidebar&wmf_source=donate&wmf_campaign=es.wikipedia.org"
+    }
+  ],
+  "suggestionsAI": null
 }
+
+// public class ResponseAI
+// {
+//     public List<BookmarkFolderDto> WithFolder { get; set; } = new List<BookmarkFolderDto>();
+//     public List<BookmarkDto> WithoutFolder { get; set; } = new List<BookmarkDto>();
+// }
+
+//   public class BookmarkFolderDto
+// {
+//   public required string Title { get; set; }
+//   public List<BookmarkDto> Bookmarks { get; set; } = [];
+//   public List<BookmarkFolderDto> SubFolders { get; set; } = [];
+// }
+
+// public class BookmarkDto
+// {
+//   public int Id { get; set; }
+//   public required string Title { get; set; }
+//   public required string Url { get; set; }
+// }
