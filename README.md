@@ -39,6 +39,29 @@ Drop-Database
 ```
 
 
+## Troubleshoot
+
+- With docker if running a UI app like Rancher Desktop:
+
+If you get below error when running “docker” command:
+
+````
+error during connect: in the default daemon configuration on Windows, the docker client must be run with elevated privileges to connect: Get "http://%2F%2F.%2Fpipe%2Fdocker_engine/v1.49/containers/json": open //./pipe/docker_engine: The system cannot find the file specified.
+Please run below script in “Terminal (Admin)” to grant yourself access to “docker_engine” socket:
+```
+```ps
+$account=whoami
+$npipe = "\\.\pipe\docker_engine"
+$dInfo = New-Object "System.IO.DirectoryInfo" -ArgumentList $npipe
+$dSec = $dInfo.GetAccessControl()
+$fullControl =[System.Security.AccessControl.FileSystemRights]::FullControl
+$allow =[System.Security.AccessControl.AccessControlType]::Allow
+$rule = New-Object "System.Security.AccessControl.FileSystemAccessRule" -ArgumentList $account,$fullControl,$allow
+$dSec.AddAccessRule($rule)
+$dInfo.SetAccessControl($dSec)
+```
+
+
 ## AI
 
 - For open web ui and other AI services / tools, run:

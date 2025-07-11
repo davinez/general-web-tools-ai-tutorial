@@ -5,8 +5,6 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Azure;
-using CoreApp.API.Domain;
 using CoreApp.API.Features.Bookmarks.Dtos;
 using CoreApp.API.Infrastructure;
 using CoreApp.API.Infrastructure.Data;
@@ -14,12 +12,11 @@ using CoreApp.API.Infrastructure.ExternalServices.ollama;
 using CoreApp.API.Infrastructure.ExternalServices.ollama.Dto;
 using FluentValidation;
 using HtmlAgilityPack;
-using MediatR;
-using NJsonSchema;
+using Mediator;
 
 namespace CoreApp.API.Features.Bookmarks.Upload;
 
-public record UploadCommand(UploadRequest File) : IRequest;
+public sealed record UploadCommand(UploadRequest File) : IQuery<UploadResponse>;
 
 
 public class UploadCommandHandler
@@ -42,7 +39,7 @@ public class UploadCommandHandler
         RuleFor(x => x.File).NotNull().SetValidator(new UploadValidator());
   }
 
-  public class Handler : IRequestHandler<UploadCommand>
+  public sealed class Handler : IQueryHandler<UploadCommand, UploadResponse> 
   {
     private readonly CoreAppContext _context;
     private readonly ICurrentUserAccessor _currentUserAccessor;
@@ -58,7 +55,7 @@ public class UploadCommandHandler
     }
 
 
-    public async Task Handle(
+    public async ValueTask<UploadResponse> Handle(
         UploadCommand command,
         CancellationToken cancellationToken
     )
@@ -101,7 +98,7 @@ public class UploadCommandHandler
       var simplified = uploadedBookmarks.Select(b => new { b.Id, b.Title, b.Url }).ToList();
       var jsonData = JsonSerializer.Serialize(simplified, options);
 
-    var prompt = @$"I have a list of bookmarks in JSON format. Each bookmark has the following properties:
+      var prompt = @$"I have a list of bookmarks in JSON format. Each bookmark has the following properties:
 
 Id: a unique identifier
 Title: the title of the bookmark
@@ -143,10 +140,16 @@ Here is the data: {jsonData}";
         SetIconsInFolder(folder, iconsDictionary);
       }
 
-      // Add to database (store file content table / metrics)
+      // Save request file in storage like Blob or Minio
+
+      // var fileBytes = memoryStream.ToArray();
+
+
 
       // Convert response to html file with import format
 
+
+      return new UploadResponse();
     }
 
 

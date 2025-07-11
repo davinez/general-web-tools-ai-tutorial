@@ -1,6 +1,6 @@
 using System;
 
-namespace CoreApp.API.Infrastructure.Errors;
+namespace CoreApp.API.Domain.Errors;
 
 public class CoreAppException : Exception
 {

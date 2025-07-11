@@ -1,4 +1,4 @@
-namespace CoreApp.API.Infrastructure.Errors;
+namespace CoreApp.API.Domain.Errors;
 
 public static class Constants
 {

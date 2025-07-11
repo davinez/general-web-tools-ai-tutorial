@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
-namespace CoreApp.API.Infrastructure.Errors;
+namespace CoreApp.API.Domain.Errors;
 
 public class ErrorHandlingMiddleware(
     RequestDelegate next,

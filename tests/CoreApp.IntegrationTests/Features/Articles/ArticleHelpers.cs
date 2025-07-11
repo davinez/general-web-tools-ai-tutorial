@@ -2,6 +2,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using CoreApp.API.Domain;
+using CoreApp.API.Domain.Errors;
 using CoreApp.API.Features.Articles;
 using CoreApp.API.Infrastructure.Errors;
 using CoreApp.IntegrationTests.Features.Users;

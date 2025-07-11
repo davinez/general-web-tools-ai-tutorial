@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using CoreApp.API;
+using CoreApp.API.Domain.Errors;
 using CoreApp.API.Infrastructure;
 using CoreApp.API.Infrastructure.Data;
 using CoreApp.API.Infrastructure.Data.Interceptors;
-using CoreApp.API.Infrastructure.Errors;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;

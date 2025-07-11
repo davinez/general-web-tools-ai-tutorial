@@ -1,7 +1,7 @@
 using System;
 using System.Net;
 
-namespace CoreApp.API.Infrastructure.Errors;
+namespace CoreApp.API.Domain.Errors;
 
 public class RestException(HttpStatusCode code, object? errors = null) : Exception
 {

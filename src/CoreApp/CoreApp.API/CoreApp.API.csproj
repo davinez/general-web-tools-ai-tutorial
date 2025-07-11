@@ -10,7 +10,14 @@
   
   <ItemGroup>
     <PackageReference Include="AutoMapper" />
+    <PackageReference Include="AWSSDK.S3" />
+    <PackageReference Include="FluentValidation" />
     <PackageReference Include="HtmlAgilityPack" />
+    <PackageReference Include="Mediator.Abstractions" />
+    <PackageReference Include="Mediator.SourceGenerator">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>
@@ -26,8 +33,6 @@
     <PackageReference Include="Serilog" />
     <PackageReference Include="Serilog.Extensions.Logging" />
     <PackageReference Include="Serilog.Sinks.Console" />
-    <PackageReference Include="FluentValidation.AspNetCore" />
-    <PackageReference Include="MediatR" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
   </ItemGroup>
 

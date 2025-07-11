@@ -1,6 +1,7 @@
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using CoreApp.API.Domain.Errors;
 using CoreApp.API.Features.Articles;
 using CoreApp.API.Infrastructure;
 using CoreApp.API.Infrastructure.Data;

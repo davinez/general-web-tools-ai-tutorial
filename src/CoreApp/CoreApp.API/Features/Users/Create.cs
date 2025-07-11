@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using CoreApp.API.Domain;
+using CoreApp.API.Domain.Errors;
 using CoreApp.API.Infrastructure;
 using CoreApp.API.Infrastructure.Data;
 using CoreApp.API.Infrastructure.Errors;
