@@ -60,6 +60,15 @@ public class UploadCommandHandler
         CancellationToken cancellationToken
     )
     {
+      // TODO: Move all logic to a separate service and the endpoint will send a event and return in progress, the service
+      // will process and update the event with fail with reason or success with result
+
+      // Use mass transit alternative, Wolverine https://wolverinefx.net/guide/messaging/message-bus.html
+      // https://medium.com/@ms111mithun/mastering-message-queues-leveraging-rabbitmq-locally-and-azure-service-bus-in-production-for-net-277236f25609
+
+      // Where send the html file generated with the grouped bookmarks?
+
+
       // Read the file content into a byte array (if needed)
       using var memoryStream = new MemoryStream();
       await command.File.FileContent.CopyToAsync(memoryStream);

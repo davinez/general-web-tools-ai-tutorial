@@ -110,5 +110,43 @@ Redis
 CosmosDB
 
 
+# Reference 
+
+## Demos Databases
+
+https://github.com/microsoft/sql-server-samples/tree/master/samples/databases
 
 
+
+## Real World General
+
+https://codebase.show/projects/realworld?category=backend
+
+- Net
+https://github.com/gothinkster/aspnetcore-realworld-example-app
+
+- Angular
+https://github.com/stefanoslig/angular-ngrx-nx-realworld-example-app
+
+- Blazor
+https://github.com/JoeyMckenzie/BlazorConduit
+
+
+
+## Blazor
+
+- Collection of blazor projects
+https://github.com/AdrienTorris/awesome-blazor
+
+
+- CRUD with .net 8
+https://github.com/thbst16/dotnet-blazor-crud
+
+
+# Angular
+
+- Collection tools
+https://github.com/PatrickJS/awesome-angular
+
+- Spotify
+https://github.com/trungvose/angular-spotify
