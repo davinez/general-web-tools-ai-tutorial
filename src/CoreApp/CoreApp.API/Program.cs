@@ -32,13 +32,13 @@ builder.Services.AddDbContext<CoreAppContext>((sp, options) =>
     // options.UseSqlite(connectionString);
   }
   else if (
-      databaseProvider.ToLowerInvariant().Trim().Equals("sqlserver", StringComparison.Ordinal)
+      databaseProvider.ToLowerInvariant().Trim().Equals("postgres", StringComparison.Ordinal)
   )
   {
 
     options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
 
-    options.UseSqlServer(connectionString, x => x.MigrationsHistoryTable("__EFMigrationsHistory", "coreapp"));
+    options.UseNpgsql(connectionString, x => x.MigrationsHistoryTable("__EFMigrationsHistory", "coreapp"));
   }
   else
   {
@@ -113,6 +113,9 @@ builder
 builder.Services.AddCoreAppAPI();
 
 builder.Services.AddJwt();
+
+
+// App
 
 var app = builder.Build();
 

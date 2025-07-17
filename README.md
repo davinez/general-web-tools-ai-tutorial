@@ -33,7 +33,7 @@ Get-Migrations
 # Generate SQL script for all migrations	
 Script-Migration
 
-#Drop the database	
+# Drop the database	
 Drop-Database
 
 ```
@@ -43,12 +43,13 @@ Drop-Database
 
 - With docker if running a UI app like Rancher Desktop:
 
-If you get below error when running “docker” command:
+If you get below error when running "docker" command:
 
-````
+```
 error during connect: in the default daemon configuration on Windows, the docker client must be run with elevated privileges to connect: Get "http://%2F%2F.%2Fpipe%2Fdocker_engine/v1.49/containers/json": open //./pipe/docker_engine: The system cannot find the file specified.
 Please run below script in “Terminal (Admin)” to grant yourself access to “docker_engine” socket:
 ```
+
 ```ps
 $account=whoami
 $npipe = "\\.\pipe\docker_engine"
@@ -74,13 +75,11 @@ docker compose -f docker-compose.ai.yml up
 # Pending / Plan
 
 - Adapt Existing functionality of medium example repo in the backend and frontend
+- Bookarks:
+-- UploadCommand send event, process bookmarks, generate file, upload it to temp storage, send succeful event
+-- Front will consume event, and update when is succesful
 
-
-- Bookmarks
-
--- Save folder and bookmarks in each folder 
---- backend
---- frontend
+- Playground:
 
 
 - Implementations Backend
@@ -97,8 +96,8 @@ Implements unit tests and integrations tests (Nunit or Xunit)
 
 - Implementations Frontend
 
-Implement Logic in blazor app and in angular app
-Implement front end tests (blazor and angular)
+Same views for blazor and angular apps
+Testing for blazor and angular
 
 
 - Use Local Emulators
@@ -108,14 +107,23 @@ Event Hubs / RabbitMQ
 Azurite
 Redis
 CosmosDB
+Docker - Implemented
+SQL Server - Implemented
 
 
 # Reference 
 
+## Used in this APP
+
+- .NET API, Real World Example https://github.com/gothinkster/aspnetcore-realworld-example-app
+
+
+
+
 ## Demos Databases
 
+- sql-server-samples
 https://github.com/microsoft/sql-server-samples/tree/master/samples/databases
-
 
 
 ## Real World General
@@ -133,7 +141,7 @@ https://github.com/JoeyMckenzie/BlazorConduit
 
 
 
-## Blazor
+## .NET
 
 - Collection of blazor projects
 https://github.com/AdrienTorris/awesome-blazor
@@ -150,3 +158,5 @@ https://github.com/PatrickJS/awesome-angular
 
 - Spotify
 https://github.com/trungvose/angular-spotify
+
+
