@@ -116,6 +116,16 @@ SQL Server - Implemented
 ## Used in this APP
 
 - .NET API, Real World Example https://github.com/gothinkster/aspnetcore-realworld-example-app
+- .Blazor, Real World Example https://github.com/JoeyMckenzie/BlazorConduit
+
+* Pending to implement
+https://wolverinefx.net/tutorials/ping-pong
+
+https://medium.com/@ms111mithun/mastering-message-queues-leveraging-rabbitmq-locally-and-azure-service-bus-in-production-for-net-277236f25609
+
+https://github.com/dotnet/eShop/tree/main
+
+https://github.com/NimblePros/eShopOnWeb
 
 
 
@@ -149,6 +159,21 @@ https://github.com/AdrienTorris/awesome-blazor
 
 - CRUD with .net 8
 https://github.com/thbst16/dotnet-blazor-crud
+
+
+- Front Angular, Back .NET
+https://github.com/Kareadita/Kavita/tree/develop
+
+
+- The Bank API is a design reference project suitable to bootstrap development for a compliant and modern API.
+https://github.com/Kareadita/Kavita/tree/develop
+
+
+- eShop Microservices
+https://github.com/dotnet/eShop/tree/main
+
+- eShop Monolithic
+https://github.com/NimblePros/eShopOnWeb
 
 
 # Angular
