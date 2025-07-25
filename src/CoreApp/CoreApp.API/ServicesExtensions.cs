@@ -8,6 +8,7 @@ using CoreApp.API.Infrastructure.ExternalServices.ollama;
 using CoreApp.API.Infrastructure.Security;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Mediator;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
@@ -16,6 +17,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
+using Wolverine;
 
 namespace CoreApp.API;
 
@@ -23,7 +25,7 @@ public static class ServicesExtensions
 {
     public static void AddCoreAppAPI(this IServiceCollection services)
     {
-        services.AddMediatR(cfg =>
+        services.AddMediator(cfg =>
             cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly())
         );
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>));
@@ -45,6 +47,35 @@ public static class ServicesExtensions
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
        services.AddHttpClient<IOllamaService, OllamaService>();
+
+    // Configure Wolverine
+    services.AddWolverine(opts =>
+    {
+      // Register the consumer in Wolverine. Wolverine will scan for Consumers by default.
+      // If you explicitly want to register, you can do:
+      // opts.Discovery.IncludeAssembly(typeof(ProcessUploadCommandConsumer).Assembly);
+
+      // If using RabbitMQ
+      opts.UseRabbitMq(mq =>
+      {
+        mq.HostName = "localhost"; // Or your RabbitMQ host
+        mq.Port = 5672;
+        mq.UserName = "guest";
+        mq.Password = "guest";
+      }).AutoProvision(); // Auto-provision queues and exchanges
+
+      // Map message types to their queues (optional, but good practice for clarity)
+      opts.PublishMessage<UploadRequested>().ToRabbitQueue("upload-requested-queue");
+      opts.PublishMessage<UploadProcessingResult>().ToRabbitQueue("upload-processing-result-queue");
+
+      // Configure the consumer to listen on the queue
+      opts.ListenToRabbitQueue("upload-requested-queue")
+          .ProcessMessagesWith<ProcessUploadCommandConsumer>(); // Explicitly define consumer for this queue
+
+      // For results, you might listen on a different queue or use a different mechanism
+      // if you want to update the client directly, e.g., SignalR or a webhook.
+      // For now, let's assume another system will pick up UploadProcessingResult.
+    });
 
   }
 

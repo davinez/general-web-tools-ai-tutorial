@@ -114,7 +114,7 @@ SQL Server - Implemented
 # Reference 
 
 ## Used in this APP
-
+ 
 - .NET API, Real World Example https://github.com/gothinkster/aspnetcore-realworld-example-app
 - .Blazor, Real World Example https://github.com/JoeyMckenzie/BlazorConduit
 
