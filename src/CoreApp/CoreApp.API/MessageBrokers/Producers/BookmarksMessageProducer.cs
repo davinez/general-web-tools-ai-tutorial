@@ -16,7 +16,7 @@ public class BookmarksMessageProducer
     _messageBus = messageBus;
   }
 
-  public ValueTask PublishUploadRequest(UploadBookmarksMessageRequest message)
+  public ValueTask PublishUploadBookmarksRequest(UploadBookmarksMessageRequest message)
   {
     return _messageBus.PublishAsync(message);
   }

@@ -1,5 +1,7 @@
 using Amazon.Runtime.Internal;
 using CoreApp.API.Features.Bookmarks.Dtos;
+using CoreApp.API.Infrastructure.Data;
+using CoreApp.API.Infrastructure.ExternalServices.ollama;
 using CoreApp.API.Infrastructure.ExternalServices.ollama.Dto;
 using CoreApp.API.MessageBrokers.Messages;
 using HtmlAgilityPack;
@@ -10,19 +12,26 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Wolverine;
 using static CoreApp.API.MessageBrokers.Producers.BookmarksMessageProducer;
 
 namespace CoreApp.API.MessageBrokers.Consumers;
 
 public class BookmarksConsumer
 {
+  private readonly CoreAppContext _context;
+  private readonly IOllamaService _ollamaService;
 
-  public async Task Consume(UploadBookmarksMessageRequest message)
+  public BookmarksConsumer(CoreAppContext context, IOllamaService ollamaService)
+  {
+    _context = context;
+    _ollamaService = ollamaService;
+  }
+
+  public async Task Consume(UploadBookmarksMessageRequest message, CoreAppContext context, IOllamaService ollamaService)
   {
     try
     {
-
-
       List<BookmarkDto> uploadedBookmarks = ParseAllBookmarks(message.HtmlContent);
 
       // Remove duplicates
@@ -144,8 +153,9 @@ Here is the data: {jsonData}";
     }
   }
 
+  #region Helpers 
 
-  //
+
   public static List<BookmarkDto> ParseAllBookmarks(string html)
   {
     var document = new HtmlDocument();
@@ -203,4 +213,6 @@ Here is the data: {jsonData}";
       SetIconsInFolder(subFolder, iconsDictionary);
     }
   }
+
+  #endregion
 }

@@ -1,31 +1,5 @@
 services:
 
-  ollama_service:
-    image: ollama/ollama:latest  # Use the official Ollama image
-    container_name: ollama
-    environment:
-      OLLAMA_MODELS: /usr/share/ollama
-    volumes:
-      - ./ollama_data:/root/.ollama:/root/.ollama
-      - ./ollama_data/models:/usr/share/ollama
-    ports:
-      - "11434:11434"
-    networks:
-      - local-network
-
-  # open-webui_service:
-  #   image: ghcr.io/open-webui/open-webui:main 
-  #   container_name: open-webui
-  #   environment:
-  #     - 'OLLAMA_BASE_URL=http://ollama:11434'
-  #     - 'WEBUI_SECRET_KEY='
-  #     - SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
-  #   volumes:
-  #     - ./open-webui:/app/backend/data
-  #   ports:
-  #     - "3000:8080"
-  #   networks:
-  #     - local-network
 
 networks:
   local-network:

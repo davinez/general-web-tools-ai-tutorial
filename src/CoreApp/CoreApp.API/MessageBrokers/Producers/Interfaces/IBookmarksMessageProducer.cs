@@ -6,7 +6,7 @@ namespace CoreApp.API.MessageBrokers.Producers.Interfaces;
 
 public interface IBookmarksMessageProducer
 {
-  public ValueTask PublishUploadRequest(UploadBookmarksMessageRequest message);
+  public ValueTask PublishUploadBookmarksRequest(UploadBookmarksMessageRequest message);
 
   public ValueTask PublishUploadProcessingResult(UploadBookmarksMessageResult message);
 }

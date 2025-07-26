@@ -1,6 +1,4 @@
 using CoreApp.API.Infrastructure;
-using CoreApp.API.Infrastructure.Data;
-using CoreApp.API.Infrastructure.ExternalServices.ollama;
 using CoreApp.API.MessageBrokers.Messages;
 using CoreApp.API.MessageBrokers.Producers.Interfaces;
 using FluentValidation;
@@ -9,7 +7,6 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Wolverine;
 
 namespace CoreApp.API.Features.Bookmarks.Upload;
 
@@ -38,24 +35,17 @@ public class UploadCommandHandler
 
   public sealed class Handler : IQueryHandler<UploadCommand, UploadResponse>
   {
-    private readonly CoreAppContext _context;
+
     private readonly ICurrentUserAccessor _currentUserAccessor;
-
-    private readonly IOllamaService _ollamaService;
-
     private readonly IBookmarksMessageProducer _bookmarksMessageProducer;
 
 
     public Handler(
-      CoreAppContext context,
       ICurrentUserAccessor currentUserAccessor,
-      IOllamaService ollamaService,
       IBookmarksMessageProducer bookmarksMessageProducer)
     {
-      _context = context;
       _currentUserAccessor = currentUserAccessor;
-      _ollamaService = ollamaService;
-      _bookmarksMessageProducer = bookmarksMessageProducer;   
+      _bookmarksMessageProducer = bookmarksMessageProducer;
     }
 
 
@@ -93,11 +83,20 @@ public class UploadCommandHandler
         HtmlContent = cleanedHtml
       };
 
-      // Publish the message using Wolverine
-      await _bookmarksMessageProducer.PublishUploadRequest(uploadRequestedMessage);
+      try
+      {
 
-      // Return an immediate "in-progress" response
-      return new UploadResponse() { UploadId = uploadId, IsQueuePublishSuccess = true };
+        // Publish the message using Wolverine
+        await _bookmarksMessageProducer.PublishUploadBookmarksRequest(uploadRequestedMessage);
+
+      }
+      catch (Exception ex)
+      {
+
+        return new UploadResponse() { UploadId = uploadId, IsQueuePublishSuccess = false, Message = ex.Message };
+      }
+
+      return new UploadResponse() { UploadId = uploadId, IsQueuePublishSuccess = true, Message = "In Progress" };
     }
 
 
