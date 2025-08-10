@@ -8,5 +8,5 @@ public interface IBookmarksMessageProducer
 {
   public ValueTask PublishUploadBookmarksRequest(UploadBookmarksMessageRequest message);
 
-  public ValueTask PublishUploadProcessingResult(UploadBookmarksMessageResult message);
+  public ValueTask PublishDeleteRequest(DeleteBookmarksMessageRequest message);
 }

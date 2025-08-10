@@ -38,6 +38,11 @@ Drop-Database
 
 ```
 
+# Linux
+
+sudo apt update && sudo apt upgrade -y
+
+
 
 ## Troubleshoot
 
@@ -74,15 +79,15 @@ docker compose -f docker-compose.ai.yml up
 
 # Pending / Plan
 
-- Adapt Existing functionality of medium example repo in the backend and frontend
+- Logic in Angular and Blazor App
 - Bookarks:
--- UploadCommand send event, process bookmarks, generate file, upload it to temp storage, send succeful event
--- Front will consume event, and update when is succesful
+-- Upload processed bookmark file to blob
+-- Handle processing message status
+-- SignalR to angular client to .net api and status of processing bookmark
 
 - Playground:
 
-
-- Implementations Backend
+##  Implementations Backend
 
 Implement Service Bus
 Implement Azure Event Hubs / RabbitMQ
@@ -94,13 +99,7 @@ Implement transactions DB
 Implement GraphQL
 Implements unit tests and integrations tests (Nunit or Xunit)
 
-- Implementations Frontend
-
-Same views for blazor and angular apps
-Testing for blazor and angular
-
-
-- Use Local Emulators
+## Use Local Emulators
 
 Service Bus
 Event Hubs / RabbitMQ
@@ -111,12 +110,23 @@ Docker - Implemented
 SQL Server - Implemented
 
 
+
 # Reference 
 
 ## Used in this APP
  
-- .NET API, Real World Example https://github.com/gothinkster/aspnetcore-realworld-example-app
-- .Blazor, Real World Example https://github.com/JoeyMckenzie/BlazorConduit
+- Angular Template
+https://github.com/ng-matero/ng-matero
+
+- .NET API, Real World Example 
+https://github.com/gothinkster/aspnetcore-realworld-example-app
+
+
+-- Reference
+https://github.com/bitwarden
+
+https://github.com/Kareadita/Kavita/tree/develop/UI/Web/src/app
+
 
 * Pending to implement
 https://wolverinefx.net/tutorials/ping-pong
@@ -136,7 +146,7 @@ https://github.com/NimblePros/eShopOnWeb
 https://github.com/microsoft/sql-server-samples/tree/master/samples/databases
 
 
-## Real World General
+## Real World App Frameworks General
 
 https://codebase.show/projects/realworld?category=backend
 
@@ -148,7 +158,6 @@ https://github.com/stefanoslig/angular-ngrx-nx-realworld-example-app
 
 - Blazor
 https://github.com/JoeyMckenzie/BlazorConduit
-
 
 
 ## .NET
@@ -166,7 +175,6 @@ https://github.com/Kareadita/Kavita/tree/develop
 
 
 - The Bank API is a design reference project suitable to bootstrap development for a compliant and modern API.
-https://github.com/Kareadita/Kavita/tree/develop
 
 
 - eShop Microservices

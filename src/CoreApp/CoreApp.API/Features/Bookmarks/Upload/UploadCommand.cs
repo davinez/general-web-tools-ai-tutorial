@@ -1,8 +1,10 @@
+using CoreApp.API.Domain.Constants;
 using CoreApp.API.Infrastructure;
 using CoreApp.API.MessageBrokers.Messages;
 using CoreApp.API.MessageBrokers.Producers.Interfaces;
 using FluentValidation;
 using Mediator;
+using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Threading;
@@ -36,14 +38,17 @@ public class UploadCommandHandler
   public sealed class Handler : IQueryHandler<UploadCommand, UploadResponse>
   {
 
+    private readonly ILogger<UploadCommandHandler> _logger;
     private readonly ICurrentUserAccessor _currentUserAccessor;
     private readonly IBookmarksMessageProducer _bookmarksMessageProducer;
 
 
     public Handler(
+      ILogger<UploadCommandHandler> logger,
       ICurrentUserAccessor currentUserAccessor,
       IBookmarksMessageProducer bookmarksMessageProducer)
     {
+      _logger = logger;
       _currentUserAccessor = currentUserAccessor;
       _bookmarksMessageProducer = bookmarksMessageProducer;
     }
@@ -92,11 +97,12 @@ public class UploadCommandHandler
       }
       catch (Exception ex)
       {
+        _logger.LogError($"Error ocurred in {nameof(UploadCommandHandler)}: with message {ex.Message} and request data: uploadId {uploadId} IsQueuePublishSuccess false");
 
-        return new UploadResponse() { UploadId = uploadId, IsQueuePublishSuccess = false, Message = ex.Message };
+        return new UploadResponse() { UploadId = uploadId, IsQueuePublishSuccess = false, Message = StatusConstants.NO_PUBLISHED };
       }
 
-      return new UploadResponse() { UploadId = uploadId, IsQueuePublishSuccess = true, Message = "In Progress" };
+      return new UploadResponse() { UploadId = uploadId, IsQueuePublishSuccess = true, Message = StatusConstants.IN_PROGRESS };
     }
 
 

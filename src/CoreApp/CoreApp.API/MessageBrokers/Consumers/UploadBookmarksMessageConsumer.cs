@@ -1,34 +1,37 @@
-using Amazon.Runtime.Internal;
 using CoreApp.API.Features.Bookmarks.Dtos;
+using CoreApp.API.Features.Bookmarks.Upload;
 using CoreApp.API.Infrastructure.Data;
 using CoreApp.API.Infrastructure.ExternalServices.ollama;
 using CoreApp.API.Infrastructure.ExternalServices.ollama.Dto;
+using CoreApp.API.MessageBrokers.Dto;
 using CoreApp.API.MessageBrokers.Messages;
 using HtmlAgilityPack;
+using Microsoft.Extensions.Logging;
 using Spectre.Console;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
-using Wolverine;
-using static CoreApp.API.MessageBrokers.Producers.BookmarksMessageProducer;
 
 namespace CoreApp.API.MessageBrokers.Consumers;
 
-public class BookmarksConsumer
+public class UploadBookmarksMessageConsumer
 {
+  private readonly ILogger<UploadBookmarksMessageConsumer> _logger;
   private readonly CoreAppContext _context;
   private readonly IOllamaService _ollamaService;
 
-  public BookmarksConsumer(CoreAppContext context, IOllamaService ollamaService)
+  public UploadBookmarksMessageConsumer(ILogger<UploadBookmarksMessageConsumer> logger, CoreAppContext context, IOllamaService ollamaService)
   {
+    _logger = logger;
     _context = context;
     _ollamaService = ollamaService;
   }
 
-  public async Task Consume(UploadBookmarksMessageRequest message, CoreAppContext context, IOllamaService ollamaService)
+  public async Task Consume(UploadBookmarksMessageRequest message, CancellationToken cancellationToken)
   {
     try
     {
@@ -131,26 +134,6 @@ Here is the data: {jsonData}";
       // Hnadle retry if fail?
     }
 
-  }
-
-
-  // New method to consume DeleteBookmarksMessageRequest
-  public async Task Handle(DeleteBookmarksMessageRequest message) // Can use Handle, Consume, etc.
-  {
-    _logger.LogInformation("Processing delete bookmarks request for User: {UserId}, Bookmarks: {BookmarkIds}",
-                           message.UserId, string.Join(", ", message.BookmarkIds));
-    try
-    {
-      // Logic to delete bookmarks from the database
-      await Task.Delay(30); // Simulate deletion work
-
-      _logger.LogInformation("Bookmarks deleted for User: {UserId}", message.UserId);
-      // You could cascade an event here too, e.g., BookmarksDeletedEvent
-    }
-    catch (Exception ex)
-    {
-      _logger.LogError(ex, "Error deleting bookmarks for User: {UserId}", message.UserId);
-    }
   }
 
   #region Helpers 
