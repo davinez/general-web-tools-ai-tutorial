@@ -117,6 +117,8 @@ SQL Server - Implemented
  
 - Angular Template
 https://github.com/ng-matero/ng-matero
+https://nzbin.gitbook.io/ng-matero/permissions
+https://ng-matero.github.io/ng-matero/dashboard
 
 - .NET API, Real World Example 
 https://github.com/gothinkster/aspnetcore-realworld-example-app
