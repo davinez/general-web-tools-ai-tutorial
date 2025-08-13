@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace CoreApp.API.Domain.Constants
 {
   public static class StatusConstants
@@ -11,9 +13,14 @@ namespace CoreApp.API.Domain.Constants
     public const string RESOURCE_NOT_FOUND = "Resource not found";
     public const string INTERNAL_SERVER_ERROR = "Internal server error";
 
-    public const string NO_PUBLISHED = "No Published";
-    public const string IN_PROGRESS = "In Progress";
-    public const string COMPLETED = "Completed";
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum PublicationStatus
+    {
+      NoPublished,
+      InProgress,
+      Completed,
+      Failed
+    }
 
     public const string VALIDATION_ERROR = "Validation error occurred";
     public const string RECORD_CREATED = "Record created successfully";

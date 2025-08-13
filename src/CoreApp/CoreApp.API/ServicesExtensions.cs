@@ -42,7 +42,7 @@ public static class ServicesExtensions
     services.AddScoped<IProfileReader, ProfileReader>();
     services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-    services.AddHttpClient<IOllamaService, OllamaService>();
+    services.AddHttpClient<IAIService2, AIService2>();
 
     // Configure Wolverine
     services.AddWolverine(opts =>

@@ -22,9 +22,9 @@ public class UploadBookmarksMessageConsumer
 {
   private readonly ILogger<UploadBookmarksMessageConsumer> _logger;
   private readonly CoreAppContext _context;
-  private readonly IOllamaService _ollamaService;
+  private readonly IAIService2 _ollamaService;
 
-  public UploadBookmarksMessageConsumer(ILogger<UploadBookmarksMessageConsumer> logger, CoreAppContext context, IOllamaService ollamaService)
+  public UploadBookmarksMessageConsumer(ILogger<UploadBookmarksMessageConsumer> logger, CoreAppContext context, IAIService2 ollamaService)
   {
     _logger = logger;
     _context = context;
@@ -61,8 +61,9 @@ public class UploadBookmarksMessageConsumer
       };
 
       var simplified = uploadedBookmarks.Select(b => new { b.Id, b.Title, b.Url }).ToList();
-      var jsonData = JsonSerializer.Serialize(simplified, options);
 
+      // AI Request:
+      var jsonData = JsonSerializer.Serialize(simplified, options);
       var prompt = @$"I have a list of bookmarks in JSON format. Each bookmark has the following properties:
 
 Id: a unique identifier
@@ -82,7 +83,7 @@ Only create subfolders if there are enough related bookmarks (e.g., 3 or more) t
 Output Format: Return the result as a JSON object.
 Here is the data: {jsonData}";
 
-      var requestAI = new ProcessBookmarkGroupingRequest()
+      var requestAI = new BookmarkGroupingRequest()
       {
         Model = "llama3.2:3b",
         Prompt = prompt,
@@ -91,6 +92,7 @@ Here is the data: {jsonData}";
       };
 
       var responseOllama = await _ollamaService.ProcessBookmarksGroupingAsync(requestAI, cancellationToken);
+
 
       foreach (var bookmark in responseOllama.WithoutFolder)
       {

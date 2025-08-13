@@ -9,6 +9,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using static CoreApp.API.Domain.Constants.StatusConstants;
 
 namespace CoreApp.API.Features.Bookmarks.Upload;
 
@@ -99,10 +100,10 @@ public class UploadCommandHandler
       {
         _logger.LogError($"Error ocurred in {nameof(UploadCommandHandler)}: with message {ex.Message} and request data: uploadId {uploadId} IsQueuePublishSuccess false");
 
-        return new UploadResponse() { UploadId = uploadId, IsQueuePublishSuccess = false, Message = StatusConstants.NO_PUBLISHED };
+        return new UploadResponse() { UploadId = uploadId, IsQueuePublishSuccess = false, Message = PublicationStatus.Failed };
       }
 
-      return new UploadResponse() { UploadId = uploadId, IsQueuePublishSuccess = true, Message = StatusConstants.IN_PROGRESS };
+      return new UploadResponse() { UploadId = uploadId, IsQueuePublishSuccess = true, Message = PublicationStatus.InProgress };
     }
 
 
