@@ -110,7 +110,7 @@ builder
             .WhenWritingNull
     );
 
-builder.Services.AddCoreAppAPI();
+builder.Services.AddCoreAppAPI(builder.Configuration);
 
 builder.Services.AddJwt();
 
