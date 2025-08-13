@@ -1,10 +1,10 @@
-using System.Threading;
-using System.Threading.Tasks;
 using CoreApp.API.Infrastructure;
 using CoreApp.API.Infrastructure.Security;
-using MediatR;
+using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CoreApp.API.Features.Users;
 
@@ -12,16 +12,21 @@ namespace CoreApp.API.Features.Users;
 [Authorize(AuthenticationSchemes = JwtIssuerOptions.Schemes)]
 public class UserController(IMediator mediator, ICurrentUserAccessor currentUserAccessor)
 {
-    [HttpGet]
-    public Task<UserEnvelope> GetCurrent(CancellationToken cancellationToken) =>
-        mediator.Send(
-            new Details.Query(currentUserAccessor.GetCurrentUsername() ?? "<unknown>"),
-            cancellationToken
-        );
+  [HttpGet]
+  public async ValueTask<UserResponse> GetCurrent(CancellationToken cancellationToken)
+  {
+    return await mediator.Send(
+          new Details.Query(currentUserAccessor.GetCurrentUsername() ?? "<unknown>"),
+          cancellationToken
+      );
+  }
 
-    [HttpPut]
-    public Task<UserEnvelope> UpdateUser(
-        [FromBody] Edit.Command command,
-        CancellationToken cancellationToken
-    ) => mediator.Send(command, cancellationToken);
+  [HttpPut]
+  public async Task<UserResponse> UpdateUser(
+      [FromBody] Edit.Command command,
+      CancellationToken cancellationToken
+  )
+  {
+    return await mediator.Send(command, cancellationToken);
+  }
 }

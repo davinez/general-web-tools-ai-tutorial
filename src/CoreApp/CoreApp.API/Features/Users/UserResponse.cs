@@ -1,6 +1,6 @@
 namespace CoreApp.API.Features.Users;
 
-public class User
+public class UserResponse
 {
     public string? Username { get; init; }
 
@@ -13,4 +13,3 @@ public class User
     public string? Token { get; set; }
 }
 
-public record UserEnvelope(User User);

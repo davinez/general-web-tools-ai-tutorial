@@ -1,12 +1,12 @@
+using CoreApp.API.Domain.Errors;
+using CoreApp.API.Infrastructure.ExternalServices.ollama.Dto;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using CoreApp.API.Infrastructure.Errors;
-using CoreApp.API.Infrastructure.ExternalServices.ollama.Dto;
-using Microsoft.Extensions.Configuration;
 
 namespace CoreApp.API.Infrastructure.ExternalServices.ollama;
 

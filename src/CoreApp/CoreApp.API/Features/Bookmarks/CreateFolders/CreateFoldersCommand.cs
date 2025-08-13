@@ -1,16 +1,16 @@
-using System.Threading;
-using System.Threading.Tasks;
 using CoreApp.API.Domain;
 using CoreApp.API.Features.Bookmarks.Dtos;
 using CoreApp.API.Infrastructure;
 using CoreApp.API.Infrastructure.Data;
 using FluentValidation;
-using MediatR;
+using Mediator;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CoreApp.API.Features.Bookmarks.CreateFolders
 {
 
-  public record CreateFoldersCommand(CreateFoldersRequest Request) : IRequest;
+  public record CreateFoldersCommand(CreateFoldersRequest Request) : ICommand;
 
 
   public class CreateFoldersCommandHandler
@@ -30,7 +30,7 @@ namespace CoreApp.API.Features.Bookmarks.CreateFolders
     }
 
 
-    public class Handler : IRequestHandler<CreateFoldersCommand>
+    public class Handler : ICommandHandler<CreateFoldersCommand>
     {
       private readonly CoreAppContext _context;
       private readonly ICurrentUserAccessor _currentUserAccessor;
@@ -42,7 +42,7 @@ namespace CoreApp.API.Features.Bookmarks.CreateFolders
         _currentUserAccessor = currentUserAccessor;
       }
 
-      public async Task Handle(
+      public async ValueTask<Unit> Handle(
         CreateFoldersCommand command,
         CancellationToken cancellationToken
        )
@@ -54,6 +54,7 @@ namespace CoreApp.API.Features.Bookmarks.CreateFolders
           await SaveFoldersAndBookmarksToDatabase(folder, 0, _context, cancellationToken);
         }
 
+        return Unit.ValueTask.Result;
       }
 
       private static async Task SaveFoldersAndBookmarksToDatabase(
@@ -97,14 +98,7 @@ namespace CoreApp.API.Features.Bookmarks.CreateFolders
           await SaveFoldersAndBookmarksToDatabase(subFolder, dbFolder.Id, context, cancellationToken);
         }
       }
-
-
-
     }
-
-
-
-
 
   }
 

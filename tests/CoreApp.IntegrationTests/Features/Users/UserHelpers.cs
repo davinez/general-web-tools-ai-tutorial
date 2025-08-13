@@ -12,7 +12,7 @@ public static class UserHelpers
   /// </summary>
   /// <param name="fixture"></param>
   /// <returns></returns>
-  public static async Task<User> CreateDefaultUser(SliceFixture fixture)
+  public static async Task<UserResponse> CreateDefaultUser(SliceFixture fixture)
   {
     var command = new Create.Command(new Create.UserData(DefaultUserName, "email", "password"));
 

@@ -1,7 +1,7 @@
+using Mediator;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
 
 namespace CoreApp.API.Infrastructure.Data;
 
@@ -12,30 +12,30 @@ namespace CoreApp.API.Infrastructure.Data;
 /// <typeparam name="TResponse"></typeparam>
 public class DBContextTransactionPipelineBehavior<TRequest, TResponse>(CoreAppContext context)
     : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : notnull
+    where TRequest : IMessage
 {
-    public async Task<TResponse> Handle(
-        TRequest request,
-        RequestHandlerDelegate<TResponse> next,
-        CancellationToken cancellationToken
-    )
+  public async ValueTask<TResponse> Handle(
+      TRequest request,
+      CancellationToken cancellationToken,
+      MessageHandlerDelegate<TRequest, TResponse> next
+  )
+  {
+    TResponse? result;
+
+    try
     {
-        TResponse? result;
+      context.BeginTransaction();
 
-        try
-        {
-            context.BeginTransaction();
+      result = await next(request, cancellationToken);
 
-            result = await next();
-
-            context.CommitTransaction();
-        }
-        catch (Exception)
-        {
-            context.RollbackTransaction();
-            throw;
-        }
-
-        return result;
+      context.CommitTransaction();
     }
+    catch (Exception)
+    {
+      context.RollbackTransaction();
+      throw;
+    }
+
+    return result;
+  }
 }

@@ -1,14 +1,10 @@
-using System.IO;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+using CoreApp.API.Features.Bookmarks.CreateFolders;
+using CoreApp.API.Features.Bookmarks.Upload;
+using Mediator;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using CoreApp.API.Features.Bookmarks.Upload;
-using CoreApp.API.Features.Bookmarks.Dtos;
-using System.Collections.Generic;
-using CoreApp.API.Features.Bookmarks.CreateFolders;
+using System;
+using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

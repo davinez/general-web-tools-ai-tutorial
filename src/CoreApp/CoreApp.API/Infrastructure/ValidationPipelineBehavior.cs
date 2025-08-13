@@ -1,37 +1,41 @@
+using FluentValidation;
+using Mediator;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentValidation;
-using MediatR;
 
 namespace CoreApp.API.Infrastructure;
 
 public class ValidationPipelineBehavior<TRequest, TResponse>(
     IEnumerable<IValidator<TRequest>> validators
 ) : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : notnull
+    where TRequest : IMessage
 {
-    private readonly List<IValidator<TRequest>> _validators = validators.ToList();
+  private readonly List<IValidator<TRequest>> _validators = validators.ToList();
 
-    public async Task<TResponse> Handle(
-        TRequest request,
-        RequestHandlerDelegate<TResponse> next,
-        CancellationToken cancellationToken
-    )
+  public async ValueTask<TResponse> Handle(
+      TRequest request,
+      CancellationToken cancellationToken,
+      MessageHandlerDelegate<TRequest, TResponse> next    
+  )
+  {
+    TResponse? result;
+
+    var context = new ValidationContext<TRequest>(request);
+    var failures = _validators
+        .Select(v => v.Validate(context))
+        .SelectMany(result => result.Errors)
+        .Where(f => f != null)
+        .ToList();
+
+    if (failures.Count != 0)
     {
-        var context = new ValidationContext<TRequest>(request);
-        var failures = _validators
-            .Select(v => v.Validate(context))
-            .SelectMany(result => result.Errors)
-            .Where(f => f != null)
-            .ToList();
-
-        if (failures.Count != 0)
-        {
-            throw new ValidationException(failures);
-        }
-
-        return await next();
+      throw new ValidationException(failures);
     }
+
+    result = await next(request, cancellationToken);
+
+    return result;
+  }
 }

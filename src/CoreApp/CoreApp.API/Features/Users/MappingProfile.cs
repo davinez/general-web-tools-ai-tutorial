@@ -4,5 +4,5 @@ namespace CoreApp.API.Features.Users;
 
 public class MappingProfile : Profile
 {
-    public MappingProfile() => CreateMap<Domain.Person, User>(MemberList.None);
+    public MappingProfile() => CreateMap<Domain.Person, UserResponse>(MemberList.None);
 }
