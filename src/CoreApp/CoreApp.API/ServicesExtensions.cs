@@ -1,8 +1,10 @@
 using CoreApp.API.Domain.Services;
 using CoreApp.API.Infrastructure;
 using CoreApp.API.Infrastructure.Data;
+using CoreApp.API.Infrastructure.ExternalServices;
 using CoreApp.API.Infrastructure.ExternalServices.AiServices;
 using CoreApp.API.Infrastructure.ExternalServices.ollama;
+using CoreApp.API.Infrastructure.ExternalServices.S3StorageService;
 using CoreApp.API.Infrastructure.Security;
 using Mediator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -62,6 +64,20 @@ public static class ServicesExtensions
             break;
         default:
             throw new InvalidOperationException("Invalid AI Service Provider specified in configuration.");
+    }
+
+    // Register Storage Service based on configuration
+    var storageServiceProvider = configuration["StorageService:Provider"];
+    switch (storageServiceProvider)
+    {
+        case "S3":
+            services.AddScoped<IStorageService, S3StorageService>();
+            break;
+        case "AzureBlobStorage":
+            services.AddScoped<IStorageService, AzureBlobStorageService>();
+            break;
+        default:
+            throw new InvalidOperationException("Invalid Storage Service Provider specified in configuration.");
     }
 
     // Configure Wolverine
