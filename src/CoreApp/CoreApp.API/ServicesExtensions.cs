@@ -1,10 +1,13 @@
+using CoreApp.API.Domain.Services;
 using CoreApp.API.Infrastructure;
 using CoreApp.API.Infrastructure.Data;
+using CoreApp.API.Infrastructure.ExternalServices.AiServices;
 using CoreApp.API.Infrastructure.ExternalServices.ollama;
 using CoreApp.API.Infrastructure.Security;
 using Mediator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -19,7 +22,7 @@ namespace CoreApp.API;
 
 public static class ServicesExtensions
 {
-  public static void AddCoreAppAPI(this IServiceCollection services)
+  public static void AddCoreAppAPI(this IServiceCollection services, IConfiguration configuration)
   {
     services.AddMediator(cfg =>
         cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly())
@@ -43,6 +46,23 @@ public static class ServicesExtensions
     services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
     services.AddHttpClient<IAIService2, AIService2>();
+
+    // Register AI Service based on configuration
+    var aiServiceProvider = configuration["AiService:Provider"];
+    switch (aiServiceProvider)
+    {
+        case "Gemini":
+            services.AddHttpClient<IAiService, GeminiAiService>(client =>
+            {
+                client.BaseAddress = new Uri("https://generativelanguage.googleapis.com");
+            });
+            break;
+        case "AzureOpenAI":
+            services.AddScoped<IAiService, AzureOpenAiService>();
+            break;
+        default:
+            throw new InvalidOperationException("Invalid AI Service Provider specified in configuration.");
+    }
 
     // Configure Wolverine
     services.AddWolverine(opts =>
