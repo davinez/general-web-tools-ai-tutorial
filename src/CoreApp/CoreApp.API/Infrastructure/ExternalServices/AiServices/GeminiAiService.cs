@@ -1,91 +1,92 @@
-using System;
+using CoreApp.API.Domain.Errors;
+using CoreApp.API.Domain.Services.ExternalServices;
+using CoreApp.API.Infrastructure.ExternalServices.AiServices.Dto;
+using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using CoreApp.API.Domain.Errors;
-using CoreApp.API.Domain.Services;
-using CoreApp.API.Infrastructure.ExternalServices.ollama.Dto;
-using Microsoft.Extensions.Configuration;
 
 namespace CoreApp.API.Infrastructure.ExternalServices.AiServices
 {
-    // For more information on how to use the Gemini API, see https://ai.google.dev/docs/gemini_api_overview
-    public class GeminiAiService : IAiService
+  // For more information on how to use the Gemini API, see https://ai.google.dev/docs/gemini_api_overview
+  public class GeminiAiService : IAiService
+  {
+    private readonly HttpClient _client;
+    private readonly IConfiguration _configuration;
+    private readonly JsonSerializerOptions _options;
+
+    public GeminiAiService(IConfiguration configuration, HttpClient client)
     {
-        private readonly HttpClient _client;
-        private readonly IConfiguration _configuration;
-        private readonly JsonSerializerOptions _options;
+      _configuration = configuration;
+      _client = client;
+      // _client.Timeout = new TimeSpan(0, 0, 30);
+      _options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+    }
 
-        public GeminiAiService(IConfiguration configuration, HttpClient client)
-        {
-            _configuration = configuration;
-            _client = client;
-            _options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-        }
+    public async Task<List<CategorizationResponse>> CategorizeIntoFolderNameAsync(string prompt, CancellationToken cancellationToken)
+    {
+      var apiKey = _configuration["AiService:Gemini:ApiKey"];
+      var modelName = _configuration["AiService:Gemini:ModelName"];
 
-        public async Task<BookmarkGroupingResponse> BookmarksGroupingAsync(BookmarkGroupingRequest request, CancellationToken cancellationToken)
-        {
-            var apiKey = _configuration["AiService:Gemini:ApiKey"];
-            var modelName = _configuration["AiService:Gemini:ModelName"];
+      var requestUri = $"/v1beta/models/{modelName}:generateContent?key={apiKey}";
 
-            var requestUri = $"/v1beta/models/{modelName}:generateContent?key={apiKey}";
-
-            var requestBody = new GeminiRequest
-            {
-                Contents = new[]
-                {
-                    new Content
+      var requestBody = new GeminiRequest
+      {
+        Contents =
+          [
+              new Content
                     {
-                        Parts = new[]
-                        {
-                            new Part { Text = request.Prompt }
-                        }
+                        Parts =
+                        [
+                            new Part { Text = prompt }
+                        ]
                     }
-                }
-            };
+          ]
+      };
 
-            string requestJson = JsonSerializer.Serialize(requestBody, _options);
+      string requestJson = JsonSerializer.Serialize(requestBody, _options);
 
-            using StringContent jsonContent = new(
-                requestJson,
-                Encoding.UTF8,
-                "application/json"
-            );
+      using StringContent jsonContent = new(
+          requestJson,
+          Encoding.UTF8,
+          "application/json"
+      );
 
-            using var response = await _client.PostAsync(requestUri, jsonContent, cancellationToken);
+      using var response = await _client.PostAsync(requestUri, jsonContent, cancellationToken);
 
-            if (!response.IsSuccessStatusCode)
-            {
-                var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
-                throw new RemoteServiceException(nameof(GeminiAiService), $"Error: {response.StatusCode} Message: {response.ReasonPhrase} Content: {errorContent} Request: {requestJson}");
-            }
+      if (!response.IsSuccessStatusCode)
+      {
+        var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
+        throw new RemoteServiceException(nameof(GeminiAiService), $"Error: {response.StatusCode} Message: {response.ReasonPhrase} Content: {errorContent} Request: {requestJson}");
+      }
 
-            var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
+      var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
 
-            using var doc = JsonDocument.Parse(responseJson);
-            var dataElement = doc.RootElement.GetProperty("candidates")[0].GetProperty("content").GetProperty("parts")[0].GetProperty("text");
-            var responseText = dataElement.GetString();
+      using var doc = JsonDocument.Parse(responseJson);
+      JsonElement dataElement = doc.RootElement.GetProperty("candidates")[0].GetProperty("content").GetProperty("parts")[0].GetProperty("text");
+      string responseText = dataElement.GetString() ?? throw new RemoteServiceException(nameof(GeminiAiService), $"Error in deserialize response");
 
-            var data = JsonSerializer.Deserialize<BookmarkGroupingResponse>(responseText, _options);
+      List<CategorizationResponse> data = JsonSerializer.Deserialize<List<CategorizationResponse>>(responseText, _options) ?? throw new RemoteServiceException(nameof(GeminiAiService), $"Error in deserialize response node");
 
-            return data ?? throw new RemoteServiceException(nameof(GeminiAiService), $"Error in deserialize response for {responseJson}");
-        }
+      return data;
+    }
 
-        public async Task<string> GenerateTextAsync(string prompt)
-        {
-            // The API key for the Gemini service.
-            var apiKey = _configuration["AiService:Gemini:ApiKey"];
-            // The name of the model to use.
-            var modelName = _configuration["AiService:Gemini:ModelName"];
+    public async Task<string> GenerateTextAsync(string prompt, CancellationToken cancellationToken)
+    {
+      // The API key for the Gemini service.
+      var apiKey = _configuration["AiService:Gemini:ApiKey"];
+      // The name of the model to use.
+      var modelName = _configuration["AiService:Gemini:ModelName"];
 
-            var requestUri = $"/v1beta/models/{modelName}:generateContent?key={apiKey}";
+      var requestUri = $"/v1beta/models/{modelName}:generateContent?key={apiKey}";
 
-            var requestBody = new GeminiRequest
-            {
-                Contents = new[]
-                {
+      var requestBody = new GeminiRequest
+      {
+        Contents = new[]
+          {
                     new Content
                     {
                         Parts = new[]
@@ -94,52 +95,52 @@ namespace CoreApp.API.Infrastructure.ExternalServices.AiServices
                         }
                     }
                 }
-            };
+      };
 
-            string requestJson = JsonSerializer.Serialize(requestBody, _options);
+      string requestJson = JsonSerializer.Serialize(requestBody, _options);
 
-            using StringContent jsonContent = new(
-                requestJson,
-                Encoding.UTF8,
-                "application/json"
-            );
+      using StringContent jsonContent = new(
+          requestJson,
+          Encoding.UTF8,
+          "application/json"
+      );
 
-            using var response = await _client.PostAsync(requestUri, jsonContent);
+      using var response = await _client.PostAsync(requestUri, jsonContent, cancellationToken);
 
-            if (!response.IsSuccessStatusCode)
-            {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                throw new RemoteServiceException(nameof(GeminiAiService), $"Error: {response.StatusCode} Message: {response.ReasonPhrase} Content: {errorContent} Request: {requestJson}");
-            }
+      if (!response.IsSuccessStatusCode)
+      {
+        var errorContent = await response.Content.ReadAsStringAsync();
+        throw new RemoteServiceException(nameof(GeminiAiService), $"Error: {response.StatusCode} Message: {response.ReasonPhrase} Content: {errorContent} Request: {requestJson}");
+      }
 
-            var responseJson = await response.Content.ReadAsStringAsync();
+      var responseJson = await response.Content.ReadAsStringAsync();
 
-            using var doc = JsonDocument.Parse(responseJson);
-            var dataElement = doc.RootElement.GetProperty("candidates")[0].GetProperty("content").GetProperty("parts")[0].GetProperty("text");
-            var responseText = dataElement.GetString();
+      using var doc = JsonDocument.Parse(responseJson);
+      var dataElement = doc.RootElement.GetProperty("candidates")[0].GetProperty("content").GetProperty("parts")[0].GetProperty("text");
+      var responseText = dataElement.GetString();
 
-            return responseText ?? throw new RemoteServiceException(nameof(GeminiAiService), $"Error in deserialize response for {responseJson}");
-        }
+      return responseText ?? throw new RemoteServiceException(nameof(GeminiAiService), $"Error in deserialize response for {responseJson}");
     }
+  }
 
-    // The request body for the Gemini API.
-    public class GeminiRequest
-    {
-        // The contents of the request.
-        public Content[] Contents { get; set; }
-    }
+  // The request body for the Gemini API.
+  public class GeminiRequest
+  {
+    // The contents of the request.
+    public required Content[] Contents { get; set; }
+  }
 
-    // The content of the request.
-    public class Content
-    {
-        // The parts of the content.
-        public Part[] Parts { get; set; }
-    }
+  // The content of the request.
+  public class Content
+  {
+    // The parts of the content.
+    public required Part[] Parts { get; set; }
+  }
 
-    // The part of the content.
-    public class Part
-    {
-        // The text of the part.
-        public string Text { get; set; }
-    }
+  // The part of the content.
+  public class Part
+  {
+    // The text of the part.
+    public required string Text { get; set; }
+  }
 }

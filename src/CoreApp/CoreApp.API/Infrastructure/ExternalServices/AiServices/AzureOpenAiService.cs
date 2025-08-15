@@ -1,84 +1,111 @@
-using System;
-using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 using Azure;
 using Azure.AI.OpenAI;
 using CoreApp.API.Domain.Errors;
-using CoreApp.API.Domain.Services;
-using CoreApp.API.Infrastructure.ExternalServices.ollama.Dto;
+using CoreApp.API.Domain.Services.ExternalServices;
+using CoreApp.API.Infrastructure.ExternalServices.AiServices.Dto;
 using Microsoft.Extensions.Configuration;
+using OpenAI.Chat;
+using System;
+using System.ClientModel;
+using System.Collections.Generic;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CoreApp.API.Infrastructure.ExternalServices.AiServices
 {
-    // For more information on how to use the Azure OpenAI API, see https://learn.microsoft.com/en-us/azure/ai-services/openai/reference
-    public class AzureOpenAiService : IAiService
+  // For more information on how to use the Azure OpenAI API, see https://learn.microsoft.com/en-us/azure/ai-services/openai/reference
+  public class AzureOpenAiService : IAiService
+  {
+    private readonly AzureOpenAIClient _client;
+    // The IConfiguration field is no longer needed after the constructor runs.
+    // private readonly IConfiguration _configuration; 
+    private readonly JsonSerializerOptions _options;
+    private readonly string _deploymentName;
+
+
+    public AzureOpenAiService(IConfiguration configuration)
     {
-        private readonly OpenAIClient _client;
-        private readonly IConfiguration _configuration;
-        private readonly JsonSerializerOptions _options;
+      // The _configuration field is only used here, so we don't need to store it.
+      var apiKey = configuration["AiService:AzureOpenAI:ApiKey"]
+          ?? throw new InvalidOperationException("Azure OpenAI API key ('AiService:AzureOpenAI:ApiKey') is not configured.");
+      var endpointString = configuration["AiService:AzureOpenAI:Endpoint"]
+          ?? throw new InvalidOperationException("Azure OpenAI endpoint ('AiService:AzureOpenAI:Endpoint') is not configured.");
 
-        public AzureOpenAiService(IConfiguration configuration)
-        {
-            _configuration = configuration;
-            // The API key for the Azure OpenAI service.
-            var apiKey = _configuration["AiService:AzureOpenAI:ApiKey"];
-            // The endpoint for the Azure OpenAI service.
-            var endpoint = new Uri(_configuration["AiService:AzureOpenAI:Endpoint"]);
-            _client = new OpenAIClient(endpoint, new AzureKeyCredential(apiKey));
-            _options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, PropertyNameCaseInsensitive = false };
-        }
+      _deploymentName = configuration["AiService:AzureOpenAI:DeploymentName"]
+          ?? throw new InvalidOperationException("Azure OpenAI deployment name ('AiService:AzureOpenAI:DeploymentName') is not configured.");
 
-        public async Task<BookmarkGroupingResponse> BookmarksGroupingAsync(BookmarkGroupingRequest request, CancellationToken cancellationToken)
-        {
-            var deploymentName = _configuration["AiService:AzureOpenAI:DeploymentName"];
+      var endpoint = new Uri(endpointString);
 
-            var chatCompletionsOptions = new ChatCompletionsOptions()
-            {
-                DeploymentName = deploymentName,
-                Messages =
-                {
-                    new ChatRequestSystemMessage("You are a helpful assistant."),
-                    new ChatRequestUserMessage(request.Prompt),
-                },
-                ResponseFormat = ChatCompletionsResponseFormat.JsonObject
-            };
+      _client = new(endpoint, new ApiKeyCredential(apiKey));
 
-            Response<ChatCompletions> response = await _client.GetChatCompletionsAsync(chatCompletionsOptions, cancellationToken);
-
-            if (response.Value.Choices.Count > 0)
-            {
-                var responseContent = response.Value.Choices[0].Message.Content;
-                var data = JsonSerializer.Deserialize<BookmarkGroupingResponse>(responseContent, _options);
-                return data ?? throw new RemoteServiceException(nameof(AzureOpenAiService), $"Error in deserialize response for {responseContent}");
-            }
-
-            throw new RemoteServiceException(nameof(AzureOpenAiService), "No response from Azure OpenAI.");
-        }
-
-        public async Task<string> GenerateTextAsync(string prompt)
-        {
-            // The name of the deployment to use.
-            var deploymentName = _configuration["AiService:AzureOpenAI:DeploymentName"];
-
-            var chatCompletionsOptions = new ChatCompletionsOptions()
-            {
-                DeploymentName = deploymentName,
-                Messages =
-                {
-                    new ChatRequestSystemMessage("You are a helpful assistant."),
-                    new ChatRequestUserMessage(prompt),
-                }
-            };
-
-            Response<ChatCompletions> response = await _client.GetChatCompletionsAsync(chatCompletionsOptions);
-
-            if (response.Value.Choices.Count > 0)
-            {
-                return response.Value.Choices[0].Message.Content;
-            }
-
-            throw new RemoteServiceException(nameof(AzureOpenAiService), "No response from Azure OpenAI.");
-        }
+      _options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, PropertyNameCaseInsensitive = true };
     }
+
+    public async Task<List<CategorizationResponse>> CategorizeIntoFolderNameAsync(string prompt, CancellationToken cancellationToken)
+    {
+      try
+      {
+        ChatClient chatClient = _client.GetChatClient(_deploymentName);
+
+        ChatCompletion completion = await chatClient.CompleteChatAsync(
+    [
+        // System messages represent instructions or other guidance about how the assistant should behave
+        new SystemChatMessage("You are an expert file organizer. Your task is to analyze a list of bookmarks and assign a folder name to each, outputting a valid JSON array."),
+        // User messages represent user input, whether historical or the most recent input
+        new UserChatMessage(prompt),
+    ],
+    null,
+    cancellationToken);
+
+        Console.WriteLine($"{completion.Role}: {completion.Content[0].Text}");
+
+        if (completion.Content.Count > 0)
+        {
+          string responseContent = completion.Content[0].Text;
+          var data = JsonSerializer.Deserialize<List<CategorizationResponse>>(responseContent, _options);
+          return data ?? throw new RemoteServiceException(nameof(AzureOpenAiService), $"{nameof(CategorizeIntoFolderNameAsync)}: Failed to deserialize the response from Azure OpenAI.");
+        }
+
+        throw new RemoteServiceException(nameof(AzureOpenAiService), $"{nameof(CategorizeIntoFolderNameAsync)}: The response from Azure OpenAI contained no choices.");
+      }
+      catch (RequestFailedException ex)
+      {
+        throw new RemoteServiceException(nameof(AzureOpenAiService), $"{nameof(CategorizeIntoFolderNameAsync)}: An error occurred while communicating with Azure OpenAI: {ex.Message}");
+      }
+    }
+
+    public async Task<string> GenerateTextAsync(string prompt, CancellationToken cancellationToken)
+    {
+      try
+      {
+        ChatClient chatClient = _client.GetChatClient(_deploymentName);
+
+        ChatCompletion completion = await chatClient.CompleteChatAsync(
+    [
+        // System messages represent instructions or other guidance about how the assistant should behave
+        new SystemChatMessage("You are an expert file organizer. Your task is to analyze a list of bookmarks and assign a folder name to each, outputting a valid JSON array."),
+        // User messages represent user input, whether historical or the most recent input
+        new UserChatMessage(prompt),
+    ],
+    null,
+    cancellationToken);
+
+        Console.WriteLine($"{completion.Role}: {completion.Content[0].Text}");
+
+        if (completion.Content.Count > 0)
+        {
+          string responseContent = completion.Content[0].Text;
+          var data = JsonSerializer.Deserialize<string>(responseContent, _options);
+          return data ?? throw new RemoteServiceException(nameof(AzureOpenAiService), $"{nameof(GenerateTextAsync)}: Failed to deserialize the response from Azure OpenAI.");
+        }
+
+        throw new RemoteServiceException(nameof(AzureOpenAiService), $"{nameof(GenerateTextAsync)}: The response from Azure OpenAI contained no choices.");
+      }
+      catch (RequestFailedException ex)
+      {
+        throw new RemoteServiceException(nameof(AzureOpenAiService), $"{nameof(GenerateTextAsync)}: An error occurred while communicating with Azure OpenAI: {ex.Message}");
+      }
+    }
+  }
 }

@@ -8,5 +8,5 @@ public class UploadResponse
 {
   public Guid UploadId { get; set; }
   public bool IsQueuePublishSuccess { get; set; }
-  public PublicationStatus Message { get; set; }
+  public JobStatus Message { get; set; }
 }

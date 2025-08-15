@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using CoreApp.API.Domain.Services;
+using CoreApp.API.Domain.Services.ExternalServices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoreApp.API.Features.Playground.Ai

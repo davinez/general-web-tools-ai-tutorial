@@ -1,8 +1,7 @@
 using System;
-using System.Text.Json.Serialization;
 
 
-namespace CoreApp.API.Features.Bookmarks.Dtos;
+namespace CoreApp.API.features.Bookmarks.Dtos;
 
 public class BookmarkDto
 {

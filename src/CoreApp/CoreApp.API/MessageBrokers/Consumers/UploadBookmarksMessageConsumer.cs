@@ -1,10 +1,13 @@
+using CoreApp.API.Domain;
+using CoreApp.API.Domain.Errors;
+using CoreApp.API.Domain.Services.ExternalServices;
+using CoreApp.API.features.Bookmarks.Dtos;
 using CoreApp.API.Features.Bookmarks.Dtos;
-using CoreApp.API.Features.Bookmarks.Upload;
 using CoreApp.API.Infrastructure.Data;
-using CoreApp.API.Infrastructure.ExternalServices.ollama;
-using CoreApp.API.Infrastructure.ExternalServices.ollama.Dto;
+using CoreApp.API.Infrastructure.ExternalServices.AiServices.Dto;
+using CoreApp.API.Infrastructure.ExternalServices.Storage.Dto;
 using CoreApp.API.MessageBrokers.Dto;
-using CoreApp.API.MessageBrokers.Messages;
+using CoreApp.API.Utils;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
 using Spectre.Console;
@@ -15,6 +18,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using static CoreApp.API.Domain.Constants.StatusConstants;
 
 namespace CoreApp.API.MessageBrokers.Consumers;
 
@@ -22,124 +26,159 @@ public class UploadBookmarksMessageConsumer
 {
   private readonly ILogger<UploadBookmarksMessageConsumer> _logger;
   private readonly CoreAppContext _context;
-  private readonly IAIService2 _ollamaService;
+  private readonly IAiService _aiService;
+  private readonly IStorageService _storageService;
 
-  public UploadBookmarksMessageConsumer(ILogger<UploadBookmarksMessageConsumer> logger, CoreAppContext context, IAIService2 ollamaService)
+  public UploadBookmarksMessageConsumer(
+    ILogger<UploadBookmarksMessageConsumer> logger,
+    CoreAppContext context,
+    IAiService aiService,
+    IStorageService storageService)
   {
     _logger = logger;
     _context = context;
-    _ollamaService = ollamaService;
+    _aiService = aiService;
+    _storageService = storageService;
   }
 
   public async Task Consume(UploadBookmarksMessageRequest message, CancellationToken cancellationToken)
   {
     try
     {
+      // SETUP & PRE-PROCESSING
+      // =================================================================
+
       List<BookmarkDto> uploadedBookmarks = ParseAllBookmarks(message.HtmlContent);
-
-      // Remove duplicates
       uploadedBookmarks = RemoveDuplicateBookmarksByUrl(uploadedBookmarks);
-
       // Add Id to each bookmark
       for (int i = 0; i < uploadedBookmarks.Count; i++)
       {
         uploadedBookmarks[i].Id = i + 1;
       }
-
       // Store bookmarks icon property in a dictionary with the key set using the Id
       var iconsDictionary = uploadedBookmarks.ToDictionary(b => b.Id, b => b.Icon);
 
-      // Read json file to obtain the desired output structure
-      string pathToJson = Path.Combine(AppContext.BaseDirectory, "Config", "ollama", "format_output.json");
-      string jsonFormatOutput = File.ReadAllText(pathToJson);
-      JsonElement formatElement = JsonSerializer.Deserialize<JsonElement>(jsonFormatOutput);
+      // We only need a simplified version for the AI to process.
+      var simplifiedBookmarks = uploadedBookmarks
+          .Select(b => new { b.Id, b.Title, b.Url })
+          .ToList();
+      var allCategorizedBookmarks = new List<CategorizationResponse>();
+      const int batchSize = 100;
 
-      var options = new System.Text.Json.JsonSerializerOptions
+      // PHASE 1: CATEGORIZE IN BATCHES
+      // =================================================================
+
+      // Use .Chunk() to easily create batches (.NET 6+).
+      foreach (var batch in simplifiedBookmarks.Chunk(batchSize))
       {
-        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-        WriteIndented = false
-      };
+        cancellationToken.ThrowIfCancellationRequested();
 
-      var simplified = uploadedBookmarks.Select(b => new { b.Id, b.Title, b.Url }).ToList();
+        // The JSON payload for this specific batch.
+        var jsonDataForBatch = JsonSerializer.Serialize(batch);
 
-      // AI Request:
-      var jsonData = JsonSerializer.Serialize(simplified, options);
-      var prompt = @$"I have a list of bookmarks in JSON format. Each bookmark has the following properties:
+        string prompt = @$"For each bookmark in the JSON list below, suggest a single, concise folder name based on its title and URL. 
+Group related topics or series under the exact same folder name (e.g., use 'One Piece' for all chapters of that manga). 
+If a bookmark is unique, suggest 'Miscellaneous'.
+Return ONLY a JSON array of objects, where each object has the original 'Id' (int) and a new 'FolderName' (string) property.
 
-Id: a unique identifier
-Title: the title of the bookmark
-Url: the full URL
-Please organize these bookmarks into folders based on domain or content similarity.
-If there is a large group of closely related bookmarks within a folder,
-you may optionally create subfolders for more granular organization.
+Data:
+{jsonDataForBatch}";
 
-Constraints:
-Uniqueness: Each bookmark must appear only once in the final result. Use the Id to ensure no duplicates across folders or collections.
-Folder Assignment:
-If a bookmark has related bookmarks (by domain or topic), group them together in a folder.
-If a bookmark has no related items, place it in a separate collection called withoutFolder.
-Subfolders:
-Only create subfolders if there are enough related bookmarks (e.g., 3 or more) that justify a more detailed grouping.
-Output Format: Return the result as a JSON object.
-Here is the data: {jsonData}";
-
-      var requestAI = new BookmarkGroupingRequest()
-      {
-        Model = "llama3.2:3b",
-        Prompt = prompt,
-        Stream = false,
-        Format = formatElement
-      };
-
-      var responseOllama = await _ollamaService.ProcessBookmarksGroupingAsync(requestAI, cancellationToken);
-
-
-      foreach (var bookmark in responseOllama.WithoutFolder)
-      {
-        if (iconsDictionary.TryGetValue(bookmark.Id, out var icon))
+        try
         {
-          bookmark.Icon = icon;
+          List<CategorizationResponse> batchResult = await _aiService.CategorizeIntoFolderNameAsync(prompt, cancellationToken);
+          if (batchResult != null)
+          {
+            allCategorizedBookmarks.AddRange(batchResult);
+          }
+        }
+        catch (Exception ex)
+        {
+          _logger.LogError(ex, $"{nameof(UploadBookmarksMessageConsumer)}:{nameof(Consume)}, Error processing a batch.");
+          throw new CoreAppException($"An error occurred in {nameof(UploadBookmarksMessageConsumer)}:{nameof(Consume)} while processing a batch.", ex);
         }
       }
 
-      foreach (var folder in responseOllama.WithFolder)
+      // PHASE 2: CONSOLIDATE RESULTS
+      // =================================================================
+
+      // Create a lookup dictionary for easy access to the folder names.
+      Dictionary<int, string> folderNameLookup = allCategorizedBookmarks.ToDictionary(r => r.Id, r => r.FolderName);
+
+      var finalResponse = new BookmarkGroupingResponse
+      {
+        WithFolder = []
+      };
+
+      // Group the *original* bookmarks using the AI-generated folder names.
+      IEnumerable<IGrouping<string, BookmarkDto>> groupedBookmarks = uploadedBookmarks
+          .Where(b => folderNameLookup.ContainsKey(b.Id))
+          .GroupBy(b => folderNameLookup[b.Id]);
+
+      foreach (IGrouping<string, BookmarkDto> group in groupedBookmarks)
+      {
+        // Handle sub-folders by splitting on '/'
+        string[] folderPath = group.Key.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        // This logic adds bookmarks to a nested folder structure.
+        AddBookmarksToNestedFolder(finalResponse.WithFolder, folderPath, group.ToList());
+      }
+
+      // =================================================================
+      // Re-attach icons to the final, structured data.
+
+      foreach (BookmarkFolderDto folder in finalResponse.WithFolder)
       {
         SetIconsInFolder(folder, iconsDictionary);
       }
 
-      // Save request file in storage like Blob or Minio
+      // =================================================================
+      // Generate the HTML file from the final structured data.
+      var generatorHtmlFile = new BookmarkHtmlGenerator();
+      string bookmarkHtml = generatorHtmlFile.Generate(finalResponse.WithFolder, []);
 
-      // var fileBytes = memoryStream.ToArray();
+      var memoryStream = new MemoryStream();
+      await using (var writer = new StreamWriter(memoryStream, leaveOpen: true))
+      {
+        await writer.WriteAsync(bookmarkHtml);
+        await writer.FlushAsync(cancellationToken); // Ensure all content is written to the stream
+      }
+      memoryStream.Position = 0;
 
+      var fileData = new FileDto()
+        {
+          FileName = $"{message.UploadId}.html",
+          Content = memoryStream,
+          ContentType = "text/html"
+        };
 
+      await _storageService.UploadFileAsync(fileData);
 
-      // Convert response to html file with import format
+      // TODO: Update database with the job status and file URL.
+      var jobEvent = _context.JobEvents
+                      .FirstOrDefault(je => je.JobEventId == message.UploadId);
 
-      // Update a database record about the upload status.
-      // or
-      // Notify the original client via WebSockets(e.g., using SignalR).
+      if (jobEvent == null)
+      {
+        _logger.LogError($"JobEvent with ID {message.UploadId} not found, in workflow ${Workflow.BookmarksUpload.ToString()}");
+        return;
+      }
+
+      jobEvent.Status = JobStatus.Complete.ToString();
+      await _context.SaveChangesAsync(cancellationToken);
+
+      // TODO: Notify the user via SignalR.
 
     }
     catch (Exception ex)
     {
-      // Log the error
-      Console.WriteLine($"Error processing upload {message.UploadId}: {ex.Message}");
-      result = new UploadProcessingResult
-      {
-        UploadId = message.UploadId,
-        IsSuccess = false,
-        ErrorMessage = ex.Message
-      };
-    }
-    finally
-    {
-      // Hnadle retry if fail?
-    }
+      _logger.LogError(ex, $"{nameof(UploadBookmarksMessageConsumer)}:{nameof(Consume)}, Critical error processing upload {message.UploadId}: {ex.Message}");
 
+      // Handle final failure, update DB status to "Failed".
+
+    }
   }
 
   #region Helpers 
-
 
   public static List<BookmarkDto> ParseAllBookmarks(string html)
   {
@@ -196,6 +235,30 @@ Here is the data: {jsonData}";
     foreach (var subFolder in folder.SubFolders)
     {
       SetIconsInFolder(subFolder, iconsDictionary);
+    }
+  }
+
+  // Helper method to handle nested folder creation.
+  private static void AddBookmarksToNestedFolder(List<BookmarkFolderDto> folders, string[] path, List<BookmarkDto> bookmarks)
+  {
+    List<BookmarkFolderDto> currentFolders = folders;
+    BookmarkFolderDto? targetFolder = null;
+
+    foreach (string folderName in path)
+    {
+      targetFolder = currentFolders.FirstOrDefault(f => f.Title.Equals(folderName, StringComparison.OrdinalIgnoreCase));
+
+      if (targetFolder == null)
+      {
+        targetFolder = new BookmarkFolderDto { Title = folderName, Bookmarks = new List<BookmarkDto>(), SubFolders = new List<BookmarkFolderDto>() };
+        currentFolders.Add(targetFolder);
+      }
+      currentFolders = targetFolder.SubFolders;
+    }
+
+    if (targetFolder != null)
+    {
+      targetFolder.Bookmarks.AddRange(bookmarks);
     }
   }
 

@@ -5,6 +5,9 @@
   <ItemGroup>
     <!-- ASP.NET -->
     <PackageVersion Include="AWSSDK.S3" Version="4.0.4.2" />
+    <PackageVersion Include="Azure.AI.OpenAI" Version="2.1.0" />
+    <PackageVersion Include="Azure.Identity" Version="1.15.0" />
+    <PackageVersion Include="Azure.Storage.Blobs" Version="12.25.0" />
     <PackageVersion Include="Blazored.FluentValidation" Version="2.2.0" />
     <PackageVersion Include="HtmlAgilityPack" Version="1.12.1" />
     <PackageVersion Include="Mediator.Abstractions" Version="2.1.7" />

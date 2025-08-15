@@ -1,12 +1,14 @@
-using CoreApp.API.Domain.Constants;
+using CoreApp.API.Domain;
 using CoreApp.API.Infrastructure;
-using CoreApp.API.MessageBrokers.Messages;
+using CoreApp.API.Infrastructure.Data;
+using CoreApp.API.MessageBrokers.Dto;
 using CoreApp.API.MessageBrokers.Producers.Interfaces;
 using FluentValidation;
 using Mediator;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using static CoreApp.API.Domain.Constants.StatusConstants;
@@ -42,16 +44,18 @@ public class UploadCommandHandler
     private readonly ILogger<UploadCommandHandler> _logger;
     private readonly ICurrentUserAccessor _currentUserAccessor;
     private readonly IBookmarksMessageProducer _bookmarksMessageProducer;
-
+    private readonly CoreAppContext _context;
 
     public Handler(
       ILogger<UploadCommandHandler> logger,
       ICurrentUserAccessor currentUserAccessor,
-      IBookmarksMessageProducer bookmarksMessageProducer)
+      IBookmarksMessageProducer bookmarksMessageProducer,
+      CoreAppContext context)
     {
       _logger = logger;
       _currentUserAccessor = currentUserAccessor;
       _bookmarksMessageProducer = bookmarksMessageProducer;
+      _context = context;
     }
 
 
@@ -91,19 +95,32 @@ public class UploadCommandHandler
 
       try
       {
-
-        // Publish the message using Wolverine
         await _bookmarksMessageProducer.PublishUploadBookmarksRequest(uploadRequestedMessage);
+
+        _logger.LogInformation($"Upload command processed successfully with uploadId {uploadId}");
+
+        var newJobEvent = new JobEvent
+        {
+          JobEventId = uploadId,
+          UserId = "test", //_currentUserAccessor.UserId,
+          Status = JobStatus.InProgress.ToString(),
+          Content = JsonSerializer.Serialize(new { Title = command.File.FileName}, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }),
+          EventTimestamp = DateTime.UtcNow,
+          Workflow = Workflow.BookmarksUpload.ToString()
+        };
+
+        _context.JobEvents.Add(newJobEvent);
+        await _context.SaveChangesAsync(cancellationToken);
 
       }
       catch (Exception ex)
       {
-        _logger.LogError($"Error ocurred in {nameof(UploadCommandHandler)}: with message {ex.Message} and request data: uploadId {uploadId} IsQueuePublishSuccess false");
+        _logger.LogError($"Error ocurred in {nameof(UploadCommandHandler)}: with message {ex.Message} and request data: uploadId {uploadId}");
 
-        return new UploadResponse() { UploadId = uploadId, IsQueuePublishSuccess = false, Message = PublicationStatus.Failed };
+        return new UploadResponse() { UploadId = uploadId, IsQueuePublishSuccess = false, Message = JobStatus.Failed };
       }
 
-      return new UploadResponse() { UploadId = uploadId, IsQueuePublishSuccess = true, Message = PublicationStatus.InProgress };
+      return new UploadResponse() { UploadId = uploadId, IsQueuePublishSuccess = true, Message = JobStatus.InProgress };
     }
 
 

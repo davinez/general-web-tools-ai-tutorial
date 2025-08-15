@@ -1,11 +1,11 @@
 using System;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
-using CoreApp.API.Domain.Services;
-using CoreApp.API.Infrastructure.ExternalServices.Dto;
+using CoreApp.API.Domain.Services.ExternalServices;
+using CoreApp.API.Infrastructure.ExternalServices.Storage.Dto;
 using Microsoft.Extensions.Configuration;
 
-namespace CoreApp.API.Infrastructure.ExternalServices
+namespace CoreApp.API.Infrastructure.ExternalServices.Storage
 {
     public class AzureBlobStorageService : IStorageService
     {

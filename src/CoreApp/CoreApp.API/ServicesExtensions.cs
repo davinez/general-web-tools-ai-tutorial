@@ -1,10 +1,9 @@
-using CoreApp.API.Domain.Services;
+using CoreApp.API.Domain.Services.ExternalServices;
 using CoreApp.API.Infrastructure;
 using CoreApp.API.Infrastructure.Data;
-using CoreApp.API.Infrastructure.ExternalServices;
 using CoreApp.API.Infrastructure.ExternalServices.AiServices;
 using CoreApp.API.Infrastructure.ExternalServices.ollama;
-using CoreApp.API.Infrastructure.ExternalServices.S3StorageService;
+using CoreApp.API.Infrastructure.ExternalServices.Storage;
 using CoreApp.API.Infrastructure.Security;
 using Mediator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -44,7 +43,6 @@ public static class ServicesExtensions
     services.AddScoped<IPasswordHasher, PasswordHasher>();
     services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
     services.AddScoped<ICurrentUserAccessor, CurrentUserAccessor>();
-    services.AddScoped<IProfileReader, ProfileReader>();
     services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
     services.AddHttpClient<IAIService2, AIService2>();

@@ -14,6 +14,8 @@ public class CoreAppContext : DbContext
 
   public DbSet<Bookmark> Bookmarks { get; set; } = null!;
   public DbSet<BookmarkFolder> BookmarkFolders { get; set; } = null!;
+  public DbSet<JobEvent> JobEvents { get; set; } = null!;
+
 
   public DbSet<Person> Persons { get; init; } = null!;
 

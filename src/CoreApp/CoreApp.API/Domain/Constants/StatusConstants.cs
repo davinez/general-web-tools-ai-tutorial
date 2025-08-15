@@ -13,13 +13,21 @@ namespace CoreApp.API.Domain.Constants
     public const string RESOURCE_NOT_FOUND = "Resource not found";
     public const string INTERNAL_SERVER_ERROR = "Internal server error";
 
+    /// <summary>
+    /// Represents the status of a background job at a specific point in time.
+    /// </summary>
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public enum PublicationStatus
+    public enum JobStatus
     {
-      NoPublished,
       InProgress,
-      Completed,
+      Complete,
       Failed
+    }
+
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum Workflow
+    {
+      BookmarksUpload,
     }
 
     public const string VALIDATION_ERROR = "Validation error occurred";
