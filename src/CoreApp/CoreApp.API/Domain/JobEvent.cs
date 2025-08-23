@@ -1,6 +1,8 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
+using CoreApp.API.Domain.Constants;
 
 namespace CoreApp.API.Domain;
 
@@ -51,4 +53,28 @@ public class JobEvent
   /// </summary>
   [Required]
   public required string Workflow { get; set; }
+
+  /// <summary>
+  /// Factory method to create a new JobEvent with standardized initialization
+  /// </summary>
+  public static JobEvent Create(
+      Guid jobEventId,
+      string userId,
+      StatusConstants.JobStatus status,
+      object contentObject,
+      StatusConstants.Workflow workflow)
+  {
+      return new JobEvent
+      {
+          JobEventId = jobEventId,
+          UserId = userId,
+          Status = status.ToString(),
+          Content = JsonSerializer.Serialize(contentObject, new JsonSerializerOptions 
+          { 
+              PropertyNamingPolicy = JsonNamingPolicy.CamelCase 
+          }),
+          EventTimestamp = DateTime.UtcNow,
+          Workflow = workflow.ToString()
+      };
+  }
 }

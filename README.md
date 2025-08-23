@@ -81,9 +81,9 @@ docker compose -f docker-compose.ai.yml up
 
 - Logic in Angular and Blazor App
 - Bookarks:
--- Upload processed bookmark file to blob
--- Handle processing message status
 -- SignalR to angular client to .net api and status of processing bookmark
+
+
 
 - Playground:
 

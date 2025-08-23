@@ -1,6 +1,7 @@
-using System.Threading.Tasks;
 using CoreApp.API.Domain.Services.ExternalServices;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CoreApp.API.Features.Playground.Ai
 {
@@ -9,16 +10,18 @@ namespace CoreApp.API.Features.Playground.Ai
     public class AiController : ControllerBase
     {
         private readonly IAiService _aiService;
+        private readonly CancellationToken _cancellationToken;
 
-        public AiController(IAiService aiService)
+    public AiController(IAiService aiService, CancellationToken cancellationToken)
         {
             _aiService = aiService;
+            _cancellationToken = cancellationToken;
         }
 
         [HttpPost("generate")]
         public async Task<IActionResult> GenerateText([FromBody] string prompt)
         {
-            var result = await _aiService.GenerateTextAsync(prompt);
+            var result = await _aiService.GenerateTextAsync(prompt, _cancellationToken);
             return Ok(result);
         }
     }

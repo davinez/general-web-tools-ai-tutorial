@@ -2,15 +2,17 @@ using CoreApp.API.Domain.Services.ExternalServices;
 using CoreApp.API.Infrastructure;
 using CoreApp.API.Infrastructure.Data;
 using CoreApp.API.Infrastructure.ExternalServices.AiServices;
-using CoreApp.API.Infrastructure.ExternalServices.ollama;
 using CoreApp.API.Infrastructure.ExternalServices.Storage;
 using CoreApp.API.Infrastructure.Security;
+using CoreApp.API.MessageBrokers.Consumers;
+using CoreApp.API.MessageBrokers.Dto;
 using Mediator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
@@ -18,6 +20,7 @@ using System;
 using System.Reflection;
 using System.Threading.Tasks;
 using Wolverine;
+using Wolverine.RabbitMQ;
 
 namespace CoreApp.API;
 
@@ -25,57 +28,63 @@ public static class ServicesExtensions
 {
   public static void AddCoreAppAPI(this IServiceCollection services, IConfiguration configuration)
   {
-    services.AddMediator(cfg =>
-        cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly())
-    );
+    services.AddMediator((MediatorOptions options) =>
+    {
+      options.Namespace = "SimpleConsole.Mediator";
+      options.ServiceLifetime = ServiceLifetime.Singleton;
+      // Only available from v3:
+      options.GenerateTypesAsInternal = true;
+      options.NotificationPublisherType = typeof(Mediator.ForeachAwaitPublisher);
+      //options.Assemblies = [typeof(...)];
+      options.PipelineBehaviors = [];
+      options.StreamPipelineBehaviors = [];
+    });
+
     services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>));
     services.AddScoped(
         typeof(IPipelineBehavior<,>),
         typeof(DBContextTransactionPipelineBehavior<,>)
     );
 
-    services.AddFluentValidationAutoValidation();
-    services.AddFluentValidationClientsideAdapters();
-    services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+   // services.AddFluentValidationAutoValidation();
+  //  services.AddFluentValidationClientsideAdapters();
+  //  services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
     services.AddAutoMapper(typeof(Program));
 
-    services.AddScoped<IPasswordHasher, PasswordHasher>();
     services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
     services.AddScoped<ICurrentUserAccessor, CurrentUserAccessor>();
     services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
-    services.AddHttpClient<IAIService2, AIService2>();
 
     // Register AI Service based on configuration
     var aiServiceProvider = configuration["AiService:Provider"];
     switch (aiServiceProvider)
     {
-        case "Gemini":
-            services.AddHttpClient<IAiService, GeminiAiService>(client =>
-            {
-                client.BaseAddress = new Uri("https://generativelanguage.googleapis.com");
-            });
-            break;
-        case "AzureOpenAI":
-            services.AddScoped<IAiService, AzureOpenAiService>();
-            break;
-        default:
-            throw new InvalidOperationException("Invalid AI Service Provider specified in configuration.");
+      case "Gemini":
+        services.AddHttpClient<IAiService, GeminiAiService>(client =>
+        {
+          client.BaseAddress = new Uri("https://generativelanguage.googleapis.com");
+        });
+        break;
+      case "AzureOpenAI":
+        services.AddScoped<IAiService, AzureOpenAiService>();
+        break;
+      default:
+        throw new InvalidOperationException("Invalid AI Service Provider specified in configuration.");
     }
 
     // Register Storage Service based on configuration
     var storageServiceProvider = configuration["StorageService:Provider"];
     switch (storageServiceProvider)
     {
-        case "S3":
-            services.AddScoped<IStorageService, S3StorageService>();
-            break;
-        case "AzureBlobStorage":
-            services.AddScoped<IStorageService, AzureBlobStorageService>();
-            break;
-        default:
-            throw new InvalidOperationException("Invalid Storage Service Provider specified in configuration.");
+      case "S3":
+        services.AddScoped<IStorageService, S3StorageService>();
+        break;
+      case "AzureBlobStorage":
+        services.AddScoped<IStorageService, AzureBlobStorageService>();
+        break;
+      default:
+        throw new InvalidOperationException("Invalid Storage Service Provider specified in configuration.");
     }
 
     // Configure Wolverine
@@ -95,12 +104,12 @@ public static class ServicesExtensions
       }).AutoProvision(); // Auto-provision queues and exchanges
 
       // Map message types to their queues (optional, but good practice for clarity)
-      opts.PublishMessage<UploadRequested>().ToRabbitQueue("upload-requested-queue");
-      opts.PublishMessage<UploadProcessingResult>().ToRabbitQueue("upload-processing-result-queue");
+      opts.PublishMessage<UploadBookmarksMessageRequest>().ToRabbitQueue("upload-requested-queue");
+      opts.PublishMessage<DeleteBookmarksMessageRequest>().ToRabbitQueue("upload-processing-result-queue");
 
       // Configure the consumer to listen on the queue
-      opts.ListenToRabbitQueue("upload-requested-queue")
-          .ProcessMessagesWith<ProcessUploadCommandConsumer>(); // Explicitly define consumer for this queue
+      opts.ListenToRabbitQueue("upload-requested-queue");
+          //.ProcessMessagesWith<UploadBookmarksMessageConsumer>(); // Explicitly define consumer for this queue
 
       // For results, you might listen on a different queue or use a different mechanism
       // if you want to update the client directly, e.g., SignalR or a webhook.

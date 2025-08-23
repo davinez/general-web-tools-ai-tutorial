@@ -45,17 +45,20 @@ public class UploadCommandHandler
     private readonly ICurrentUserAccessor _currentUserAccessor;
     private readonly IBookmarksMessageProducer _bookmarksMessageProducer;
     private readonly CoreAppContext _context;
+    private readonly JsonSerializerOptions _options;
 
     public Handler(
       ILogger<UploadCommandHandler> logger,
       ICurrentUserAccessor currentUserAccessor,
       IBookmarksMessageProducer bookmarksMessageProducer,
-      CoreAppContext context)
+      CoreAppContext context,
+      JsonSerializerOptions options)
     {
       _logger = logger;
       _currentUserAccessor = currentUserAccessor;
       _bookmarksMessageProducer = bookmarksMessageProducer;
       _context = context;
+      _options = options;
     }
 
 
@@ -99,28 +102,36 @@ public class UploadCommandHandler
 
         _logger.LogInformation($"Upload command processed successfully with uploadId {uploadId}");
 
-        var newJobEvent = new JobEvent
-        {
-          JobEventId = uploadId,
-          UserId = "test", //_currentUserAccessor.UserId,
-          Status = JobStatus.InProgress.ToString(),
-          Content = JsonSerializer.Serialize(new { Title = command.File.FileName}, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }),
-          EventTimestamp = DateTime.UtcNow,
-          Workflow = Workflow.BookmarksUpload.ToString()
-        };
+        var newJobEvent = JobEvent.Create(
+          uploadId,
+          "test",//_currentUserAccessor.UserId,
+          JobStatus.InProgress,
+          JsonSerializer.Serialize(new { Title = command.File.FileName }, _options),
+          Workflow.BookmarksUpload
+          );
 
         _context.JobEvents.Add(newJobEvent);
-        await _context.SaveChangesAsync(cancellationToken);
 
+        await _context.SaveChangesAsync(cancellationToken);
       }
       catch (Exception ex)
       {
         _logger.LogError($"Error ocurred in {nameof(UploadCommandHandler)}: with message {ex.Message} and request data: uploadId {uploadId}");
 
-        return new UploadResponse() { UploadId = uploadId, IsQueuePublishSuccess = false, Message = JobStatus.Failed };
+        var newJobEvent = JobEvent.Create(
+                          uploadId,
+                          "test",//_currentUserAccessor.UserId,
+                          JobStatus.Failed,
+                          JsonSerializer.Serialize(new { Title = command.File.FileName }, _options),
+                          Workflow.BookmarksUpload
+                          );
+        _context.JobEvents.Add(newJobEvent);
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return new UploadResponse() { UploadId = uploadId, IsQueuePublishSuccess = false, Message = JobStatus.Failed.ToString() };
       }
 
-      return new UploadResponse() { UploadId = uploadId, IsQueuePublishSuccess = true, Message = JobStatus.InProgress };
+      return new UploadResponse() { UploadId = uploadId, IsQueuePublishSuccess = true, Message = JobStatus.InProgress.ToString() };
     }
 
 

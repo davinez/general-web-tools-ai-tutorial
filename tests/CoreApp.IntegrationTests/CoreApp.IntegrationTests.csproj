@@ -7,4 +7,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\CoreApp\CoreApp.API\CoreApp.API.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Features\Articles\" />
+    <Folder Include="Features\Comments\" />
+    <Folder Include="Features\Users\" />
+  </ItemGroup>
 </Project>

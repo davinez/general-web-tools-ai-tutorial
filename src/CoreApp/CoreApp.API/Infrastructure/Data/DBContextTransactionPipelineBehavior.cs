@@ -16,8 +16,8 @@ public class DBContextTransactionPipelineBehavior<TRequest, TResponse>(CoreAppCo
 {
   public async ValueTask<TResponse> Handle(
       TRequest request,
-      CancellationToken cancellationToken,
-      MessageHandlerDelegate<TRequest, TResponse> next
+      MessageHandlerDelegate<TRequest, TResponse> next,
+      CancellationToken cancellationToken      
   )
   {
     TResponse? result;

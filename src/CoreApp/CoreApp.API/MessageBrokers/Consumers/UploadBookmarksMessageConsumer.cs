@@ -153,7 +153,6 @@ Data:
 
       await _storageService.UploadFileAsync(fileData);
 
-      // TODO: Update database with the job status and file URL.
       var jobEvent = _context.JobEvents
                       .FirstOrDefault(je => je.JobEventId == message.UploadId);
 
@@ -168,12 +167,27 @@ Data:
 
       // TODO: Notify the user via SignalR.
 
+
     }
     catch (Exception ex)
     {
       _logger.LogError(ex, $"{nameof(UploadBookmarksMessageConsumer)}:{nameof(Consume)}, Critical error processing upload {message.UploadId}: {ex.Message}");
 
       // Handle final failure, update DB status to "Failed".
+      var jobEvent = _context.JobEvents
+                     .FirstOrDefault(je => je.JobEventId == message.UploadId);
+      if (jobEvent != null)
+        {
+        jobEvent.Status = JobStatus.Failed.ToString();
+        jobEvent.Content = JsonSerializer.Serialize(new { ErrorMessage = ex.Message }, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+        await _context.SaveChangesAsync(cancellationToken);
+      }
+      else
+      {
+        _logger.LogError(ex, $"{nameof(UploadBookmarksMessageConsumer)}:{nameof(Consume)}, Failed to update jobEvento for upload {message.UploadId}: {ex.Message}");
+      }
+
+      _logger.LogError(ex, $"{nameof(UploadBookmarksMessageConsumer)}:{nameof(Consume)}, Critical error processing upload {message.UploadId}: {ex.Message}");
 
     }
   }

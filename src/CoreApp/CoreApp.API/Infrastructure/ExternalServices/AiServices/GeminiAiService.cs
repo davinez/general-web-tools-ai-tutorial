@@ -18,12 +18,12 @@ namespace CoreApp.API.Infrastructure.ExternalServices.AiServices
     private readonly IConfiguration _configuration;
     private readonly JsonSerializerOptions _options;
 
-    public GeminiAiService(IConfiguration configuration, HttpClient client)
+    public GeminiAiService(IConfiguration configuration, HttpClient client, JsonSerializerOptions options)
     {
       _configuration = configuration;
       _client = client;
       // _client.Timeout = new TimeSpan(0, 0, 30);
-      _options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+      _options = options;
     }
 
     public async Task<List<CategorizationResponse>> CategorizeIntoFolderNameAsync(string prompt, CancellationToken cancellationToken)
