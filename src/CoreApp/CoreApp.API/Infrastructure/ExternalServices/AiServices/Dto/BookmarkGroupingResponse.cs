@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using CoreApp.API.Features.Bookmarks.Dtos;
+using CoreApp.API.Endpoints.Bookmarks.Dtos;
 
 namespace CoreApp.API.Infrastructure.ExternalServices.AiServices.Dto
 {

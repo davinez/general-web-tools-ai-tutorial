@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using System.Text.Json;
-using CoreApp.API.Features.Bookmarks.Dtos;
 
 namespace CoreApp.API.Infrastructure.ExternalServices.AiServices.Dto;
 

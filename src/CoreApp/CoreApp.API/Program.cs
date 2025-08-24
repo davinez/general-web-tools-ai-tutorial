@@ -1,10 +1,10 @@
-using System;
-using System.Collections.Generic;
 using CoreApp.API;
 using CoreApp.API.Domain.Errors;
+using CoreApp.API.Domain.Hubs;
 using CoreApp.API.Infrastructure;
 using CoreApp.API.Infrastructure.Data;
 using CoreApp.API.Infrastructure.Data.Interceptors;
+using CoreApp.API.Infrastructure.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -13,6 +13,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
+using StackExchange.Redis;
+using System;
+using System.Collections.Generic;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -114,6 +117,14 @@ builder.Services.AddCoreAppAPI(builder.Configuration);
 
 builder.Services.AddJwt();
 
+// Hubs
+// Add SignalR services
+builder.Services.AddSignalR()
+    .AddStackExchangeRedis("your_redis_connection_string", options => {
+      options.Configuration.ChannelPrefix = RedisChannel.Literal("YourApp");
+    });
+
+
 
 // App
 
@@ -154,6 +165,10 @@ else
   // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
   app.UseHsts();
 }
+
+
+// Map the SignalR hub
+app.MapHub<JobEventStatusHub>("/eventStatusHub");
 
 
 app.Run();

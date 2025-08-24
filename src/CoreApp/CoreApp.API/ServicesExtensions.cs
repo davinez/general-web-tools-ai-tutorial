@@ -3,21 +3,18 @@ using CoreApp.API.Infrastructure;
 using CoreApp.API.Infrastructure.Data;
 using CoreApp.API.Infrastructure.ExternalServices.AiServices;
 using CoreApp.API.Infrastructure.ExternalServices.Storage;
+using CoreApp.API.Infrastructure.MessageBrokers.Dto;
 using CoreApp.API.Infrastructure.Security;
-using CoreApp.API.MessageBrokers.Consumers;
-using CoreApp.API.MessageBrokers.Dto;
 using Mediator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 using System;
-using System.Reflection;
 using System.Threading.Tasks;
 using Wolverine;
 using Wolverine.RabbitMQ;
@@ -46,9 +43,9 @@ public static class ServicesExtensions
         typeof(DBContextTransactionPipelineBehavior<,>)
     );
 
-   // services.AddFluentValidationAutoValidation();
-  //  services.AddFluentValidationClientsideAdapters();
-  //  services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+    // services.AddFluentValidationAutoValidation();
+    //  services.AddFluentValidationClientsideAdapters();
+    //  services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
     services.AddAutoMapper(typeof(Program));
 
@@ -109,7 +106,7 @@ public static class ServicesExtensions
 
       // Configure the consumer to listen on the queue
       opts.ListenToRabbitQueue("upload-requested-queue");
-          //.ProcessMessagesWith<UploadBookmarksMessageConsumer>(); // Explicitly define consumer for this queue
+      //.ProcessMessagesWith<UploadBookmarksMessageConsumer>(); // Explicitly define consumer for this queue
 
       // For results, you might listen on a different queue or use a different mechanism
       // if you want to update the client directly, e.g., SignalR or a webhook.

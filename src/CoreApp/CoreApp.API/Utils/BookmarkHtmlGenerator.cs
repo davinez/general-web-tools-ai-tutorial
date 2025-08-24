@@ -1,5 +1,4 @@
-using CoreApp.API.features.Bookmarks.Dtos;
-using CoreApp.API.Features.Bookmarks.Dtos;
+using CoreApp.API.Endpoints.Bookmarks.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Net;
