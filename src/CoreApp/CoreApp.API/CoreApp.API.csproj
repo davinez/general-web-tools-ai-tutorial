@@ -59,6 +59,5 @@
     <ItemGroup>
       <Folder Include="Config\ollama\" />
       <Folder Include="Domain\MessageBrokers\Consumers\" />
-      <Folder Include="Infrastructure\Hubs\Dto\" />
     </ItemGroup>
 </Project>

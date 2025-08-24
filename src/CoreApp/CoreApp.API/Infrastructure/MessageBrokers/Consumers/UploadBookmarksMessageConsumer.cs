@@ -6,6 +6,7 @@ using CoreApp.API.Infrastructure.Data;
 using CoreApp.API.Infrastructure.ExternalServices.AiServices.Dto;
 using CoreApp.API.Infrastructure.ExternalServices.Storage.Dto;
 using CoreApp.API.Infrastructure.Hubs;
+using CoreApp.API.Infrastructure.Hubs.Dto;
 using CoreApp.API.Infrastructure.MessageBrokers.Dto;
 using CoreApp.API.Utils;
 using HtmlAgilityPack;
@@ -191,7 +192,13 @@ Data:
     }
 
     // Send a notification to the client 
-    await _hubContext.Clients.All.StatusUpdate(message.UploadId.ToString(), messageStatus);
+    var hubUpdate = new JobEventStatusHubDto
+    {
+      JobId = message.UploadId.ToString(),
+      Status = messageStatus,
+      Timestamp = DateTime.UtcNow
+    };
+    await _hubContext.Clients.User(message.UserId).StatusUpdate(hubUpdate);
   }
 
   #region Helpers 

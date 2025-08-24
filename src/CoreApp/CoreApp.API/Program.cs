@@ -168,7 +168,7 @@ else
 
 
 // Map the SignalR hub
-app.MapHub<JobEventStatusHub>("/eventStatusHub");
+app.MapHub<JobEventStatusHub>("/jobEventStatusHub");
 
 
 app.Run();

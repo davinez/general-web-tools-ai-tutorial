@@ -68,7 +68,7 @@ public class UploadCommandHandler
     )
     {
       // Generate a unique ID for this upload operation
-      var uploadId = Guid.NewGuid();
+      Guid uploadId = Guid.NewGuid();
 
       // TODO: Move all logic to a separate service and the endpoint will send a event and return in progress, the service
       // will process and update the event with fail with reason or success with result
@@ -92,7 +92,8 @@ public class UploadCommandHandler
       // Create the message to be published
       var uploadRequestedMessage = new UploadBookmarksMessageRequest
       {
-        UploadId = uploadId,
+        UploadId = uploadId.ToString(),
+        UserId = _currentUserAccessor.GetCurrentUsername(),
         HtmlContent = cleanedHtml
       };
 
@@ -104,7 +105,7 @@ public class UploadCommandHandler
 
         var newJobEvent = JobEvent.Create(
           uploadId,
-          "test",//_currentUserAccessor.UserId,
+          _currentUserAccessor.GetCurrentUsername(),
           JobStatus.InProgress,
           JsonSerializer.Serialize(new { Title = command.File.FileName }, _options),
           Workflow.BookmarksUpload
@@ -120,7 +121,7 @@ public class UploadCommandHandler
 
         var newJobEvent = JobEvent.Create(
                           uploadId,
-                          "test",//_currentUserAccessor.UserId,
+                          _currentUserAccessor.GetCurrentUsername(),
                           JobStatus.Failed,
                           JsonSerializer.Serialize(new { Title = command.File.FileName }, _options),
                           Workflow.BookmarksUpload
