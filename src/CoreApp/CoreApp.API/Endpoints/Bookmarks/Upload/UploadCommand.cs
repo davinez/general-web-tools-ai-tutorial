@@ -92,7 +92,7 @@ public class UploadCommandHandler
       // Create the message to be published
       var uploadRequestedMessage = new UploadBookmarksMessageRequest
       {
-        UploadId = uploadId.ToString(),
+        UploadId = uploadId,
         UserId = _currentUserAccessor.GetCurrentUsername(),
         HtmlContent = cleanedHtml
       };
