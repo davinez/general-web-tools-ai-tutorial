@@ -27,6 +27,8 @@ builder.Services.AddSingleton(TimeProvider.System);
 
 var connectionString = builder.Configuration["ConnectionStrings:CoreAppDB"] ?? throw new CoreAppException("Missing connection string");
 var databaseProvider = builder.Configuration["ConnectionStrings:CoreAppDBProvider"] ?? throw new CoreAppException("Missing CoreAppDBProvider");
+var redisConnectionString = builder.Configuration["Redis:ConnectionString"] ?? throw new CoreAppException("Missing Redis:ConnectionString");
+var redsChannel = builder.Configuration["Redis:RedisChannel"] ?? throw new CoreAppException("Missing Redis:RedisChannel");
 
 builder.Services.AddDbContext<CoreAppContext>((sp, options) =>
 {
@@ -52,7 +54,7 @@ builder.Services.AddDbContext<CoreAppContext>((sp, options) =>
 });
 
 // if we're using the Interface, we register the interface
-// builder.Services.AddScoped<CoreAppContext>(provider => provider.GetRequiredService<CoreAppContext>());
+builder.Services.AddScoped<CoreAppContext>(provider => provider.GetRequiredService<CoreAppContext>());
 
 builder.Services.AddLocalization(x => x.ResourcesPath = "Resources");
 
@@ -121,11 +123,9 @@ builder.Services.AddJwt();
 // Hubs
 // Add SignalR services
 builder.Services.AddSignalR()
-    .AddStackExchangeRedis("your_redis_connection_string", options => {
-      options.Configuration.ChannelPrefix = RedisChannel.Literal("YourApp");
+    .AddStackExchangeRedis(redisConnectionString, options => {
+      options.Configuration.ChannelPrefix = RedisChannel.Literal(redsChannel);
     });
-
-
 
 // App
 
