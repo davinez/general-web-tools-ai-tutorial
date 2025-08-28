@@ -12,23 +12,16 @@ namespace CoreApp.API.Endpoints.Bookmarks.CreateFolders
 
   public record CreateFoldersCommand(CreateFoldersRequest Request) : ICommand;
 
-
   public class CreateFoldersCommandHandler
   {
-    public class CreateFoldersValidator : AbstractValidator<CreateFoldersRequest>
-    {
-      public CreateFoldersValidator()
-      {
-        RuleFor(x => x.Folders).NotNull().NotEmpty();
-      }
-    }
-
     public class CommandValidator : AbstractValidator<CreateFoldersCommand>
     {
-      public CommandValidator() =>
-          RuleFor(x => x.Request).NotNull().SetValidator(new CreateFoldersValidator());
+      public CommandValidator()
+      {
+        RuleFor(x => x.Request).NotNull();
+        RuleFor(x => x.Request.Folders).NotNull().NotEmpty();
+      }
     }
-
 
     public class Handler : ICommandHandler<CreateFoldersCommand>
     {

@@ -10,8 +10,26 @@
 Run the following commands to create the database schema:
 
 ```bash
-dotnet ef migrations add InitialCreate
+# Create a new migration
+dotnet ef migrations add [MigrationName]
+
+# Remove the latest migration
+dotnet ef migrations remove
+
+# Update the database to the latest migration
 dotnet ef database update
+
+# Update the database to a specific migration
+dotnet ef database update [MigrationName]
+
+# List all available migrations
+dotnet ef migrations list
+
+# Generate SQL script for all migrations
+dotnet ef migrations script
+
+# Drop the database
+dotnet ef database drop
 ```
 
 ```ps1

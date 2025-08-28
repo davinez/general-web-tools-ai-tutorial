@@ -1,4 +1,3 @@
-using AutoMapper;
 using CoreApp.API.Domain;
 using CoreApp.API.Domain.Errors;
 using CoreApp.API.Infrastructure;
@@ -11,7 +10,6 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace CoreApp.API.Endpoints.Users;
 
@@ -39,8 +37,7 @@ public class Edit
 
   public class Handler(
       CoreAppContext context,
-      ICurrentUserAccessor currentUserAccessor,
-      IMapper mapper
+      ICurrentUserAccessor currentUserAccessor
   ) : ICommandHandler<Command, UserResponse>
   {
     public async ValueTask<UserResponse> Handle(Command message, CancellationToken cancellationToken)
@@ -69,7 +66,12 @@ public class Edit
 
       await context.SaveChangesAsync(cancellationToken);
 
-      var user = mapper.Map<Person, UserResponse>(person);
+      // PENDING
+      var user = new UserResponse()
+      {
+        Bio = person.Bio,
+        Username = person.Username,
+      };
 
       return user;
     }

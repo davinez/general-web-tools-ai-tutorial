@@ -1,5 +1,7 @@
 version: '3'
 services:
+
+  # API Core App
   CoreApp:
     build: .
     environment:
@@ -7,6 +9,41 @@ services:
      - ASPNETCORE_CoreApp_ConnectionString=${ASPNETCORE_CoreApp_ConnectionString}
     ports:
      - "5000:5000"
+
+  db:
+    image: postgres:16.4
+    container_name: core_app_db
+    #restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: localdev
+      POSTGRES_PASSWORD: localpass
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    #restart: always
+    ports:
+      - "8888:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: localdev@domain-name.com
+      PGADMIN_DEFAULT_PASSWORD: localpass
+    volumes:
+      - ./db-pgadmin-data:/var/lib/pgadmin
+
+  redisinsight:
+    image: redislabs/redisinsight:latest
+    container_name: redisinsight
+    ports:
+    - '5540:5540'
+    volumes:
+      - ./redisinsight:/redis/data/redisinsight
+    networks:
+      - local-network
+
 
 
 

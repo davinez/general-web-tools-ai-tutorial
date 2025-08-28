@@ -20,22 +20,19 @@ public sealed record UploadCommand(UploadRequest File) : IQuery<UploadResponse>;
 
 public class UploadCommandHandler
 {
-
-  public class UploadValidator : AbstractValidator<UploadRequest>
-  {
-    public UploadValidator()
-    {
-      RuleFor(x => x.FileName).NotNull().NotEmpty();
-      // TODO: check type of file
-      RuleFor(x => x.FileContent).NotNull().NotEmpty();
-      RuleFor(x => x.UploadTimestamp).NotNull().NotEmpty();
-    }
-  }
-
   public class CommandValidator : AbstractValidator<UploadCommand>
   {
-    public CommandValidator() =>
-        RuleFor(x => x.File).NotNull().SetValidator(new UploadValidator());
+    public CommandValidator()
+    {
+      RuleFor(x => x.File).NotNull();
+
+      RuleFor(x => x.File.FileName).NotNull().NotEmpty();
+      // TODO: check type of file
+      RuleFor(x => x.File.FileContent).NotNull().NotEmpty();
+      RuleFor(x => x.File.UploadTimestamp).NotNull().NotEmpty();
+
+
+    }
   }
 
   public sealed class Handler : IQueryHandler<UploadCommand, UploadResponse>

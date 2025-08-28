@@ -1,10 +1,14 @@
+using CoreApp.API.Domain;
 using CoreApp.API.Domain.Services.ExternalServices;
+using CoreApp.API.Endpoints.Bookmarks.CreateFolders;
+using CoreApp.API.Endpoints.Bookmarks.Upload;
 using CoreApp.API.Infrastructure;
 using CoreApp.API.Infrastructure.Data;
 using CoreApp.API.Infrastructure.ExternalServices.AiServices;
 using CoreApp.API.Infrastructure.ExternalServices.Storage;
 using CoreApp.API.Infrastructure.MessageBrokers.Dto;
 using CoreApp.API.Infrastructure.Security;
+using FluentValidation;
 using Mediator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
@@ -23,6 +27,13 @@ namespace CoreApp.API;
 
 public static class ServicesExtensions
 {
+  public static void AddValidators(this IServiceCollection services)
+  {
+    services.AddScoped<IValidator<UploadCommand>, UploadCommandHandler.CommandValidator>();
+    services.AddScoped<IValidator<CreateFoldersCommand>, CreateFoldersCommandHandler.CommandValidator>();
+  }
+
+
   public static void AddCoreAppAPI(this IServiceCollection services, IConfiguration configuration)
   {
     services.AddMediator((MediatorOptions options) =>
@@ -42,12 +53,6 @@ public static class ServicesExtensions
         typeof(IPipelineBehavior<,>),
         typeof(DBContextTransactionPipelineBehavior<,>)
     );
-
-    // services.AddFluentValidationAutoValidation();
-    //  services.AddFluentValidationClientsideAdapters();
-    //  services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-
-    services.AddAutoMapper(typeof(Program));
 
     services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
     services.AddScoped<ICurrentUserAccessor, CurrentUserAccessor>();

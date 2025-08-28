@@ -114,6 +114,7 @@ builder
     );
 
 builder.Services.AddCoreAppAPI(builder.Configuration);
+builder.Services.AddValidators();
 
 builder.Services.AddJwt();
 

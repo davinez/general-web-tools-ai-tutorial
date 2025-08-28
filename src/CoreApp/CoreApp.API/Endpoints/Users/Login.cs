@@ -1,4 +1,3 @@
-using AutoMapper;
 using CoreApp.API.Domain.Errors;
 using CoreApp.API.Infrastructure.Data;
 using CoreApp.API.Infrastructure.Security;
@@ -36,8 +35,7 @@ public class Login
 
   public class Handler(
       CoreAppContext context,
-      IJwtTokenGenerator jwtTokenGenerator,
-      IMapper mapper
+      IJwtTokenGenerator jwtTokenGenerator
   ) : IQueryHandler<Command, UserResponse>
   {
     public async ValueTask<UserResponse> Handle(Command message, CancellationToken cancellationToken)
@@ -54,7 +52,13 @@ public class Login
         );
       }
 
-      var user = mapper.Map<Domain.Person, UserResponse>(person);
+      // PENDING
+      var user = new UserResponse()
+      {
+        Bio = person.Bio,
+        Username = person.Username,
+      };
+
       user.Token = jwtTokenGenerator.CreateToken(
           person.Username ?? throw new InvalidOperationException()
       );
