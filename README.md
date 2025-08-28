@@ -196,6 +196,9 @@ https://github.com/Kareadita/Kavita/tree/develop
 
 - The Bank API is a design reference project suitable to bootstrap development for a compliant and modern API.
 
+- Libraries
+https://github.com/martinothamar/Mediator
+
 
 - eShop Microservices
 https://github.com/dotnet/eShop/tree/main

@@ -1,38 +1,62 @@
-version: '3'
 services:
+  # core-app:
+  #   build: .
+  #   environment:
+  #    - ASPNETCORE_CoreApp_DatabaseProvider=${ASPNETCORE_CoreApp_DatabaseProvider}
+  #    - ASPNETCORE_CoreApp_ConnectionString=${ASPNETCORE_CoreApp_ConnectionString}
+  #   ports:
+  #    - "5000:5000"
+  #   networks:
+  #     - gwtai-network
 
-  # API Core App
-  CoreApp:
-    build: .
-    environment:
-     - ASPNETCORE_CoreApp_DatabaseProvider=${ASPNETCORE_CoreApp_DatabaseProvider}
-     - ASPNETCORE_CoreApp_ConnectionString=${ASPNETCORE_CoreApp_ConnectionString}
-    ports:
-     - "5000:5000"
-
-  db:
+  core-app-db:
+    container_name: core-app-db 
+    # Docker uses the default tag latest if there are no tags defined in the pull request.
     image: postgres:16.4
-    container_name: core_app_db
     #restart: always
     ports:
-      - "5432:5432"
+      - "5433:5433"
     environment:
-      POSTGRES_USER: localdev
-      POSTGRES_PASSWORD: localpass
+      PGPORT: 5433
+      POSTGRES_USER: coredev
+      POSTGRES_PASSWORD: corepassdev
+      POSTGRES_DB: CoreAppDb
     volumes:
-      - ./db-data:/var/lib/postgresql/data
+      - ./data/core-app-db:/var/lib/postgresql/data
+    networks:
+      - gwtai-network
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin4_container
-    #restart: always
+  cosmosdbemulator:
+    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator
+    container_name: cosmosdb-emulator
     ports:
-      - "8888:80"
+      - "8081:8081" # REST API endpoint  https://localhost:8081/_explorer/index.html UI
+      - "10251:10251" # MongoDB endpoint
+      - "10252:10252" # MongoDB endpoint
+      - "10253:10253" # MongoDB endpoint
+      - "10254:10254" # MongoDB endpoint
     environment:
-      PGADMIN_DEFAULT_EMAIL: localdev@domain-name.com
-      PGADMIN_DEFAULT_PASSWORD: localpass
+      AZURE_COSMOS_EMULATOR_PARTITION_COUNT: 3 # Optional: Set partition count
+      AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE: "true" # Enable data persistence
+      AZURE_COSMOS_EMULATOR_IP_ADDRESS_OVERRIDE: "127.0.0.1" # Ensure correct binding
     volumes:
-      - ./db-pgadmin-data:/var/lib/pgadmin
+      - ./cosmosdb-data:/data # Persist data locally
+    networks:
+      - gwtai-network
+
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   container_name: pgadmin4_container
+  #   #restart: always
+  #   ports:
+  #     - "8888:80"
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: localdev@domain-name.com
+  #     PGADMIN_DEFAULT_PASSWORD: localpass
+  #   volumes:
+  #     - ./db-pgadmin-data:/var/lib/pgadmin
+  #   networks:
+  #     - gwtai-network
 
   redisinsight:
     image: redislabs/redisinsight:latest
@@ -42,179 +66,38 @@ services:
     volumes:
       - ./redisinsight:/redis/data/redisinsight
     networks:
-      - local-network
+      - gwtai-network
 
+  # Default account
+  # Account name: devstoreaccount1
+  # Account key: Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
+  # Full Connection string
+  # DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    container_name: "azurite"
+    hostname: azurite
+    #restart: always
+    ports:
+      - "10000:10000" # will expose blob service's default listening port
+      - "10001:10001" # will expose queue service's default listening port
+      - "10002:10002" # will expose table service's default listening port
+    volumes:
+      - ./azurite:/data # Persist data locally
+    networks:
+      - gwtai-network  
 
-
+# docker network create gwtainetwork
+networks:
+  gwtai-network :
+    name: gwtainetwork 
+    driver: bridge
+    external: true
 
 # After compose up, docker exec -it ollama_service ollama run llama3
 # docker compose -f .\docker-compose.gwtai.yml up
 
 
-services: 
-  # azurite:
-  #   image: mcr.microsoft.com/azure-storage/azurite
-  #   container_name: "azurite"
-  #   hostname: azurite
-  #   #restart: always
-  #   ports:
-  #     - "10000:10000" # will expose blob service's default listening port
-  #     - "10001:10001" # will expose queue service's default listening port
-  #     - "10002:10002" # will expose table service's default listening port
-  #   volumes:
-  #     - ./azurite:/data # Persist data locally
-
-      # Default account
-      # Account name: devstoreaccount1
-      # Account key: Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
-      # Full Connection string
-      # DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;
-
-  # dbsqlserver:
-  #   image: "mcr.microsoft.com/mssql/server:2022-latest"
-  #   restart: no
-  #   container_name: local_sqlserverdb
-  #   #restart: always
-  #   ports:
-  #     - "1433:1433"   
-  #   environment:
-  #     MSSQL_SA_PASSWORD: "MyStr@ngPassw0rd"
-  #     MSSQL_PID: "Developer"
-  #     MSSQL_BACKUP_DIR: "/var/opt/mssql/backups"
-  #     ACCEPT_EULA: "Y"
-  #   volumes:
-  #     - ./sqlserverdb-data/backups:/var/opt/mssql/backups
-  #     - ./sqlserverdb-data/data:/var/opt/mssql/data
-  #     - ./sqlserverdb-data/secrets:/var/opt/mssql/secrets  
-  #     - ./sqlserverdb-data/log:/var/opt/mssql/log  
-
-  # cosmosdbemulator:
-  #   image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator
-  #   container_name: cosmosdb-emulator
-  #   ports:
-  #     - "8081:8081" # REST API endpoint  https://localhost:8081/_explorer/index.html UI
-  #     - "10251:10251" # MongoDB endpoint
-  #     - "10252:10252" # MongoDB endpoint
-  #     - "10253:10253" # MongoDB endpoint
-  #     - "10254:10254" # MongoDB endpoint
-  #   environment:
-  #     AZURE_COSMOS_EMULATOR_PARTITION_COUNT: 3 # Optional: Set partition count
-  #     AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE: "true" # Enable data persistence
-  #     AZURE_COSMOS_EMULATOR_IP_ADDRESS_OVERRIDE: "127.0.0.1" # Ensure correct binding
-  #   volumes:
-  #     - ./cosmosdb-data:/data # Persist data locally
-
-  # redisinsight:
-  #   image: redislabs/redisinsight:latest
-  #   container_name: redisinsight
-  #   ports:
-  #   - '5540:5540'
-  #   volumes:
-  #     - ./redisinsight:/redis/data/redisinsight
-  #   networks:
-  #     - local-network
-
-# docker network create localdevnetwork
-networks:
-  local-network:
-    name: localdevnetwork
-    driver: bridge
-    external: true
-# networks:
-#   local-network:
-#     name: vpsnetwork
-#     external: true
 
 
-
-
-# services:
-#   dbsqlserver:
-#     image: "mcr.microsoft.com/mssql/server:2022-latest"
-#     restart: no
-#     container_name: local_sqlserverdb
-#     #restart: always
-#     ports:
-#       - "1433:1433"   
-#     environment:
-#       MSSQL_SA_PASSWORD: "MyStr@ngPassw0rd"
-#       MSSQL_PID: "Developer"
-#       MSSQL_BACKUP_DIR: "/var/opt/mssql/backups"
-#       ACCEPT_EULA: "Y"
-#     volumes:
-#       - ./sqlserverdb-data/backups:/var/opt/mssql/backups
-#       - ./sqlserverdb-data/data:/var/opt/mssql/data
-#       - ./sqlserverdb-data/secrets:/var/opt/mssql/secrets  
-#       - ./sqlserverdb-data/log:/var/opt/mssql/log    
-
-#   db:
-#     image: postgres:16.4
-#     container_name: local_pgdb
-#     #restart: always
-#     ports:
-#       - "5432:5432"
-#     environment:
-#       POSTGRES_USER: localdev
-#       POSTGRES_PASSWORD: localpass
-#     volumes:
-#       - ./db-data:/var/lib/postgresql/data
-
-#   pgadmin:
-#     image: dpage/pgadmin4
-#     container_name: pgadmin4_container
-#     #restart: always
-#     ports:
-#       - "8888:80"
-#     environment:
-#       PGADMIN_DEFAULT_EMAIL: localdev@domain-name.com
-#       PGADMIN_DEFAULT_PASSWORD: localpass
-#     volumes:
-#       - ./db-pgadmin-data:/var/lib/pgadmin
-
-#   redisinsight:
-#     image: redislabs/redisinsight:latest
-#     container_name: redisinsight
-#     ports:
-#     - '5540:5540'
-#     volumes:
-#       - ./redisinsight:/redis/data/redisinsight
-#     networks:
-#       - local-network
-
-
-#   # ollama_service:
-#   #   image: ollama/ollama:latest  # Use the official Ollama image
-#   #   container_name: ollama
-#   #   environment:
-#   #     OLLAMA_MODELS: /usr/share/ollama
-#   #   volumes:
-#   #     - ./ollama_data:/root/.ollama:/root/.ollama
-#   #     - ./ollama_data/models:/usr/share/ollama
-#   #   ports:
-#   #     - "11434:11434"
-#   #   networks:
-#   #     - local-network
-
-#   # open-webui_service:
-#   #   image: ghcr.io/open-webui/open-webui:main 
-#   #   container_name: open-webui
-#   #   environment:
-#   #     - 'OLLAMA_BASE_URL=http://ollama:11434'
-#   #     - 'WEBUI_SECRET_KEY='
-#   #     - SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
-#   #   volumes:
-#   #     - ./open-webui:/app/backend/data
-#   #   ports:
-#   #     - "3000:8080"
-#   #   networks:
-#   #     - local-network
-
-
-# # docker network create localdevnetwork
-# networks:
-#   local-network:
-#     name: localdevnetwork
-#     driver: bridge
-#     external: true
-      
       
