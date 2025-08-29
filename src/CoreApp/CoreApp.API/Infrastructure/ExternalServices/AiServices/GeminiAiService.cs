@@ -30,9 +30,8 @@ namespace CoreApp.API.Infrastructure.ExternalServices.AiServices
     {
       var apiKey = _configuration["AiService:Gemini:ApiKey"];
       var modelName = _configuration["AiService:Gemini:ModelName"];
-
-      var requestUri = $"/v1beta/models/{modelName}:generateContent?key={apiKey}";
-
+      var requestUri = $"v1beta/models/{modelName}:generateContent";
+      
       var requestBody = new GeminiRequest
       {
         Contents =
@@ -55,7 +54,11 @@ namespace CoreApp.API.Infrastructure.ExternalServices.AiServices
           "application/json"
       );
 
-      using var response = await _client.PostAsync(requestUri, jsonContent, cancellationToken);
+      using var request = new HttpRequestMessage(HttpMethod.Post, requestUri);
+      request.Headers.Add("x-goog-api-key", apiKey);
+      request.Content = jsonContent;
+
+      using var response = await _client.SendAsync(request, cancellationToken);
 
       if (!response.IsSuccessStatusCode)
       {
@@ -81,7 +84,7 @@ namespace CoreApp.API.Infrastructure.ExternalServices.AiServices
       // The name of the model to use.
       var modelName = _configuration["AiService:Gemini:ModelName"];
 
-      var requestUri = $"/v1beta/models/{modelName}:generateContent?key={apiKey}";
+      var requestUri = $"v1beta/models/{modelName}:generateContent";
 
       var requestBody = new GeminiRequest
       {
@@ -105,19 +108,23 @@ namespace CoreApp.API.Infrastructure.ExternalServices.AiServices
           "application/json"
       );
 
-      using var response = await _client.PostAsync(requestUri, jsonContent, cancellationToken);
+      using var request = new HttpRequestMessage(HttpMethod.Post, requestUri);
+      request.Headers.Add("x-goog-api-key", apiKey);
+      request.Content = jsonContent;
+
+      using var response = await _client.SendAsync(request, cancellationToken);
 
       if (!response.IsSuccessStatusCode)
       {
-        var errorContent = await response.Content.ReadAsStringAsync();
+        var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
         throw new RemoteServiceException(nameof(GeminiAiService), $"Error: {response.StatusCode} Message: {response.ReasonPhrase} Content: {errorContent} Request: {requestJson}");
       }
 
-      var responseJson = await response.Content.ReadAsStringAsync();
+      var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
 
       using var doc = JsonDocument.Parse(responseJson);
       var dataElement = doc.RootElement.GetProperty("candidates")[0].GetProperty("content").GetProperty("parts")[0].GetProperty("text");
-      var responseText = dataElement.GetString();
+      string? responseText = dataElement.GetString();
 
       return responseText ?? throw new RemoteServiceException(nameof(GeminiAiService), $"Error in deserialize response for {responseJson}");
     }

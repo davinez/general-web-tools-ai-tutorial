@@ -38,7 +38,7 @@ public static class ServicesExtensions
   {
     services.AddMediator((MediatorOptions options) =>
     {
-      options.Namespace = "SimpleConsole.Mediator";
+      //options.Namespace = "SimpleConsole.Mediator";
       options.ServiceLifetime = ServiceLifetime.Singleton;
       // Only available from v3:
       options.GenerateTypesAsInternal = true;

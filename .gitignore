@@ -450,3 +450,6 @@ Thumbs.db
 .env.dev.core-app
 /extras/ai/open-webui
 /extras/ai/ollama_data
+/containers-data
+src/CoreApp/CoreApp.API/appsettings.Development.json
+/src/CoreApp/CoreApp.API/appsettings.Development.json

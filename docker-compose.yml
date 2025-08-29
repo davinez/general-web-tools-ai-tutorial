@@ -22,7 +22,7 @@ services:
       POSTGRES_PASSWORD: corepassdev
       POSTGRES_DB: CoreAppDb
     volumes:
-      - ./data/core-app-db:/var/lib/postgresql/data
+      - ./containers-data/data/core-app-db:/var/lib/postgresql/data
     networks:
       - gwtai-network
 
@@ -40,7 +40,7 @@ services:
       AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE: "true" # Enable data persistence
       AZURE_COSMOS_EMULATOR_IP_ADDRESS_OVERRIDE: "127.0.0.1" # Ensure correct binding
     volumes:
-      - ./cosmosdb-data:/data # Persist data locally
+      - ./containers-data/cosmosdb-data:/data # Persist data locally
     networks:
       - gwtai-network
 
@@ -64,7 +64,7 @@ services:
     ports:
     - '5540:5540'
     volumes:
-      - ./redisinsight:/redis/data/redisinsight
+      - ./containers-data/redisinsight:/redis/data/redisinsight
     networks:
       - gwtai-network
 
@@ -83,7 +83,7 @@ services:
       - "10001:10001" # will expose queue service's default listening port
       - "10002:10002" # will expose table service's default listening port
     volumes:
-      - ./azurite:/data # Persist data locally
+      - ./containers-data/azurite:/data # Persist data locally
     networks:
       - gwtai-network  
 
