@@ -1,136 +1,252 @@
-{
-  "withFolder": [
-    {
-      "title": "Wikipedia",
-      "bookmarks": [
-        {
-          "id": 1,
-          "title": "Wikipedia:Wikipedia no es un diccionario - Wikipedia, la enciclopedia libre",
-          "url": "https://es.wikipedia.org/wiki/Wikipedia:Wikipedia_no_es_un_diccionario"
-        },
-        {
-          "id": 2,
-          "title": "Wikipedia:Consenso - Wikipedia, la enciclopedia libre",
-          "url": "https://es.wikipedia.org/wiki/Wikipedia:Consenso"
-        },
-        {
-          "id": 5,
-          "title": "Wikipedia:Los cinco pilares - Wikipedia, la enciclopedia libre",
-          "url": "https://es.wikipedia.org/wiki/Wikipedia:Los_cinco_pilares"
-        },
-        {
-          "id": 12,
-          "title": "Wikipedia, la enciclopedia libre",
-          "url": "https://es.wikipedia.org/wiki/Wikipedia:Portada"
-        },
-        {
-          "id": 10,
-          "title": "Wikipedia:Derechos de autor - Wikipedia, la enciclopedia libre",
-          "url": "https://es.wikipedia.org/wiki/Wikipedia:Derechos_de_autor"
-        },
-        {
-          "id": 11,
-          "title": "Derecho de autor - Wikipedia, la enciclopedia libre",
-          "url": "https://es.wikipedia.org/wiki/Derecho_de_autor"
-        }
-      ],
-      "subFolders": []
-    },
-    {
-      "title": "Xbox",
-      "bookmarks": [
-        {
-          "id": 3,
-          "title": "Sitio oficial de Xbox: Consolas, juegos y comunidad | Xbox",
-          "url": "https://www.xbox.com/es-MX"
-        },
-        {
-          "id": 15,
-          "title": "Help:What links here - MediaWiki",
-          "url": "https://www.mediawiki.org/wiki/Help:What_links_here"
-        },
-        {
-          "id": 16,
-          "title": "Manual:FAQ - MediaWiki",
-          "url": "https://www.mediawiki.org/wiki/Manual:FAQ"
-        }
-      ],
-      "subFolders": []
-    },
-    {
-      "title": "Mediawiki",
-      "bookmarks": [
-        {
-          "id": 6,
-          "title": "Manual:linktarget table - MediaWiki",
-          "url": "https://www.mediawiki.org/wiki/Manual:Linktarget_table"
-        },
-        {
-          "id": 7,
-          "title": "Manual:$wgTemplateLinksSchemaMigrationStage - MediaWiki",
-          "url": "https://www.mediawiki.org/wiki/Manual:$wgTemplateLinksSchemaMigrationStage"
-        },
-        {
-          "id": 9,
-          "title": "Manual:pagelinks table - MediaWiki",
-          "url": "https://www.mediawiki.org/wiki/Manual:Pagelinks_table"
-        },
-        {
-          "id": 14,
-          "title": "Wikipedia discusión:Portada - Wikipedia, la enciclopedia libre",
-          "url": "https://es.wikipedia.org/wiki/Wikipedia_discusi%C3%B3n:Portada"
-        },
-        {
-          "id": 8,
-          "title": "Páginas que enlazan con «Wikipedia discusión:Portada» - Wikipedia, la enciclopedia libre",
-          "url": "https://es.wikipedia.org/wiki/Especial:LoQueEnlazaAqu%C3%AD/Wikipedia_discusi%C3%B3n:Portada"
-        },
-        {
-          "id": 17,
-          "title": "Download from Git - MediaWiki",
-          "url": "https://www.mediawiki.org/wiki/Download_from_Git"
-        }
-      ],
-      "subFolders": []
-    },
-    {
-      "title": "withoutFolder",
-      "bookmarks": [
-        {
-          "id": 4,
-          "title": "Usuario discusión:Daneel~eswiki - Wikipedia, la enciclopedia libre",
-          "url": "https://es.wikipedia.org/wiki/Usuario_discusi%C3%B3n:Daneel~eswiki"
-        }
-      ],
-      "subFolders": []
-    }
-  ],
-  "withoutFolder": [
-    {
-      "id": 13,
-      "title": "Haz tu donación ahora - Wikimedia Foundation",
-      "url": "https://donate.wikimedia.org/w/index.php?title=Special:LandingPage&country=MX&uselang=es&wmf_medium=sidebar&wmf_source=donate&wmf_campaign=es.wikipedia.org"
-    }
-  ],
-  "suggestionsAI": null
-}
-
-// public class ResponseAI
-// {
-//     public List<BookmarkFolderDto> WithFolder { get; set; } = new List<BookmarkFolderDto>();
-//     public List<BookmarkDto> WithoutFolder { get; set; } = new List<BookmarkDto>();
-// }
-
-//   public class BookmarkFolderDto
-// {
-//   public required string Title { get; set; }
-//   public List<BookmarkDto> Bookmarks { get; set; } = [];
-//   public List<BookmarkFolderDto> SubFolders { get; set; } = [];
-// }
-
-// public class BookmarkDto
-// {
-//   public int Id { get; set; }
-//   public required string Title { get; set; }
-//   public required string Url { get; set; }
-// }
+[
+  {
+    "Id": 1,
+    "Title": "JavaScript | MDN",
+    "Url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript"
+  },
+  {
+    "Id": 2,
+    "Title": "Array - JavaScript | MDN",
+    "Url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array"
+  },
+  {
+    "Id": 3,
+    "Title": "Promise - JavaScript | MDN",
+    "Url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"
+  },
+  {
+    "Id": 4,
+    "Title": "async function - JavaScript | MDN",
+    "Url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function"
+  },
+  {
+    "Id": 5,
+    "Title": "Fetch API - Web APIs | MDN",
+    "Url": "https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API"
+  },
+  {
+    "Id": 6,
+    "Title": "Using promises - JavaScript | MDN",
+    "Url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises"
+  },
+  {
+    "Id": 7,
+    "Title": "Map - JavaScript | MDN",
+    "Url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map"
+  },
+  {
+    "Id": 8,
+    "Title": "The Event Loop - JavaScript | MDN",
+    "Url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/EventLoop"
+  },
+  {
+    "Id": 9,
+    "Title": "Document Object Model (DOM) - Web APIs | MDN",
+    "Url": "https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model"
+  },
+  {
+    "Id": 10,
+    "Title": "Destructuring assignment - JavaScript | MDN",
+    "Url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment"
+  },
+  {
+    "Id": 11,
+    "Title": "Stack Overflow - Where Developers Learn, Share, & Build Careers",
+    "Url": "https://stackoverflow.com/"
+  },
+  {
+    "Id": 12,
+    "Title": "React",
+    "Url": "https://react.dev/"
+  },
+  {
+    "Id": 13,
+    "Title": "Vue.js - The Progressive JavaScript Framework",
+    "Url": "https://vuejs.org/"
+  },
+  {
+    "Id": 14,
+    "Title": "Figma: The Collaborative Interface Design Tool",
+    "Url": "https://www.figma.com/"
+  },
+  {
+    "Id": 15,
+    "Title": "AWS Management Console",
+    "Url": "https://aws.amazon.com/console/"
+  },
+  {
+    "Id": 16,
+    "Title": "CSS-Tricks - DigitalOcean",
+    "Url": "https://css-tricks.com/"
+  },
+  {
+    "Id": 17,
+    "Title": "Smashing Magazine \u2014 For Web Designers And Developers",
+    "Url": "https://www.smashingmagazine.com/"
+  },
+  {
+    "Id": 18,
+    "Title": "OpenAI",
+    "Url": "https://openai.com/"
+  },
+  {
+    "Id": 19,
+    "Title": "Hugging Face \u2013 The AI community building the future.",
+    "Url": "https://huggingface.co/"
+  },
+  {
+    "Id": 20,
+    "Title": "arXiv.org e-Print archive",
+    "Url": "https://arxiv.org/"
+  },
+  {
+    "Id": 21,
+    "Title": "Google AI",
+    "Url": "https://ai.google/discover/"
+  },
+  {
+    "Id": 22,
+    "Title": "TensorFlow",
+    "Url": "https://www.tensorflow.org/"
+  },
+  {
+    "Id": 23,
+    "Title": "PyTorch",
+    "Url": "https://pytorch.org/"
+  },
+  {
+    "Id": 24,
+    "Title": "GitHub: Let's build from here",
+    "Url": "https://github.com/"
+  },
+  {
+    "Id": 25,
+    "Title": "YouTube",
+    "Url": "https://www.youtube.com/"
+  },
+  {
+    "Id": 26,
+    "Title": "Reddit - Dive into anything",
+    "Url": "https://www.reddit.com/"
+  },
+  {
+    "Id": 27,
+    "Title": "Wikipedia",
+    "Url": "https://www.wikipedia.org/"
+  },
+  {
+    "Id": 28,
+    "Title": "Hacker News",
+    "Url": "https://news.ycombinator.com/"
+  },
+  {
+    "Id": 29,
+    "Title": "Trello",
+    "Url": "https://trello.com/"
+  },
+  {
+    "Id": 30,
+    "Title": "Notion \u2013 Your connected workspace for wiki, docs & projects.",
+    "Url": "https://www.notion.so/"
+  },
+  {
+    "Id": 31,
+    "Title": "Breaking Bad (TV Series 2008\u20132013) - IMDb",
+    "Url": "https://www.imdb.com/title/tt0903747/"
+  },
+  {
+    "Id": 32,
+    "Title": "Game of Thrones - Rotten Tomatoes",
+    "Url": "https://www.rottentomatoes.com/tv/game_of_thrones"
+  },
+  {
+    "Id": 33,
+    "Title": "The Godfather (1972) - IMDb",
+    "Url": "https://www.imdb.com/title/tt0068646/"
+  },
+  {
+    "Id": 34,
+    "Title": "One Piece Wiki | Fandom",
+    "Url": "https://onepiece.fandom.com/wiki/One_Piece_Wiki"
+  },
+  {
+    "Id": 35,
+    "Title": "Pulp Fiction - Rotten Tomatoes",
+    "Url": "https://www.rottentomatoes.com/m/pulp_fiction"
+  },
+  {
+    "Id": 36,
+    "Title": "VIZ | Read Jujutsu Kaisen Manga Free",
+    "Url": "https://www.viz.com/shonenjump/chapters/jujutsu-kaisen"
+  },
+  {
+    "Id": 37,
+    "Title": "Inception (2010) - IMDb",
+    "Url": "https://www.imdb.com/title/tt1375666/"
+  },
+  {
+    "Id": 38,
+    "Title": "Watch Attack on Titan - Crunchyroll",
+    "Url": "https://www.crunchyroll.com/series/GR751KNZY/attack-on-titan"
+  },
+  {
+    "Id": 39,
+    "Title": "The Sopranos | HBO Official Website",
+    "Url": "https://www.hbo.com/the-sopranos"
+  },
+  {
+    "Id": 40,
+    "Title": "Parasite - Rotten Tomatoes",
+    "Url": "https://www.rottentomatoes.com/m/parasite_2019"
+  },
+  {
+    "Id": 41,
+    "Title": "VIZ | Read Chainsaw Man Manga Free",
+    "Url": "https://www.viz.com/shonenjump/chapters/chainsaw-man"
+  },
+  {
+    "Id": 42,
+    "Title": "The Office (TV Series 2005\u20132013) - IMDb",
+    "Url": "https://www.imdb.com/title/tt0386676/"
+  },
+  {
+    "Id": 43,
+    "Title": "Stranger Things - Rotten Tomatoes",
+    "Url": "https://www.rottentomatoes.com/tv/stranger_things"
+  },
+  {
+    "Id": 44,
+    "Title": "Spirited Away (2001) - IMDb",
+    "Url": "https://www.imdb.com/title/tt0245429/"
+  },
+  {
+    "Id": 45,
+    "Title": "Berserk Wiki | Fandom",
+    "Url": "https://berserk.fandom.com/wiki/Berserk_Wiki"
+  },
+  {
+    "Id": 46,
+    "Title": "Everything Everywhere All at Once - Rotten Tomatoes",
+    "Url": "https://www.rottentomatoes.com/m/everything_everywhere_all_at_once"
+  },
+  {
+    "Id": 47,
+    "Title": "The Mandalorian | Disney+",
+    "Url": "https://disneyplusoriginals.disney.com/show/the-mandalorian"
+  },
+  {
+    "Id": 48,
+    "Title": "Interstellar (2014) - IMDb",
+    "Url": "https://www.imdb.com/title/tt0816692/"
+  },
+  {
+    "Id": 49,
+    "Title": "Ted Lasso | Apple TV+",
+    "Url": "https://tv.apple.com/us/show/ted-lasso/umc.cmc.vtoh0i0x5vj0aur630mcmxfl"
+  },
+  {
+    "Id": 50,
+    "Title": "VIZ | Read Demon Slayer: Kimetsu no Yaiba Manga",
+    "Url": "https://www.viz.com/shonenjump/chapters/demon-slayer-kimetsu-no-yaiba"
+  }
+]
