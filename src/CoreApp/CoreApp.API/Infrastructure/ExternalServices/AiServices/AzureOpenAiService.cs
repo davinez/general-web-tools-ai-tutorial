@@ -3,6 +3,7 @@ using Azure.AI.OpenAI;
 using CoreApp.API.Domain.Errors;
 using CoreApp.API.Domain.Services.ExternalServices;
 using CoreApp.API.Infrastructure.ExternalServices.AiServices.Dto;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using OpenAI.Chat;
 using System;
@@ -36,8 +37,9 @@ namespace CoreApp.API.Infrastructure.ExternalServices.AiServices
           ?? throw new InvalidOperationException("Azure OpenAI deployment name ('AiService:AzureOpenAI:DeploymentName') is not configured.");
 
       var endpoint = new Uri(endpointString);
+      var credential = new AzureKeyCredential(apiKey);
 
-      _client = new(endpoint, new ApiKeyCredential(apiKey));
+      _client = new(endpoint, credential);
 
       _options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, PropertyNameCaseInsensitive = true };
     }
