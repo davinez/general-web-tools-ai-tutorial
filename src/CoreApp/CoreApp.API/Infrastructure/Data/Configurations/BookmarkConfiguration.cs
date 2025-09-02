@@ -23,8 +23,7 @@ public class BookmarkConfiguration : IEntityTypeConfiguration<Bookmark>
         .IsRequired()
         .HasMaxLength(2048);
 
-    builder.Property(b => b.AddDate)
-        .HasColumnType("datetime");
+    builder.Property(b => b.AddDate);
 
     builder.Property(b => b.Icon)
         .HasMaxLength(2048);

@@ -33,7 +33,6 @@ public static class ServicesExtensions
     services.AddScoped<IValidator<CreateFoldersCommand>, CreateFoldersCommandHandler.CommandValidator>();
   }
 
-
   public static void AddCoreAppAPI(this IServiceCollection services, IConfiguration configuration)
   {
     services.AddMediator((MediatorOptions options) =>
@@ -43,7 +42,7 @@ public static class ServicesExtensions
       // Only available from v3:
       options.GenerateTypesAsInternal = true;
       options.NotificationPublisherType = typeof(Mediator.ForeachAwaitPublisher);
-      //options.Assemblies = [typeof(...)];
+      options.Assemblies = [];
       options.PipelineBehaviors = [];
       options.StreamPipelineBehaviors = [];
     });

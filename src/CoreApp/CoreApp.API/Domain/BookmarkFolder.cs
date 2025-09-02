@@ -7,8 +7,8 @@ namespace CoreApp.API.Domain;
 public class BookmarkFolder : BaseEntity
 {
   public required string Title { get; set; }
-  public DateTime? AddDate { get; set; }
-  public DateTime? LastModified { get; set; }
+  public DateTimeOffset? AddDate { get; set; }
+  public DateTimeOffset? LastModified { get; set; }
 
   // Foreign Key
   public int? ParentFolderId { get; set; }

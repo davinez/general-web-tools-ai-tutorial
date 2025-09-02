@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace CoreApp.API.Endpoints.Bookmarks.CreateFolders
 {
 
-  public record CreateFoldersCommand(CreateFoldersRequest Request) : ICommand;
+  public record CreateFoldersCommand(CreateFoldersRequest Request) : ICommand<Unit>;
 
   public class CreateFoldersCommandHandler
   {
@@ -23,7 +23,7 @@ namespace CoreApp.API.Endpoints.Bookmarks.CreateFolders
       }
     }
 
-    public class Handler : ICommandHandler<CreateFoldersCommand>
+    public class Handler : ICommandHandler<CreateFoldersCommand, Unit>
     {
       private readonly CoreAppContext _context;
       private readonly ICurrentUserAccessor _currentUserAccessor;

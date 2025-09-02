@@ -19,21 +19,14 @@ public class BookmarkFolderConfiguration : IEntityTypeConfiguration<BookmarkFold
         .IsRequired()
         .HasMaxLength(255);
 
-    builder.Property(f => f.AddDate)
-        .HasColumnType("datetime");
+    builder.Property(f => f.AddDate);
 
-    builder.Property(f => f.LastModified)
-        .HasColumnType("datetime");
+    builder.Property(f => f.LastModified);
 
     // Relationships
     builder.HasMany(f => f.SubFolders)
         .WithOne(f => f.ParentFolder)
         .HasForeignKey(f => f.ParentFolderId)
         .OnDelete(DeleteBehavior.Restrict);
-
-    builder.HasMany(f => f.Bookmarks)
-        .WithOne(b => b.BookmarkFolder)
-        .HasForeignKey(b => b.BookmarkFolderId)
-        .OnDelete(DeleteBehavior.Cascade);
   }
 }

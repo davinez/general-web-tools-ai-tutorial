@@ -1,7 +1,5 @@
 using CoreApp.API;
 using CoreApp.API.Domain.Errors;
-using CoreApp.API.Domain.Hubs;
-using CoreApp.API.Infrastructure;
 using CoreApp.API.Infrastructure.Data;
 using CoreApp.API.Infrastructure.Data.Interceptors;
 using CoreApp.API.Infrastructure.Hubs;
@@ -10,166 +8,150 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Logging;
-using Microsoft.OpenApi.Models;
+using NSwag;
+using NSwag.Generation.Processors.Security;
+using Serilog;
 using StackExchange.Redis;
 using System;
-using System.Collections.Generic;
 
+// Configure Serilog for bootstrap logging. This will catch errors during startup.
+// This should be the very first thing in your Program.cs
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
-builder.Services.AddScoped<ApplicationDbContextInitialiser>();
-
-builder.Services.AddSingleton(TimeProvider.System);
-
-var connectionString = builder.Configuration["ConnectionStrings:CoreAppDB"] ?? throw new CoreAppException("Missing connection string");
-var databaseProvider = builder.Configuration["ConnectionStrings:CoreAppDBProvider"] ?? throw new CoreAppException("Missing CoreAppDBProvider");
-var redisConnectionString = builder.Configuration["Redis:ConnectionString"] ?? throw new CoreAppException("Missing Redis:ConnectionString");
-var redsChannel = builder.Configuration["Redis:RedisChannel"] ?? throw new CoreAppException("Missing Redis:RedisChannel");
-
-builder.Services.AddDbContext<CoreAppContext>((sp, options) =>
+try
 {
-  if (databaseProvider.ToLowerInvariant().Trim().Equals("sqlite", StringComparison.Ordinal))
+
+  Log.Information("Starting web application");
+
+  var builder = WebApplication.CreateBuilder(args);
+
+  // Configure Serilog as the logging provider for the application
+  builder.Host.UseSerilog((context, services, configuration) => configuration
+      .ReadFrom.Configuration(context.Configuration)
+      .ReadFrom.Services(services)
+      .Enrich.FromLogContext()
+      .WriteTo.Console());
+
+  builder.Services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
+  builder.Services.AddScoped<ApplicationDbContextInitialiser>();
+
+  var connectionString = builder.Configuration["ConnectionStrings:CoreAppDB"] ?? throw new CoreAppException("Missing connection string");
+  var databaseProvider = builder.Configuration["ConnectionStrings:CoreAppDBProvider"] ?? throw new CoreAppException("Missing CoreAppDBProvider");
+  var redisConnectionString = builder.Configuration["Redis:ConnectionString"] ?? throw new CoreAppException("Missing Redis:ConnectionString");
+  var redsChannel = builder.Configuration["Redis:RedisChannel"] ?? throw new CoreAppException("Missing Redis:RedisChannel");
+
+  builder.Services.AddDbContext<CoreAppContext>((sp, options) =>
   {
-    // options.UseSqlite(connectionString);
+    if (databaseProvider.ToLowerInvariant().Trim().Equals("sqlite", StringComparison.Ordinal))
+    {
+      // options.UseSqlite(connectionString);
+    }
+    else if (
+        databaseProvider.ToLowerInvariant().Trim().Equals("postgres", StringComparison.Ordinal)
+    )
+    {
+
+      options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
+
+      options.UseNpgsql(connectionString, x => x.MigrationsHistoryTable("__EFMigrationsHistory", "coreapp"));
+    }
+    else
+    {
+      throw new InvalidOperationException(
+          "Database provider unknown. Please check configuration"
+      );
+    }
+  });
+
+  // if we're using the Interface, we register the interface
+ // builder.Services.AddScoped<ICoreAppContext>(provider => provider.GetRequiredService<CoreAppContext>());
+
+  builder.Services.AddEndpointsApiExplorer();
+  builder.Services.AddOpenApiDocument((configure, sp) =>
+  {
+    configure.Title = "GWTAI API";
+
+    // Add JWT
+    configure.AddSecurity("bearer", new NSwag.OpenApiSecurityScheme
+    {
+      Type = OpenApiSecuritySchemeType.ApiKey,
+      Name = "Authorization",
+      In = OpenApiSecurityApiKeyLocation.Header,
+      Description = "Type into the textbox: Bearer {your JWT token}."
+    });
+
+    configure.OperationProcessors.Add(new AspNetCoreOperationSecurityScopeProcessor("bearer"));
+
+  });
+
+  builder.Services.AddCors();
+  builder.Services.AddCoreAppAPI(builder.Configuration);
+  builder.Services.AddValidators();
+
+  builder.Services.AddJwt();
+
+  // Hubs
+  // Add SignalR services
+  builder.Services.AddSignalR()
+      .AddStackExchangeRedis(redisConnectionString, options =>
+      {
+        options.Configuration.ChannelPrefix = RedisChannel.Literal(redsChannel);
+      });
+
+  // App
+
+  var app = builder.Build();
+
+  // Configure the HTTP request pipeline.
+  app.UseSerilogRequestLogging(); // Optional: Log all HTTP requests
+
+  app.UseMiddleware<ErrorHandlingMiddleware>();
+
+  app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+
+  app.UseAuthentication();
+
+  // Configure the HTTP request pipeline.
+  if (app.Environment.IsDevelopment())
+  {
+    app.InitialiseDatabase();
+    IdentityModelEventSource.ShowPII = false;
   }
-  else if (
-      databaseProvider.ToLowerInvariant().Trim().Equals("postgres", StringComparison.Ordinal)
-  )
+  else if (app.Environment.IsProduction())
   {
-
-    options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
-
-    options.UseNpgsql(connectionString, x => x.MigrationsHistoryTable("__EFMigrationsHistory", "coreapp"));
+    // For prod environment, ideally we want a script migration not auto-migration using EF Core
+    // example dotnet ef migrations script --idempotent --output EFCore/migrations.sql
+    app.InitialiseDatabase();
+    app.UseOpenApi();
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
   }
   else
   {
-    throw new InvalidOperationException(
-        "Database provider unknown. Please check configuration"
-    );
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
   }
-});
-
-// if we're using the Interface, we register the interface
-builder.Services.AddScoped<CoreAppContext>(provider => provider.GetRequiredService<CoreAppContext>());
-
-builder.Services.AddLocalization(x => x.ResourcesPath = "Resources");
-
-// Inject an implementation of ISwaggerProvider with defaulted settings applied
-builder.Services.AddSwaggerGen(x =>
-{
-  x.AddSecurityDefinition(
-      "Bearer",
-      new OpenApiSecurityScheme
-      {
-        In = ParameterLocation.Header,
-        Description = "Please insert JWT with Bearer into field",
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey,
-        BearerFormat = "JWT"
-      }
-  );
-
-  x.SupportNonNullableReferenceTypes();
-
-  x.AddSecurityRequirement(
-      new OpenApiSecurityRequirement
-      {
-            {
-                new OpenApiSecurityScheme
-                {
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
-                    }
-                },
-                Array.Empty<string>()
-            }
-      }
-  );
-  x.SwaggerDoc("v1", new OpenApiInfo { Title = "GWTAI Core API", Version = "v1" });
-  x.CustomSchemaIds(y => y.FullName);
-  x.DocInclusionPredicate((_, _) => true);
-  x.TagActionsBy(y => new List<string> { y.GroupName ?? throw new InvalidOperationException() });
-  x.CustomSchemaIds(s => s.FullName?.Replace("+", "."));
-});
-
-builder.Services.AddCors();
-builder
-    .Services.AddMvc(opt =>
-    {
-      opt.Conventions.Add(new GroupByApiRootConvention());
-      opt.Filters.Add(typeof(ValidatorActionFilter));
-      opt.EnableEndpointRouting = false;
-    })
-    .AddJsonOptions(opt =>
-        opt.JsonSerializerOptions.DefaultIgnoreCondition = System
-            .Text
-            .Json
-            .Serialization
-            .JsonIgnoreCondition
-            .WhenWritingNull
-    );
-
-builder.Services.AddCoreAppAPI(builder.Configuration);
-builder.Services.AddValidators();
-
-builder.Services.AddJwt();
-
-// Hubs
-// Add SignalR services
-builder.Services.AddSignalR()
-    .AddStackExchangeRedis(redisConnectionString, options => {
-      options.Configuration.ChannelPrefix = RedisChannel.Literal(redsChannel);
-    });
-
-// App
-
-var app = builder.Build();
-
-app.Services.GetRequiredService<ILoggerFactory>().AddSerilogLogging();
-
-app.UseMiddleware<ErrorHandlingMiddleware>();
-
-app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
-
-app.UseAuthentication();
-app.UseMvc();
-
-// Enable middleware to serve generated Swagger as a JSON endpoint
-app.UseSwagger(c => c.RouteTemplate = "swagger/{documentName}/swagger.json");
-
-// Enable middleware to serve swagger-ui assets(HTML, JS, CSS etc.)
-app.UseSwaggerUI(x => x.SwaggerEndpoint("/swagger/v1/swagger.json", "RealWorld API V1"));
 
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-  await app.InitialiseDatabaseAsync();
-  IdentityModelEventSource.ShowPII = false;
+  // Map the SignalR hub
+  app.MapHub<JobEventStatusHub>("/jobEventStatusHub");
+
+
+  app.Run();
+
 }
-else if (app.Environment.IsProduction())
+catch (Exception ex) when (ex is not HostAbortedException && ex.Source != "Microsoft.EntityFrameworkCore.Design") // see https://github.com/dotnet/efcore/issues/29923
 {
-  // For prod environment, ideally we want a script migration not auto-migration using EF Core
-  // example dotnet ef migrations script --idempotent --output EFCore/migrations.sql
-  await app.InitialiseDatabaseAsync();
-  // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-  app.UseHsts();
+  Log.Fatal(ex, "Web host terminated unexpectedly");
+ // return 1;
 }
-else
+finally
 {
-  // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-  app.UseHsts();
+  // IMPORTANT: This flushes any buffered logs and gracefully shuts down Serilog
+  Log.CloseAndFlush();
 }
-
-
-// Map the SignalR hub
-app.MapHub<JobEventStatusHub>("/jobEventStatusHub");
-
-
-app.Run();
+// return 0;

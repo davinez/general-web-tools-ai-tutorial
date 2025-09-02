@@ -11,7 +11,7 @@ Run the following commands to create the database schema:
 
 ```bash
 # Create a new migration
-dotnet ef migrations add [MigrationName]
+dotnet ef migrations add Initial-Migration --output-dir Infrastructure/Data/Migrations
 
 # Remove the latest migration
 dotnet ef migrations remove

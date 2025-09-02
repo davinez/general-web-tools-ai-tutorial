@@ -5,20 +5,21 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using CoreApp.API.Domain.Errors;
 
 namespace CoreApp.API.Infrastructure.Data;
 
 public static class InitialiserExtensions
 {
-  public static async Task InitialiseDatabaseAsync(this WebApplication app)
+  public static void InitialiseDatabase(this WebApplication app)
   {
     using var scope = app.Services.CreateScope();
 
     var initialiser = scope.ServiceProvider.GetRequiredService<ApplicationDbContextInitialiser>();
 
-    await initialiser.InitialiseAsync();
+    initialiser.Initialise();
 
-    // await initialiser.SeedAsync();
+    // await initialiser.Seed();
   }
 }
 
@@ -33,13 +34,20 @@ public class ApplicationDbContextInitialiser
     _context = context;
   }
 
-  public async Task InitialiseAsync()
+  public void Initialise()
   {
     try
     {
-      if ((await _context.Database.GetPendingMigrationsAsync()).Any())
+      if (!_context.Database.CanConnect())
       {
-        await _context.Database.MigrateAsync();
+        throw new CoreAppException("Database cannot connect");
+      }
+
+      var pendingMigrations = _context.Database.GetPendingMigrations();
+
+      if (pendingMigrations.Any())
+      {
+        _context.Database.Migrate();
       }
     }
     catch (Exception ex)
@@ -49,11 +57,11 @@ public class ApplicationDbContextInitialiser
     }
   }
 
-  //public async Task SeedAsync()
+  //public void Seed()
   //{
   //  try
   //  {
-  //    await TrySeedAsync();
+  //    TrySeed();
   //  }
   //  catch (Exception ex)
   //  {
