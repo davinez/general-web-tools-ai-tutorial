@@ -1,4 +1,4 @@
-using CoreApp.API.Infrastructure;
+using CoreApp.API.Domain.Security;
 
 namespace CoreApp.IntegrationTests;
 

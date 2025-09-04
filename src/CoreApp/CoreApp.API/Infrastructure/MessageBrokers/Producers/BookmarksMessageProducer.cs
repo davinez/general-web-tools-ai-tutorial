@@ -1,10 +1,11 @@
+using CoreApp.API.Domain.MessageBrokers.Producers;
 using CoreApp.API.Infrastructure.MessageBrokers.Dto;
 using System.Threading.Tasks;
 using Wolverine;
 
 namespace CoreApp.API.Infrastructure.MessageBrokers.Producers;
 
-public class BookmarksMessageProducer
+public class BookmarksMessageProducer : IBookmarksMessageProducer
 {
   private readonly IMessageBus _messageBus;
 

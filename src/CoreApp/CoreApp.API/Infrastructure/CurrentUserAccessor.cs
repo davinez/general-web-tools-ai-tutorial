@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Security.Claims;
+using CoreApp.API.Domain.Security;
 using Microsoft.AspNetCore.Http;
 
 namespace CoreApp.API.Infrastructure;

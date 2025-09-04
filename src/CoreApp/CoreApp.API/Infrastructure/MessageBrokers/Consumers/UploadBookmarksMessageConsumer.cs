@@ -1,4 +1,5 @@
 using CoreApp.API.Domain.Errors;
+using CoreApp.API.Domain.Errors.Exceptions;
 using CoreApp.API.Domain.Hubs;
 using CoreApp.API.Domain.Services.ExternalServices;
 using CoreApp.API.Endpoints.Bookmarks.Dtos;

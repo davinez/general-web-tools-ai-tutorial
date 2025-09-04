@@ -1,13 +1,11 @@
 using Azure;
 using Azure.AI.OpenAI;
-using CoreApp.API.Domain.Errors;
+using CoreApp.API.Domain.Errors.Exceptions;
 using CoreApp.API.Domain.Services.ExternalServices;
 using CoreApp.API.Infrastructure.ExternalServices.AiServices.Dto;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using OpenAI.Chat;
 using System;
-using System.ClientModel;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading;
@@ -60,6 +58,7 @@ namespace CoreApp.API.Infrastructure.ExternalServices.AiServices
     null,
     cancellationToken);
 
+        // DEBUG LOCALLY AI Response
         Console.WriteLine($"{completion.Role}: {completion.Content[0].Text}");
 
         if (completion.Content.Count > 0)

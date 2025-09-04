@@ -56,6 +56,12 @@ Drop-Database
 
 ```
 
+# Run App
+
+- Locally
+http://localhost:8082/swagger
+
+
 # Linux
 
 sudo apt update && sudo apt upgrade -y

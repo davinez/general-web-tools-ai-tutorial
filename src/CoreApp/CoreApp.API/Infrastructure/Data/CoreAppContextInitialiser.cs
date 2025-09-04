@@ -1,11 +1,10 @@
+using CoreApp.API.Domain.Errors.Exceptions;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
-using System;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Linq;
-using CoreApp.API.Domain.Errors;
 
 namespace CoreApp.API.Infrastructure.Data;
 

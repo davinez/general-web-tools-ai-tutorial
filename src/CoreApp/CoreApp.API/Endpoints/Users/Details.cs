@@ -1,4 +1,5 @@
 using CoreApp.API.Domain.Errors;
+using CoreApp.API.Domain.Errors.Exceptions;
 using CoreApp.API.Infrastructure.Data;
 using CoreApp.API.Infrastructure.Security;
 using FluentValidation;

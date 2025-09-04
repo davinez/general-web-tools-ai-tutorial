@@ -1,4 +1,4 @@
-using CoreApp.API.Infrastructure;
+using CoreApp.API.Domain.Security;
 using CoreApp.API.Infrastructure.Security;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;

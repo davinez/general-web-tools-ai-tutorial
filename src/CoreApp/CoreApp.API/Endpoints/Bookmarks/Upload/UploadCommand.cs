@@ -1,6 +1,6 @@
 using CoreApp.API.Domain;
 using CoreApp.API.Domain.MessageBrokers.Producers;
-using CoreApp.API.Infrastructure;
+using CoreApp.API.Domain.Security;
 using CoreApp.API.Infrastructure.Data;
 using CoreApp.API.Infrastructure.MessageBrokers.Dto;
 using FluentValidation;
@@ -15,8 +15,7 @@ using static CoreApp.API.Domain.Constants.StatusConstants;
 
 namespace CoreApp.API.Endpoints.Bookmarks.Upload;
 
-public sealed record UploadCommand(UploadRequest File) : IQuery<UploadResponse>;
-
+public record UploadCommand(UploadRequest File) : ICommand<UploadResponse>;
 
 public class UploadCommandHandler
 {
@@ -35,7 +34,7 @@ public class UploadCommandHandler
     }
   }
 
-  public sealed class Handler : IQueryHandler<UploadCommand, UploadResponse>
+  public class Handler : ICommandHandler<UploadCommand, UploadResponse>
   {
 
     private readonly ILogger<UploadCommandHandler> _logger;

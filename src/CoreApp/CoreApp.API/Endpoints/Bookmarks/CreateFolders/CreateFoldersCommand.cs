@@ -1,6 +1,6 @@
 using CoreApp.API.Domain;
+using CoreApp.API.Domain.Security;
 using CoreApp.API.Endpoints.Bookmarks.Dtos;
-using CoreApp.API.Infrastructure;
 using CoreApp.API.Infrastructure.Data;
 using FluentValidation;
 using Mediator;

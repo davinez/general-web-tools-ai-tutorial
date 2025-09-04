@@ -1,4 +1,4 @@
-using CoreApp.API.Domain.Errors;
+using CoreApp.API.Domain.Errors.Exceptions;
 using CoreApp.API.Domain.Services.ExternalServices;
 using CoreApp.API.Infrastructure.ExternalServices.AiServices.Dto;
 using Microsoft.Extensions.Configuration;
@@ -31,7 +31,7 @@ namespace CoreApp.API.Infrastructure.ExternalServices.AiServices
       var apiKey = _configuration["AiService:Gemini:ApiKey"];
       var modelName = _configuration["AiService:Gemini:ModelName"];
       var requestUri = $"v1beta/models/{modelName}:generateContent";
-      
+
       var requestBody = new GeminiRequest
       {
         Contents =

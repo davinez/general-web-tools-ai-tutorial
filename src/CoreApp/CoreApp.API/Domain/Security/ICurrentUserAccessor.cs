@@ -1,4 +1,4 @@
-namespace CoreApp.API.Infrastructure;
+namespace CoreApp.API.Domain.Security;
 
 public interface ICurrentUserAccessor
 {

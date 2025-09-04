@@ -1,6 +1,7 @@
 using CoreApp.API.Domain;
 using CoreApp.API.Domain.Errors;
-using CoreApp.API.Infrastructure;
+using CoreApp.API.Domain.Errors.Exceptions;
+using CoreApp.API.Domain.Security;
 using CoreApp.API.Infrastructure.Data;
 using FluentValidation;
 using Mediator;

@@ -68,6 +68,24 @@ services:
     networks:
       - gwtai-network
 
+  # Local Redis DB empty default:localpass
+  # Connection redis://default:localpass@redis:6379
+  redis:
+    image: 'redis:7.4.0'
+    container_name: redis
+    #restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - ./containers-data/redis:/redis
+      - ./containers-data/redis/redis.conf:/etc/redis.conf
+    environment:
+      - REDIS_PASSWORD=localpass
+      #- REDIS_DATABASES=16
+    command: /bin/sh -c 'redis-server --appendonly yes --requirepass $${REDIS_PASSWORD}'
+    networks:
+     - gwtai-network
+
   # Default account
   # Account name: devstoreaccount1
   # Account key: Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==
@@ -87,6 +105,21 @@ services:
     networks:
       - gwtai-network  
 
+  rabbitmq:
+      image: rabbitmq:3-management-alpine
+      container_name: "rabbitmq"
+      # hostname: rabbitmq
+      ports:
+        - "5672:5672"   # Port for AMQP protocol (for your application)
+        - "15672:15672" # Port for the web-based Management UI
+      volumes:
+        - ./containers-data/rabbitmq:/var/lib/rabbitmq # Persists queues and messages
+      environment:
+        - RABBITMQ_DEFAULT_USER=guest # Sets the default username
+        - RABBITMQ_DEFAULT_PASS=guest # Sets the default password
+      networks:
+        - gwtai-network
+
 # docker network create gwtainetwork
 networks:
   gwtai-network :
@@ -94,8 +127,11 @@ networks:
     driver: bridge
     external: true
 
+
+
 # After compose up, docker exec -it ollama_service ollama run llama3
 # docker compose -f .\docker-compose.gwtai.yml up
+
 
 
 
