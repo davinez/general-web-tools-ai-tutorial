@@ -88,6 +88,7 @@ public class UploadBookmarksMessageConsumer
 Group related topics or series under the exact same folder name (e.g., use 'One Piece' for all chapters of that manga). 
 If a bookmark is unique, suggest 'Miscellaneous'.
 Return ONLY a JSON array of objects, where each object has the original 'Id' (int) and a new 'FolderName' (string) property.
+Don't wrap the JSON array response in any additional text or markdown formatting.
 
 Data:
 {jsonDataForBatch}";

@@ -6,6 +6,7 @@ using CoreApp.API.Infrastructure.Data;
 using CoreApp.API.Infrastructure.Data.Interceptors;
 using CoreApp.API.Infrastructure.ExternalServices.AiServices;
 using CoreApp.API.Infrastructure.ExternalServices.Storage;
+using CoreApp.API.Infrastructure.MessageBrokers.Consumers;
 using CoreApp.API.Infrastructure.MessageBrokers.Dto;
 using CoreApp.API.Infrastructure.MessageBrokers.Producers;
 using CoreApp.API.Infrastructure.Security;

@@ -1,3 +1,4 @@
+using CoreApp.API.Domain.Models;
 using CoreApp.API.Endpoints.Bookmarks.CreateFolders;
 using CoreApp.API.Endpoints.Bookmarks.Upload;
 using Mediator;
@@ -23,7 +24,6 @@ namespace CoreApp.API.Endpoints.Bookmarks
     // [Authorize(AuthenticationSchemes = JwtIssuerOptions.Schemes)]
     public async Task<IActionResult> BulkUpload(IFormFile fileContent, [FromForm] string fileName, [FromForm] DateTimeOffset uploadTimestamp)
     {
-
       // Now you can pass this data to your mediator or service
       var request = new UploadRequest
       {
@@ -32,9 +32,10 @@ namespace CoreApp.API.Endpoints.Bookmarks
         UploadTimestamp = uploadTimestamp
       };
 
-      await mediator.Send(new UploadCommand(request));
+      UploadResponse response = await mediator.Send(new UploadCommand(request));
+      var data = new ApiResponse<UploadResponse> { Data = response };
 
-      return Ok();
+     return Ok(data);
     }
 
     // POST: api/bookmarks/create-folders

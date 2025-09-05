@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace CoreApp.API.Domain.Errors;
+namespace CoreApp.API.Domain.Models;
 
 public class ApiErrorResponse
 {

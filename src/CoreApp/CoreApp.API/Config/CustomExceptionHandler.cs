@@ -1,5 +1,5 @@
-using CoreApp.API.Domain.Errors;
 using CoreApp.API.Domain.Errors.Exceptions;
+using CoreApp.API.Domain.Models;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
