@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { PageHeader } from '@shared';
+import { JOB_NOTIFICATIONS } from './data-temp';
 
 @Component({
   selector: 'app-dashboard',
@@ -9,4 +10,8 @@ import { PageHeader } from '@shared';
 })
 export class Dashboard {
 
+
+  jobNotifications = JOB_NOTIFICATIONS;
+
+  
 }
