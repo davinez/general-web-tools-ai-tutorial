@@ -3,6 +3,7 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { catchError, throwError } from 'rxjs';
+import { ApiErrorResponse } from '../interfaces/api-error.interface';
 
 export enum STATUS {
   UNAUTHORIZED = 401,
@@ -11,12 +12,27 @@ export enum STATUS {
   INTERNAL_SERVER_ERROR = 500,
 }
 
+function isApiErrorResponse(responseBody: any): responseBody is ApiErrorResponse {
+  return (
+    responseBody &&
+    responseBody.error &&
+    typeof responseBody.error.code === 'number' &&
+    Array.isArray(responseBody.error.errors)
+  );
+}
+
 export function errorInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn) {
   const router = inject(Router);
   const toast = inject(ToastrService);
   const errorPages = [STATUS.FORBIDDEN, STATUS.NOT_FOUND, STATUS.INTERNAL_SERVER_ERROR];
 
   const getMessage = (error: HttpErrorResponse) => {
+    if (isApiErrorResponse(error.error)) {
+      const apiError = error.error.error;
+      const mainMessage = apiError.message || 'An error occurred.';
+      const subErrors = apiError.errors.map(e => e.message).join('\n');
+      return subErrors ? `${mainMessage}\n${subErrors}` : mainMessage;
+    }
     if (error.error?.message) {
       return error.error.message;
     }

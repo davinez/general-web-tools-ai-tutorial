@@ -1,0 +1,145 @@
+
+    <!-- Old ways of use ngIf and let-of -->
+    <!-- <ng-container *ngFor="let column of columns" [matColumnDef]="column.key.toString()">
+      <th mat-header-cell *matHeaderCellDef>{{ column.label }}</th>
+      <td mat-cell *matCellDef="let row">
+        <ng-container *ngIf="editingRow && editingRow[paginatorConfig.idKey!] === row[paginatorConfig.idKey!] && column.editable">
+          <mat-form-field>
+            <input matInput [(ngModel)]="editingRow[column.key]">
+          </mat-form-field>
+        </ng-container>
+        <ng-container *ngIf="!editingRow || editingRow[paginatorConfig.idKey!] !== row[paginatorConfig.idKey!] || !column.editable">
+          {{ row[column.key] }}
+        </ng-container>
+      </td>
+    </ng-container> -->
+
+
+ <!--
+  This is the main container for the table and its paginator. 
+  Using a container div is good practice for styling and layout, especially for controlling overflow or setting a max-height.
+-->
+<div class="table-container">
+  <!--
+    The <table> element is enhanced by the `mat-table` component directive from Angular Material.
+    [dataSource]: This is an @Input property on the mat-table component. We use property binding `[]` to pass our data source from the component's TypeScript file.
+    [trackBy]: This is a performance optimization. It provides a function that helps Angular track changes in the data array more efficiently,
+               preventing it from re-rendering the entire table when data changes.
+  -->
+  <table mat-table [dataSource]="dataSource" [trackBy]="trackByFn">
+
+    <!-- ================== DYNAMIC COLUMNS ================== -->
+    <!--
+      `@for` is Angular's new, built-in control flow for rendering lists. It's more efficient and has a cleaner syntax than the old *ngFor.
+      It iterates over the `columns` array defined in the component's TypeScript.
+      `track column.key`: This is the tracking function for the loop, equivalent to `trackBy`. It's required for performance.
+    -->
+    @for (column of columns; track column.key) {
+      <!--
+        `ng-container` is an Angular element that groups other elements but doesn't get rendered in the final DOM. It's perfect for applying structural directives.
+        `matColumnDef` is a structural directive that defines a column. The string passed to it is the unique identifier for this column.
+      -->
+      <ng-container [matColumnDef]="column.key.toString()">
+        <!--
+          `th` is the standard HTML table header cell.
+          `mat-header-cell` is an attribute directive that applies Material Design styling to the `th`.
+          `*matHeaderCellDef` is a structural directive that provides the template for this column's header.
+        -->
+        <th mat-header-cell *matHeaderCellDef>{{ column.label }}</th>
+        <!--
+          `td` is the standard HTML table data cell.
+          `mat-cell` is an attribute directive that applies Material Design styling to the `td`.
+          `*matCellDef="let row"` is a structural directive that provides the template for this column's data cells.
+          `let row` makes the data object for the current row available as a local variable named `row`.
+        -->
+        <td mat-cell *matCellDef="let row">
+          <!--
+            `@if` is Angular's new, built-in control flow for conditional rendering.
+            This block checks if the current row is the one being edited AND if the column is marked as editable.
+          -->
+          @if (editingRow && editingRow[paginatorConfig.idKey!] === row[paginatorConfig.idKey!] && column.editable) {
+            <!-- If in edit mode, render an input field. -->
+            <mat-form-field>
+              <!--
+                `[(ngModel)]` is two-way data binding.
+                It binds the input's value to a property in the component's TypeScript (`editingRow[column.key]`).
+                - When the user types, the property is updated.
+                - When the property is changed in code, the input's value is updated.
+              -->
+              <input matInput [(ngModel)]="editingRow[column.key]">
+            </mat-form-field>
+          } @else if (!editingRow || editingRow[paginatorConfig.idKey!] !== row[paginatorConfig.idKey!] || !column.editable) {
+            <!-- If not in edit mode, just display the data as text. -->
+            {{ row[column.key] }}
+          }
+        </td>
+      </ng-container>
+    }
+
+    <!-- ================== ACTIONS COLUMN (for Edit/Delete) ================== -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let row">
+        <!-- Show Save/Cancel buttons if this row is being edited. -->
+        @if (editingRow && editingRow[paginatorConfig.idKey!] === row[paginatorConfig.idKey!]) {
+          <!--
+            `mat-icon-button` is an attribute directive that styles a button as a circular icon button.
+            `(click)="saveUpdate()"` is event binding. It calls the `saveUpdate` method in the component's code when the button is clicked.
+            `matTooltip` is a directive that shows a helpful text label on hover.
+          -->
+          <button mat-icon-button (click)="saveUpdate()" matTooltip="Save">
+            <mat-icon>save</mat-icon>
+          </button>
+          <button mat-icon-button (click)="cancelEdit()" matTooltip="Cancel">
+            <mat-icon>cancel</mat-icon>
+          </button>
+        } @else if (!editingRow || editingRow[paginatorConfig.idKey!] !== row[paginatorConfig.idKey!]) {
+          <!-- Show Edit/Delete buttons if not in edit mode. -->
+          <button mat-icon-button (click)="startEdit(row)" matTooltip="Update">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button (click)="delete(row)" matTooltip="Delete">
+            <mat-icon>delete</mat-icon>
+          </button>
+        }
+      </td>
+    </ng-container>
+
+    <!-- ================== CUSTOM ACTION COLUMN ================== -->
+    <ng-container matColumnDef="customAction">
+      <th mat-header-cell *matHeaderCellDef>Custom Action</th>
+      <td mat-cell *matCellDef="let row">
+        <button mat-raised-button color="primary" (click)="customAction(row)">Custom</button>
+      </td>
+    </ng-container>
+
+    <!-- ================== ROW DEFINITIONS ================== -->
+    <!--
+      This defines the header row.
+      `mat-header-row` is an attribute directive that applies styling.
+      `*matHeaderRowDef` is a structural directive that tells the table which columns (by their `matColumnDef` ID) to include in the header, and in what order.
+      `displayedColumns` is an array of strings in the component's TypeScript.
+    -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <!--
+      This defines the data rows.
+      `mat-row` is an attribute directive for styling.
+      `*matRowDef` is a structural directive that acts as the template for each row in the table.
+      It iterates through the `dataSource`. `let row` captures the data for each item.
+      `columns: displayedColumns` tells the row which cell templates to render, based on the `displayedColumns` array.
+    -->
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <!--
+    `<mat-paginator>` is a component that provides UI for paging through data.
+    Its properties are configured using property binding from the `paginatorConfig` object in the component's TypeScript.
+  -->
+  <mat-paginator [length]="paginatorConfig.length"
+               [pageSize]="paginatorConfig.pageSize"
+               [pageSizeOptions]="paginatorConfig.pageSizeOptions"
+               aria-label="Select page">
+  </mat-paginator>
+</div>
+
+

@@ -1,6 +1,42 @@
+<mat-progress-bar *ngIf="isUploading" mode="indeterminate"></mat-progress-bar>
+<div class="bookmarks-container">
+  <h2>Upload Bookmarks</h2>
+  <p>Upload your bookmarks file (in HTML format) to import them.</p>
 
-<div class="row">
-  <div class="col-sm-6 col-md-3">
-    Bookmarks page coming soon!
-  </div>
+  <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="file" class="file-upload-label">
+        <span class="file-upload-button">Choose File</span>
+        <span class="file-upload-filename">{{ uploadForm.get('fileName')?.value || 'No file chosen' }}</span>
+      </label>
+      <input type="file" id="file" class="file-upload-input" (change)="onFileSelected($event)" accept=".html">
+
+      @if (uploadForm.get('fileContent')?.invalid && (uploadForm.get('fileContent')?.dirty || uploadForm.get('fileContent')?.touched)) {
+        <div class="error-message">
+          Please select a file.
+        </div>
+      }
+    </div>
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="!uploadForm.valid || isUploading">
+      @if (!isUploading) {
+        <span>Upload</span>
+      } @else {
+        <span>Uploading...</span>
+      }
+    </button>
+  </form>
+</div>
+
+<div class="bookmarks-container">
+  <h2>Upload History</h2>
+  <app-dynamic-table
+    [data]="uploads"
+    [columns]="columns"
+    [paginatorConfig]="paginatorConfig"
+    [showActions]="false"
+    [showCustomAction]="true"
+    (onCustomAction)="handleCustomAction($event)"
+  >
+  </app-dynamic-table>
 </div>

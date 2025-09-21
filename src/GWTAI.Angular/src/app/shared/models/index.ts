@@ -16,3 +16,10 @@ export interface IProfile {
   website: string;
   date: string;
 }
+
+
+export type JobStatus = 'InProgress' | 'Complete' | 'Failed';
+
+export type WorkflowType = 'BookmarksUpload' | 'Test2';
+
+

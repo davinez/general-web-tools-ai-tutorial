@@ -1,0 +1,63 @@
+.bookmarks-container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.error-message {
+  color: #f44336; // A more vibrant red for dark backgrounds
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+}
+
+button {
+  margin-top: 10px;
+}
+
+// Custom file input styles for dark theme
+.file-upload-input {
+  display: none;
+}
+
+.file-upload-label {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #2a2a2a; // Dark background for the "input"
+  border: 1px solid #555; // Lighter border
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+  color: #eee; // Light text for the label content
+
+  .file-upload-button {
+    background-color: #3c3c3c; // Slightly lighter dark background for the button
+    color: #eee; // Light text
+    padding: 5px 15px;
+    border-radius: 4px;
+    border: 1px solid #555;
+    margin-right: 10px;
+    white-space: nowrap;
+    font-size: inherit; // Match parent font size
+    transition: background-color 0.2s ease;
+  }
+
+  &:hover .file-upload-button {
+    background-color: #4a4a4a; // Lighter on hover
+  }
+
+  .file-upload-filename {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

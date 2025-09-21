@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  baseUrl: '',
   useHash: false,
+  apiUrl: 'http://localhost:5263', // placeholder for backend URL
 };
 
 /*

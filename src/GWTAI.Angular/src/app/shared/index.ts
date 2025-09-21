@@ -14,7 +14,7 @@ export * from './services';
 export * from './utils';
 
 // Interfaces
-export * from './interfaces';
+export * from './models';
 
 // Formly
 export * from './formly-config';

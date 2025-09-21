@@ -21,7 +21,7 @@ import { NgxPermissionsModule } from 'ngx-permissions';
 import { provideToastr } from 'ngx-toastr';
 
 import {
-  BASE_URL,
+  API_URL,
   interceptors,
   SettingsService,
   StartupService,
@@ -36,7 +36,7 @@ import { FakeLoginService } from './fake-login.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    { provide: BASE_URL, useValue: environment.baseUrl },
+            { provide: API_URL, useValue: environment.apiUrl },
     provideAppInitializer(() => inject(TranslateLangService).load()),
     provideAppInitializer(() => inject(StartupService).load()),
     provideAnimationsAsync(),
