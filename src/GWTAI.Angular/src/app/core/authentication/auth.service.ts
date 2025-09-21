@@ -61,10 +61,6 @@ export class AuthService {
     return this.user$.pipe(share());
   }
 
-  menu() {
-    return iif(() => this.check(), this.loginService.menu(), of([]));
-  }
-
   private assignUser() {
     if (!this.check()) {
       return of({}).pipe(tap(user => this.user$.next(user)));

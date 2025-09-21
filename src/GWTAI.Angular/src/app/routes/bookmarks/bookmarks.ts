@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { PageHeader } from '@shared';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -9,15 +8,12 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MtxProgressModule } from '@ng-matero/extensions/progress';
 import { MtxAlertModule } from '@ng-matero/extensions/alert';
 import { RouterLink } from '@angular/router';
-// DATA
-import { JOB_NOTIFICATIONS } from './data-temp';
 
 @Component({
-  selector: 'app-dashboard',
-  templateUrl: './dashboard.html',
-  styleUrl: './dashboard.scss',
+  selector: 'app-bookmarks',
+  templateUrl: './bookmarks.html',
+  styleUrl: './bookmarks.scss',
   imports: [
-    PageHeader,
     MatButtonModule,
     MatCardModule,
     MatChipsModule,
@@ -29,9 +25,7 @@ import { JOB_NOTIFICATIONS } from './data-temp';
     MtxAlertModule,
   ],
 })
-export class Dashboard {
-
-  jobNotifications = JOB_NOTIFICATIONS;
+export class Bookmarks{
 
 
 }

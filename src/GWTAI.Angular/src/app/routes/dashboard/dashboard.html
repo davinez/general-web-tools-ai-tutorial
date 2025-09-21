@@ -1,1 +1,34 @@
 <page-header />
+
+
+<div class="row">
+  <!-- Job Notifications -->
+  <div class="col-sm-6 col-md-3">
+    <mat-card [class]="['text-white', 'b-0', 'bg-green-50']">
+      <mat-card-header>
+        <mat-card-subtitle class="text-white">
+          Bookmarks File Uploaded
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div>Successful: {{jobNotifications.BookmarksUploadWorkflow.Completed}}</div>
+        <div>In Progress: {{jobNotifications.BookmarksUploadWorkflow.InProgress}}</div>
+        <div>Failed: {{jobNotifications.BookmarksUploadWorkflow.Failed}}</div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+    <div class="col-sm-6 col-md-3">
+    <mat-card [class]="['text-white', 'b-0', 'bg-green-50']">
+      <mat-card-header>
+        <mat-card-subtitle class="text-white">
+          Test Workflow 2
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div>Successful: {{jobNotifications.Test2Workflow.Completed}}</div>
+        <div>In Progress: {{jobNotifications.Test2Workflow.InProgress}}</div>
+        <div>Failed: {{jobNotifications.Test2Workflow.Failed}}</div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

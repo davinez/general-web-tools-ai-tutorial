@@ -26,8 +26,4 @@ export class LoginService {
   user() {
     return this.http.get<User>('/user');
   }
-
-  menu() {
-    return this.http.get<{ menu: Menu[] }>('/user/menu').pipe(map(res => res.menu));
-  }
 }

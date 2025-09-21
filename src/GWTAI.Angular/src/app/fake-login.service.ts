@@ -25,10 +25,4 @@ export class FakeLoginService extends LoginService {
   user() {
     return of(admin);
   }
-
-  menu() {
-    return this.http
-      .get<{ menu: Menu[] }>('data/menu.json?_t=' + Date.now())
-      .pipe(map(res => res.menu));
-  }
 }

@@ -11,6 +11,12 @@
       }
     },
     {
+      "route": "bookmarks",
+      "name": "bookmarks",
+      "type": "link",
+      "icon": "bookmarks"
+    },
+    {
       "route": "/",
       "name": "sessions",
       "type": "sub",

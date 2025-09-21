@@ -20,5 +20,217 @@
   @if (showUser) {
     <app-user-panel />
   }
-  <app-sidemenu [ripple]="showToggle" />
+  <!-- <ng-container
+  [ngTemplateOutlet]="menuListTpl"
+  [ngTemplateOutletContext]="{ menuList: menu$ | async, parentRoute: [], level: 0, expanded: true }"
+/>
+
+<ng-template
+  #menuListTpl
+  let-menuList="menuList"
+  let-parentRoute="parentRoute"
+  let-level="level"
+  let-expanded="expanded"
+>
+  <ul
+    navAccordion
+    class="matero-sidemenu level-{{ level }}"
+    [class.submenu]="level > 0"
+    [@expansion]="expanded ? 'expanded' : 'collapsed'"
+  >
+    @for (menuItem of menuList; track menuItem) {
+      <ng-template
+        [ngxPermissionsOnly]="menuItem.permissions?.only"
+        [ngxPermissionsExcept]="menuItem.permissions?.except"
+      >
+        <li
+          #navItem="navAccordionItem"
+          navAccordionItem
+          class="menu-item"
+          routerLinkActive="active"
+          [route]="menuItem.route"
+          [type]="menuItem.type"
+        >
+          @if (menuItem.type === 'link') {
+            <a
+              class="menu-heading"
+              [routerLink]="buildRoute(parentRoute.concat([menuItem.route]))"
+              matRipple
+              [matRippleDisabled]="!showToggle"
+            >
+              <ng-container
+                [ngTemplateOutlet]="linkTypeTpl"
+                [ngTemplateOutletContext]="{ item: menuItem, level: level }"
+              />
+            </a>
+          }
+          @if (menuItem.type === 'extLink') {
+            <a class="menu-heading" [href]="menuItem.route" matRipple [matRippleDisabled]="!showToggle">
+              <ng-container
+                [ngTemplateOutlet]="linkTypeTpl"
+                [ngTemplateOutletContext]="{ item: menuItem, level: level }"
+              />
+            </a>
+          }
+          @if (menuItem.type === 'extTabLink') {
+            <a
+              class="menu-heading"
+              [href]="menuItem.route"
+              target="_blank"
+              matRipple
+              [matRippleDisabled]="!showToggle"
+            >
+              <ng-container
+                [ngTemplateOutlet]="linkTypeTpl"
+                [ngTemplateOutletContext]="{ item: menuItem, level: level }"
+              />
+            </a>
+          }
+          @if (menuItem.type === 'sub') {
+            <button
+              navAccordionToggle
+              class="menu-heading menu-toggle"
+              matRipple
+              [matRippleDisabled]="!showToggle"
+            >
+              <ng-container
+                [ngTemplateOutlet]="linkTypeTpl"
+                [ngTemplateOutletContext]="{ item: menuItem, level: level }"
+              />
+            </button>
+
+            <ng-container
+              [ngTemplateOutlet]="menuListTpl"
+              [ngTemplateOutletContext]="{
+                menuList: menuItem.children,
+                parentRoute: parentRoute.concat([menuItem.route]),
+                level: level + 1,
+                expanded: navItem.expanded,
+              }"
+            />
+          }
+        </li>
+      </ng-template>
+    }
+  </ul>
+</ng-template>
+
+<ng-template #linkTypeTpl let-item="item" let-level="level">
+  @if (item.icon) {
+    <mat-icon class="menu-icon" [class.submenu-icon]="level > 0">{{ item.icon }}</mat-icon>
+  } @else {
+    <span class="menu-icon" [class.submenu-icon]="level > 0">
+      {{ item.name | translate | slice: 0 : 1 }}
+    </span>
+  }
+  <span class="menu-name">{{ item.name | translate }}</span>
+  @if (item.label) {
+    <span class="menu-label bg-{{ item.label.color }}">{{ item.label.value }}</span>
+  }
+  @if (item.badge) {
+    <span class="menu-badge bg-{{ item.badge.color }}">{{ item.badge.value }}</span>
+  }
+  @if (item.type !== 'link') {
+    <mat-icon class="menu-caret">{{ item.type === 'sub' ? 'arrow_drop_down' : 'launch' }}</mat-icon>
+  }
+</ng-template> -->
+
+  <ul navAccordion class="matero-sidemenu level-0">
+    <!-- Menu item: Dashboard -->
+    <li navAccordionItem class="menu-item" routerLinkActive="active" route="dashboard" type="link">
+      <a class="menu-heading" [routerLink]="['/dashboard']" matRipple [matRippleDisabled]="!showToggle">
+        <mat-icon class="menu-icon">dashboard</mat-icon>
+        <span class="menu-name">{{ 'menu.dashboard' | translate }}</span>
+        <span class="menu-badge bg-indigo-500">5</span>
+         <!-- <span class="menu-label bg-pink-500">New</span> -->
+      </a>
+    </li>
+
+    <!-- Menu item: Bookmarks -->
+    <li navAccordionItem class="menu-item" routerLinkActive="active" route="bookmarks" type="link">
+      <a class="menu-heading" [routerLink]="['/bookmarks']" matRipple [matRippleDisabled]="!showToggle">
+        <mat-icon class="menu-icon">bookmarks</mat-icon>
+        <span class="menu-name">{{ 'menu.bookmarks' | translate }}</span>
+      </a>
+    </li>
+
+    <!-- Menu item: Sessions Submenu -->
+    <li #sessionsNavItem="navAccordionItem" navAccordionItem class="menu-item" route="sessions" type="sub">
+      <button navAccordionToggle class="menu-heading menu-toggle" matRipple [matRippleDisabled]="!showToggle">
+        <mat-icon class="menu-icon">question_answer</mat-icon>
+        <span class="menu-name">{{ 'menu.sessions' | translate }}</span>
+        <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
+      </button>
+
+      <!-- Submenu level 1 for Sessions -->
+      <ul navAccordion class="matero-sidemenu level-1 submenu" [@expansion]="sessionsNavItem.expanded ? 'expanded' : 'collapsed'">
+        <li navAccordionItem class="menu-item" routerLinkActive="active" route="403" type="link">
+          <a class="menu-heading" [routerLink]="['/sessions/403']" matRipple [matRippleDisabled]="!showToggle">
+            <span class="menu-icon submenu-icon">{{ 'menu.sessions.403' | translate | slice: 0:1 }}</span>
+            <span class="menu-name">{{ 'menu.sessions.403' | translate }}</span>
+          </a>
+        </li>
+        <li navAccordionItem class="menu-item" routerLinkActive="active" route="404" type="link">
+          <a class="menu-heading" [routerLink]="['/sessions/404']" matRipple [matRippleDisabled]="!showToggle">
+            <span class="menu-icon submenu-icon">{{ 'menu.sessions.404' | translate | slice: 0:1 }}</span>
+            <span class="menu-name">{{ 'menu.sessions.404' | translate }}</span>
+          </a>
+        </li>
+        <li navAccordionItem class="menu-item" routerLinkActive="active" route="500" type="link">
+          <a class="menu-heading" [routerLink]="['/sessions/500']" matRipple [matRippleDisabled]="!showToggle">
+            <span class="menu-icon submenu-icon">{{ 'menu.sessions.500' | translate | slice: 0:1 }}</span>
+            <span class="menu-name">{{ 'menu.sessions.500' | translate }}</span>
+          </a>
+        </li>
+      </ul>
+    </li>
+
+    <!-- Menu item: Submenu -->
+    <li #navItem="navAccordionItem" navAccordionItem class="menu-item" route="menu" type="sub">
+      <button navAccordionToggle class="menu-heading menu-toggle" matRipple [matRippleDisabled]="!showToggle">
+        <mat-icon class="menu-icon">more_horiz</mat-icon>
+        <span class="menu-name">{{ 'menu.more' | translate }}</span>
+        <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
+      </button>
+
+      <!-- Submenu level 1 -->
+      <ul navAccordion class="matero-sidemenu level-1 submenu" [@expansion]="navItem.expanded ? 'expanded' : 'collapsed'">
+        <li navAccordionItem class="menu-item" routerLinkActive="active" route="level-1" type="link">
+          <a class="menu-heading" [routerLink]="['/menu', 'level-1']" matRipple [matRippleDisabled]="!showToggle">
+            <span class="menu-icon submenu-icon">{{ 'menu.level1' | translate | slice: 0:1 }}</span>
+            <span class="menu-name">{{ 'menu.level1' | translate }}</span>
+          </a>
+        </li>
+      </ul>
+    </li>
+
+    <!-- Menu item with permissions -->
+    <ng-template [ngxPermissionsOnly]="['ADMIN']">
+      <li navAccordionItem class="menu-item" routerLinkActive="active" route="admin" type="link">
+        <a class="menu-heading" [routerLink]="['/admin']" matRipple [matRippleDisabled]="!showToggle">
+          <mat-icon class="menu-icon">security</mat-icon>
+          <span class="menu-name">{{ 'menu.admin' | translate }}</span>
+        </a>
+      </li>
+    </ng-template>
+
+    <!-- Menu item: External link -->
+    <li navAccordionItem class="menu-item" type="extLink">
+      <a class="menu-heading" href="https://www.google.com" matRipple [matRippleDisabled]="!showToggle">
+        <mat-icon class="menu-icon">link</mat-icon>
+        <span class="menu-name">{{ 'menu.external' | translate }}</span>
+        <mat-icon class="menu-caret">launch</mat-icon>
+      </a>
+    </li>
+
+    <!-- Menu item: External link in new tab -->
+    <li navAccordionItem class="menu-item" type="extTabLink">
+      <a class="menu-heading" href="https://www.github.com" target="_blank" matRipple [matRippleDisabled]="!showToggle">
+        <mat-icon class="menu-icon">open_in_new</mat-icon>
+        <span class="menu-name">{{ 'menu.github' | translate }}</span>
+        <mat-icon class="menu-caret">launch</mat-icon>
+      </a>
+    </li>
+  </ul>
+
 </div>
