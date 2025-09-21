@@ -74,7 +74,7 @@ try
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
 
-  app.Map("/", () => Results.Redirect("/api"));
+  // app.Map("/", () => Results.Redirect("/api"));
 
   // Map the SignalR hub
   app.MapHub<JobEventStatusHub>("/jobEventStatusHub");
