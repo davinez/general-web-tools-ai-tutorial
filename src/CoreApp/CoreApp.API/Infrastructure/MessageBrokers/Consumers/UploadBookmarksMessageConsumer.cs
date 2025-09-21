@@ -1,4 +1,3 @@
-using CoreApp.API.Domain.Errors;
 using CoreApp.API.Domain.Errors.Exceptions;
 using CoreApp.API.Domain.Hubs;
 using CoreApp.API.Domain.Services.ExternalServices;
@@ -32,24 +31,35 @@ public class UploadBookmarksMessageConsumer
   private readonly IAiService _aiService;
   private readonly IStorageService _storageService;
   private readonly IHubContext<JobEventStatusHub, IJobEventStatusHub> _hubContext;
+  private readonly JsonSerializerOptions _options;
 
   public UploadBookmarksMessageConsumer(
     ILogger<UploadBookmarksMessageConsumer> logger,
     CoreAppContext context,
     IAiService aiService,
     IStorageService storageService,
-    IHubContext<JobEventStatusHub, IJobEventStatusHub> hubContext)
+    IHubContext<JobEventStatusHub, IJobEventStatusHub> hubContext,
+    JsonSerializerOptions options)
   {
     _logger = logger;
     _context = context;
     _aiService = aiService;
     _storageService = storageService;
     _hubContext = hubContext;
+    _options = options;
   }
 
   public async Task Consume(UploadBookmarksMessageRequest message, CancellationToken cancellationToken)
   {
     string messageStatus = string.Empty;
+    var jobEvent = _context.JobEvents
+                      .FirstOrDefault(je => je.JobEventId == message.UploadId);
+
+    if (jobEvent == null)
+    {
+      messageStatus = JobStatus.Failed.ToString();
+      throw new CoreAppException($"JobEvent with ID {message.UploadId} not found, in workflow ${Workflow.BookmarksUpload.ToString()}");
+    }
 
     try
     {
@@ -151,6 +161,7 @@ Data:
         await writer.WriteAsync(bookmarkHtml);
         await writer.FlushAsync(cancellationToken); // Ensure all content is written to the stream
       }
+
       memoryStream.Position = 0;
 
       var fileData = new FileDto()
@@ -160,20 +171,21 @@ Data:
         ContentType = "text/html"
       };
 
-      await _storageService.UploadFileAsync(fileData);
+      string fileUrl = await _storageService.UploadFileAsync(fileData);
 
-      var jobEvent = _context.JobEvents
-                      .FirstOrDefault(je => je.JobEventId == message.UploadId);
+      jobEvent.Status = JobStatus.Complete.ToString();
+      jobEvent.Content = JsonSerializer.Serialize(new { FileUrl = fileUrl }, _options);
 
-      if (jobEvent == null)
-      {
-        messageStatus = JobStatus.Failed.ToString();
-        throw new CoreAppException($"JobEvent with ID {message.UploadId} not found, in workflow ${Workflow.BookmarksUpload.ToString()}");
-      }
-
-      messageStatus = JobStatus.Complete.ToString();
-      jobEvent.Status = messageStatus;
       await _context.SaveChangesAsync(cancellationToken);
+
+      // Send a notification to the client 
+      var hubUpdate = new JobEventStatusHubDto
+      {
+        JobId = message.UploadId.ToString(),
+        Status = JobStatus.Complete.ToString(),
+        Timestamp = DateTime.UtcNow
+      };
+      await _hubContext.Clients.User(message.UserId).StatusUpdate(hubUpdate);
 
     }
     catch (Exception ex)
@@ -182,25 +194,18 @@ Data:
 
       _logger.LogError(ex, $"{nameof(UploadBookmarksMessageConsumer)}:{nameof(Consume)}, Critical error processing upload {message.UploadId}: {ex.Message}");
 
-      // Handle final failure, update DB status to "Failed".
-      var jobEvent = _context.JobEvents
-                     .FirstOrDefault(je => je.JobEventId == message.UploadId);
-      if (jobEvent != null)
-      {
-        jobEvent.Status = JobStatus.Failed.ToString();
-        jobEvent.Content = JsonSerializer.Serialize(new { ErrorMessage = ex.Message }, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-        await _context.SaveChangesAsync(cancellationToken);
-      }
-    }
+      jobEvent.Status = JobStatus.Failed.ToString();
+      jobEvent.Content = JsonSerializer.Serialize(new { ErrorMessage = ex.Message }, _options);
+      await _context.SaveChangesAsync(cancellationToken);
 
-    // Send a notification to the client 
-    var hubUpdate = new JobEventStatusHubDto
-    {
-      JobId = message.UploadId.ToString(),
-      Status = messageStatus,
-      Timestamp = DateTime.UtcNow
-    };
-    await _hubContext.Clients.User(message.UserId).StatusUpdate(hubUpdate);
+      var hubUpdate = new JobEventStatusHubDto
+      {
+        JobId = message.UploadId.ToString(),
+        Status = JobStatus.Failed.ToString(),
+        Timestamp = DateTime.UtcNow
+      };
+      await _hubContext.Clients.User(message.UserId).StatusUpdate(hubUpdate);
+    }
   }
 
   #region Helpers 

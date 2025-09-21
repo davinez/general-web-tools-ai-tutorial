@@ -14,8 +14,7 @@ namespace CoreApp.API.Domain;
 public class JobEvent
 {
   /// <summary>
-  /// The unique identifier for the job this event belongs to.
-  /// Primary Key, Foreign key to the main Jobs table.
+  /// Primary Key
   /// </summary>
   [Key]
   public Guid JobEventId { get; set; }
