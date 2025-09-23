@@ -12,7 +12,7 @@
         </mat-form-field>
         } @else if (!editingRow || editingRow[paginatorConfig.idKey!] !== row[paginatorConfig.idKey!] ||
         !column.editable) {
-        {{ row[column.key] }}
+        {{ column.pipe ? column.pipe(row[column.key]) : row[column.key] }}
         }
       </td>
     </ng-container>

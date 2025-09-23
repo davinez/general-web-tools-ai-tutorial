@@ -1,15 +1,15 @@
 import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { BASE_URL, baseUrlInterceptor } from './base-url-interceptor';
+import { API_URL, apiUrlInterceptor } from './api-url-interceptor';
 
-describe('BaseUrlInterceptor', () => {
+describe('ApiUrlInterceptor', () => {
   let httpMock: HttpTestingController;
   let http: HttpClient;
-  const baseUrl = 'https://foo.bar';
+  const apiUrl = 'https://foo.bar/api';
 
-  const setBaseUrl = (url: string | null) => {
-    TestBed.overrideProvider(BASE_URL, { useValue: url });
+  const setApiUrl = (url: string | null) => {
+    TestBed.overrideProvider(API_URL, { useValue: url });
     httpMock = TestBed.inject(HttpTestingController);
     http = TestBed.inject(HttpClient);
   };
@@ -17,8 +17,8 @@ describe('BaseUrlInterceptor', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        { provide: BASE_URL, useValue: null },
-        provideHttpClient(withInterceptors([baseUrlInterceptor])),
+        { provide: API_URL, useValue: null },
+        provideHttpClient(withInterceptors([apiUrlInterceptor])),
         provideHttpClientTesting(),
       ],
     });
@@ -26,21 +26,21 @@ describe('BaseUrlInterceptor', () => {
 
   afterEach(() => httpMock.verify());
 
-  it('should not prepend base url when base url is empty', () => {
-    setBaseUrl(null);
+  it('should not prepend API url when API url is empty', () => {
+    setApiUrl(null);
 
     http.get('/user').subscribe(data => expect(data).toEqual({ success: true }));
 
     httpMock.expectOne('/user').flush({ success: true });
   });
 
-  it('should prepend base url when request url does not has http scheme', () => {
-    setBaseUrl(baseUrl);
+  it('should prepend API url when request url does not has http scheme', () => {
+    setApiUrl(apiUrl);
 
     http.get('./user').subscribe(data => expect(data).toEqual({ success: true }));
-    httpMock.expectOne(baseUrl + '/user').flush({ success: true });
+    httpMock.expectOne(apiUrl + '/user').flush({ success: true });
 
     http.get('').subscribe(data => expect(data).toEqual({ success: true }));
-    httpMock.expectOne(baseUrl).flush({ success: true });
+    httpMock.expectOne(apiUrl).flush({ success: true });
   });
 });

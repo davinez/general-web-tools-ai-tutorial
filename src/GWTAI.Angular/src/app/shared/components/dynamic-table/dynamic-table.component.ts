@@ -1,4 +1,3 @@
-
 import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -85,6 +84,6 @@ export class DynamicTableComponent<T extends { [key: string]: any }> {
   }
 
   trackByFn(index: number, item: T): any {
-    return item[this.paginatorConfig.idKey as keyof T] || index;
+    return item[(this.paginatorConfig ?? { idKey: 'id' }).idKey as keyof T] || index;
   }
 }

@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -34,16 +34,17 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
   ],
 })
 export class Bookmarks implements OnInit, OnDestroy {
+  @ViewChild('fileInput') fileInput!: ElementRef;
   uploadForm: FormGroup<BookmarksUploadForm>;
   isUploading = false;
   public uploads: UploadEvent[] = [];
   public columns: ColumnDef<UploadEvent>[] = [
-    { key: 'uploadId', label: 'Upload ID' },
-    { key: 'eventTimestamp', label: 'Timestamp' },
-    { key: 'status', label: 'Status' },
+    { key: 'jobEventId', label: 'Upload ID' },
+    { key: 'eventTimestamp', label: 'Timestamp', pipe: (value: string) => new Date(value).toLocaleDateString() },
+    { key: 'status', label: 'Status', editable: true },
   ];
   public paginatorConfig: PaginatorConfig = {
-    length: 0, pageSize: 10, pageSizeOptions: [5, 10, 25, 100], idKey: 'uploadId'
+    length: 0, pageSize: 10, pageSizeOptions: [5, 10, 25, 100], idKey: 'jobEventId'
   };
   private uploadsUpdateSubscription: Subscription;
 
@@ -76,23 +77,30 @@ export class Bookmarks implements OnInit, OnDestroy {
 
   private async setupSignalRListeners(): Promise<void> {
     await this.signalRService.startConnection();
-
     // The backend sends a simple status update. We use the jobId from it
     // to fetch the complete, updated job event data.
     this.uploadsUpdateSubscription = this.signalRService
       // 'StatusUpdate' name of the event/method from the backend: await _hubContext.Clients.User(message.UserId).StatusUpdate(hubUpdate);
       .getEventObservable<JobEventStatusUpdate>('StatusUpdate')
       .subscribe(update => {
-        this.bookmarkService.getUpload(update.jobId).subscribe(updatedEvents => {
-          if (updatedEvents.length > 0) {
-            this.handleUploadUpdate(updatedEvents[0]);
+        if (!update?.jobEventId) {
+          console.error('Invalid SignalR update received, jobEventId is missing:', update);
+          return;
+        }
+        this.bookmarkService.getUpload(update.jobEventId).subscribe(updatedEvent => {
+          // The length check was preventing new items from being added to an empty list.
+          // We should process the event as long as it's valid.
+          if (updatedEvent) {
+            this.handleUploadUpdate(updatedEvent);
+          } else {
+            console.warn('getUpload returned null or undefined. Skipping UI update.');
           }
         });
       });
   }
 
   private handleUploadUpdate(updatedUpload: UploadEvent): void {
-    const index = this.uploads.findIndex(u => u.uploadId === updatedUpload.uploadId);
+    const index = this.uploads.findIndex(u => u.jobEventId === updatedUpload.jobEventId);
 
     if (index !== -1) {
       // If upload exists, update it
@@ -149,6 +157,7 @@ export class Bookmarks implements OnInit, OnDestroy {
           this.toastr.success(response.message);
           this.isUploading = false;
           this.uploadForm.reset();
+          this.fileInput.nativeElement.value = '';
         },
         error: (error: HttpErrorResponse) => {
           // The error toast is now handled globally by the error-interceptor.
