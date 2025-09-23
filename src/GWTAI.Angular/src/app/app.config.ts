@@ -1,4 +1,4 @@
-import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
+import { HttpClient, HttpBackend, provideHttpClient, withInterceptors } from '@angular/common/http';
 import {
   ApplicationConfig,
   importProvidersFrom,
@@ -50,8 +50,8 @@ export const appConfig: ApplicationConfig = {
     provideTranslateService({
       loader: {
         provide: TranslateLoader,
-        useFactory: (http: HttpClient) => new TranslateHttpLoader(http, 'i18n/', '.json'),
-        deps: [HttpClient],
+        useFactory: (httpBackend: HttpBackend) => new TranslateHttpLoader(new HttpClient(httpBackend), 'i18n/', '.json'),
+        deps: [HttpBackend],
       },
     }),
     importProvidersFrom(

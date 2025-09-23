@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   useHash: false,
-  apiUrl: 'http://localhost:5263', // placeholder for backend URL
+  apiUrl: 'http://localhost:8082/api', // placeholder for backend URL
 };
 
 /*

@@ -1,8 +1,8 @@
-
 export interface ColumnDef<T> {
   key: keyof T;
   label: string;
   editable?: boolean;
+  pipe?: (value: any) => string; // Optional pipe function for formatting 
 }
 
 export interface PaginatorConfig {

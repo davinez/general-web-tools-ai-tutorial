@@ -16,7 +16,7 @@ export interface BookmarksBulkUpload {
 
 // Table Data Rows
 export interface UploadEvent {
-  uploadId: string;
+  jobEventId: string;
   userId: string;
   /**
    * The UTC timestamp when the event was recorded.
@@ -43,7 +43,7 @@ export interface BookmarksUploadForm {
 
 // Interface for the SignalR payload
 export interface JobEventStatusUpdate {
-  jobId: string;
+  jobEventId: string;
   status: string;
   timestamp: string;
 }

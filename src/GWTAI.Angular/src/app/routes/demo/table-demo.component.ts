@@ -1,5 +1,5 @@
 
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DynamicTableComponent } from '@shared/components/dynamic-table/dynamic-table.component';
 import { ColumnDef, PaginatorConfig } from '@shared/components/dynamic-table/dynamic-table.interfaces';
 
@@ -25,7 +25,7 @@ interface User {
     ></app-dynamic-table>
   `,
 })
-export class TableDemoComponent {
+export class TableDemoComponent implements OnInit {
   data: User[] = [
     { id: 1, name: 'John Doe', email: 'john.doe@example.com', editable: true },
     { id: 2, name: 'Jane Smith', email: 'jane.smith@example.com', editable: true },
@@ -43,6 +43,10 @@ export class TableDemoComponent {
     pageSize: 5,
     pageSizeOptions: [5, 10, 20],
   };
+
+  ngOnInit(): void {
+   
+  }
 
   handleUpdate(item: User) {
     console.log('Update:', item);
