@@ -1,11 +1,15 @@
+# Cert
 
-# AI APIs
+https://www.datacamp.com/tutorial/azure-openai
 
+https://www.reddit.com/r/AzureCertification/comments/1lailo1/passed_ai102_leaving_few_tips_here/
 
-## Docs
+https://www.reddit.com/r/AzureCertification/comments/1nf3z15/passed_ai102_some_thoughts_and_one_big_tip/
 
+https://certs.msfthub.wiki/azure/ai-102/
 
-## Keys
+https://learn.microsoft.com/en-us/credentials/certifications/azure-ai-engineer/?WT.mc_id=studentamb_165290&practice-assessment-type=certification
+
 
 
 
