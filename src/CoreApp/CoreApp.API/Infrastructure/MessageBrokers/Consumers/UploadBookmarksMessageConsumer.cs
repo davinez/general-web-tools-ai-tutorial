@@ -181,11 +181,12 @@ Data:
       // Send a notification to the client 
       var hubUpdate = new JobEventStatusHubDto
       {
-        JobId = message.UploadId.ToString(),
+        JobEventId = message.UploadId.ToString(),
         Status = JobStatus.Complete.ToString(),
         Timestamp = DateTime.UtcNow
       };
-      await _hubContext.Clients.User(message.UserId).StatusUpdate(hubUpdate);
+      // await _hubContext.Clients.User(message.UserId).StatusUpdate(hubUpdate);
+      await _hubContext.Clients.All.StatusUpdate(hubUpdate);
 
     }
     catch (Exception ex)
@@ -200,7 +201,7 @@ Data:
 
       var hubUpdate = new JobEventStatusHubDto
       {
-        JobId = message.UploadId.ToString(),
+        JobEventId = message.UploadId.ToString(),
         Status = JobStatus.Failed.ToString(),
         Timestamp = DateTime.UtcNow
       };

@@ -37,9 +37,10 @@ public static class APIExtensions
                         {
                           if (isDevelop)
                           {
-                            policy.AllowAnyOrigin()
+                            policy.WithOrigins("http://localhost:4200")
                                         .AllowAnyMethod()
-                                        .AllowAnyHeader();
+                                        .AllowAnyHeader()
+                                        .AllowCredentials();
                           }
                           else
                           {

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CoreApp.API.Endpoints.Playground.Ai
+namespace CoreApp.API.Endpoints.Ai
 {
     [ApiController]
     [Route("api/playground/ai")]

@@ -1,9 +1,10 @@
+using CoreApp.API.Domain.Models;
 using CoreApp.API.Domain.Security;
 using CoreApp.API.Infrastructure.Data;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,7 +13,7 @@ namespace CoreApp.API.Endpoints.JobEvents;
 
 public record JobEventDto
 {
-  public Guid UploadId { get; set; }
+  public Guid JobEventId { get; set; }
   public required string UserId { get; set; }
   public DateTime EventTimestamp { get; set; }
   public required string Status { get; set; }
@@ -22,7 +23,7 @@ public record JobEventDto
 
 [ApiController]
 [Route("api/job-events")]
-[Authorize]
+//[Authorize]
 public class JobEventsController : ControllerBase
 {
   private readonly CoreAppContext _context;
@@ -50,7 +51,7 @@ public class JobEventsController : ControllerBase
           .OrderByDescending(je => je.EventTimestamp)
           .Select(je => new JobEventDto
           {
-            UploadId = je.JobEventId,
+            JobEventId = je.JobEventId,
             UserId = je.UserId,
             EventTimestamp = je.EventTimestamp,
             Status = je.Status,
@@ -58,7 +59,8 @@ public class JobEventsController : ControllerBase
           })
           .ToListAsync();
 
-      return Ok(results);
+      var data = new ApiResponse<IEnumerable<JobEventDto>> { Data = results };
+      return Ok(data);
     }
     else
     {
@@ -66,7 +68,7 @@ public class JobEventsController : ControllerBase
           .OrderByDescending(je => je.EventTimestamp)
           .Select(je => new JobEventDto
           {
-            UploadId = je.JobEventId,
+            JobEventId = je.JobEventId,
             UserId = je.UserId,
             EventTimestamp = je.EventTimestamp,
             Status = je.Status,
@@ -75,7 +77,8 @@ public class JobEventsController : ControllerBase
           })
           .ToListAsync();
 
-      return Ok(results);
+      var data = new ApiResponse<IEnumerable<JobEventDto>> { Data = results };
+      return Ok(data);
     }
   }
 
@@ -84,7 +87,7 @@ public class JobEventsController : ControllerBase
   public async Task<IActionResult> GetJobEventsById(string id, [FromQuery] string workflow)
   {
     var userId = _currentUserAccessor.GetCurrentUsername();
-    var results = await _context.JobEvents
+    var result = await _context.JobEvents
         .AsNoTracking()
         .Where(je => je.UserId == userId
                     && je.Workflow == workflow
@@ -92,15 +95,16 @@ public class JobEventsController : ControllerBase
         .OrderByDescending(je => je.EventTimestamp)
         .Select(je => new JobEventDto
         {
-          UploadId = je.JobEventId,
+          JobEventId = je.JobEventId,
           UserId = je.UserId,
           EventTimestamp = je.EventTimestamp,
           Status = je.Status,
           Content = je.Content
         })
-        .ToListAsync();
-  
-    return Ok(results);
+        .SingleOrDefaultAsync();
+
+    var data = new ApiResponse<JobEventDto> { Data = result };
+    return Ok(data);
   }
 
 

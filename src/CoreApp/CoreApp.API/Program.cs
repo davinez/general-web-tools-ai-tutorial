@@ -66,8 +66,8 @@ try
  // app.UseHealthChecks("/health");
   //app.UseHttpsRedirection();
   app.UseCors("gwtai_policy");
-  app.UseAuthentication();
-  app.UseAuthorization();
+  //app.UseAuthentication();
+  //app.UseAuthorization();
 
 
   app.MapControllerRoute(
@@ -77,7 +77,7 @@ try
   // app.Map("/", () => Results.Redirect("/api"));
 
   // Map the SignalR hub
-  app.MapHub<JobEventStatusHub>("/jobEventStatusHub");
+  app.MapHub<JobEventStatusHub>("/api/jobEventStatusHub");
 
   app.UseExceptionHandler(options => { });
 
