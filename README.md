@@ -68,30 +68,6 @@ sudo apt update && sudo apt upgrade -y
 
 
 
-## Troubleshoot
-
-- With docker if running a UI app like Rancher Desktop:
-
-If you get below error when running "docker" command:
-
-```
-error during connect: in the default daemon configuration on Windows, the docker client must be run with elevated privileges to connect: Get "http://%2F%2F.%2Fpipe%2Fdocker_engine/v1.49/containers/json": open //./pipe/docker_engine: The system cannot find the file specified.
-Please run below script in “Terminal (Admin)” to grant yourself access to “docker_engine” socket:
-```
-
-```ps
-$account=whoami
-$npipe = "\\.\pipe\docker_engine"
-$dInfo = New-Object "System.IO.DirectoryInfo" -ArgumentList $npipe
-$dSec = $dInfo.GetAccessControl()
-$fullControl =[System.Security.AccessControl.FileSystemRights]::FullControl
-$allow =[System.Security.AccessControl.AccessControlType]::Allow
-$rule = New-Object "System.Security.AccessControl.FileSystemAccessRule" -ArgumentList $account,$fullControl,$allow
-$dSec.AddAccessRule($rule)
-$dInfo.SetAccessControl($dSec)
-```
-
-
 ## AI
 
 - For open web ui and other AI services / tools, run:
@@ -165,6 +141,20 @@ https://github.com/NimblePros/eShopOnWeb
 
 
 
+# Services Urls
+
+- Azure AI Foundry portal
+https://ai.azure.com
+
+
+
+
+
+
+
+
+
+
 
 ## Demos Databases
 
@@ -222,3 +212,26 @@ https://github.com/PatrickJS/awesome-angular
 https://github.com/trungvose/angular-spotify
 
 
+
+## Troubleshoot
+
+- With docker if running a UI app like Rancher Desktop:
+
+If you get below error when running "docker" command:
+
+```
+error during connect: in the default daemon configuration on Windows, the docker client must be run with elevated privileges to connect: Get "http://%2F%2F.%2Fpipe%2Fdocker_engine/v1.49/containers/json": open //./pipe/docker_engine: The system cannot find the file specified.
+Please run below script in “Terminal (Admin)” to grant yourself access to “docker_engine” socket:
+```
+
+```ps
+$account=whoami
+$npipe = "\\.\pipe\docker_engine"
+$dInfo = New-Object "System.IO.DirectoryInfo" -ArgumentList $npipe
+$dSec = $dInfo.GetAccessControl()
+$fullControl =[System.Security.AccessControl.FileSystemRights]::FullControl
+$allow =[System.Security.AccessControl.AccessControlType]::Allow
+$rule = New-Object "System.Security.AccessControl.FileSystemAccessRule" -ArgumentList $account,$fullControl,$allow
+$dSec.AddAccessRule($rule)
+$dInfo.SetAccessControl($dSec)
+```

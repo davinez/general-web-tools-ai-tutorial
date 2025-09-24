@@ -59,7 +59,7 @@ namespace CoreApp.API.Infrastructure.ExternalServices.AiServices
     cancellationToken);
 
         // DEBUG LOCALLY AI Response
-        Console.WriteLine($"{completion.Role}: {completion.Content[0].Text}");
+        // Console.WriteLine($"{completion.Role}: {completion.Content[0].Text}");
 
         if (completion.Content.Count > 0)
         {
