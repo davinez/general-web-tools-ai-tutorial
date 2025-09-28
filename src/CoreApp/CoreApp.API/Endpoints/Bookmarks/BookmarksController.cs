@@ -16,15 +16,12 @@ namespace CoreApp.API.Endpoints.Bookmarks
   [ApiController]
   public class BookmarksController(IMediator mediator) : ControllerBase
   {
-
-
-    // POST: api/bookmarks/bulk-upload
+  
     [Route("bulk-upload")]
     [HttpPost]
     // [Authorize(AuthenticationSchemes = JwtIssuerOptions.Schemes)]
     public async Task<IActionResult> BulkUpload(IFormFile fileContent, [FromForm] string fileName, [FromForm] DateTimeOffset uploadTimestamp)
     {
-      // Now you can pass this data to your mediator or service
       var request = new UploadRequest
       {
         FileContent = fileContent,
