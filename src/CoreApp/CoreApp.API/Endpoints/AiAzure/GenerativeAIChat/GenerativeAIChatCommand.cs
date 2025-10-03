@@ -126,11 +126,13 @@ public class GenerativeAIChatCommandHandler
       try
       {
         // Get the chat client
-        OpenAIClient openAIClient = projectClient.GetOpenAIClient(connectionName: "ssss", apiVersion: "2024-10-21");
+        OpenAIClient openAIClient = projectClient.GetOpenAIClient();
         string modelName = GetModelName();
         string userPrompt = command.Prompt ?? throw new CoreAppException("Null prompt in GenerativeAIChatCommand");
 
-        ChatCompletion response = await openAIClient.GetChatClient(modelName).CompleteChatAsync(
+        ChatCompletion response = await openAIClient
+          .GetChatClient(modelName)
+          .CompleteChatAsync(
                        [
                            // System messages represent instructions or other guidance about how the assistant should behave
                            new SystemChatMessage("You are an azure tech specialist."),

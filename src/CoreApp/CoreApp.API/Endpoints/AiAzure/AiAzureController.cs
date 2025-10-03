@@ -15,21 +15,19 @@ namespace CoreApp.API.Endpoints.Ai
   public class AiAzureController : ControllerBase
   {
     private readonly IAiService _aiService;
-    private readonly CancellationToken _cancellationToken;
     private readonly IMediator _mediator;
 
 
-    public AiAzureController(IAiService aiService, IMediator mediator, CancellationToken cancellationToken)
+    public AiAzureController(IAiService aiService, IMediator mediator)
     {
       _aiService = aiService;
       _mediator = mediator;
-      _cancellationToken = cancellationToken;
     }
 
     [HttpPost("generate")]
-    public async Task<IActionResult> GenerateText([FromBody] string prompt)
+    public async Task<IActionResult> GenerateText([FromBody] string prompt, CancellationToken ct)
     {
-      var result = await _aiService.GenerateTextAsync(prompt, _cancellationToken);
+      var result = await _aiService.GenerateTextAsync(prompt, ct);
       return Ok(result);
     }
 
