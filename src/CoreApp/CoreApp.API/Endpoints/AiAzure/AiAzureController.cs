@@ -2,6 +2,7 @@ using CoreApp.API.Domain.Models;
 using CoreApp.API.Domain.Services.ExternalServices;
 using CoreApp.API.Endpoints.AiAzure.AIFoundrySDK;
 using CoreApp.API.Endpoints.AiAzure.GenerativeAIChat;
+using CoreApp.API.Endpoints.AiAzure.RAGGenerativeAI;
 using CoreApp.API.Endpoints.Bookmarks.Upload;
 using Mediator;
 using Microsoft.AspNetCore.Mvc;
@@ -39,6 +40,17 @@ namespace CoreApp.API.Endpoints.Ai
       GenerativeAIChatResponse response = await _mediator.Send(command);
 
       var data = new ApiResponse<GenerativeAIChatResponse> { Data = response };
+      return Ok(data);
+    }
+
+    [Route("rag-generative-ai")]
+    [HttpPost]
+    // [Authorize(AuthenticationSchemes = JwtIssuerOptions.Schemes)]
+    public async Task<IActionResult> RAGGenerativeAI(RAGGenerativeAICommand command)
+    {
+      RAGGenerativeAIResponse response = await _mediator.Send(command);
+
+      var data = new ApiResponse<RAGGenerativeAIResponse> { Data = response };
       return Ok(data);
     }
 
