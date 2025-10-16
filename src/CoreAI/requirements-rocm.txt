@@ -1,0 +1,39 @@
+# Chatterbox TTS Core Package with multilingual support
+chatterbox-tts==0.1.4
+
+# Required for Chatterbox TTS watermarker functionality
+resemble-perth
+
+# FastAPI and ASGI server
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+pydantic>=2.0.0
+
+# Required for FastAPI file upload support
+python-multipart>=0.0.6
+
+# Server-Sent Events support for real-time progress updates
+sse-starlette>=3.0.2
+
+# Environment variables
+python-dotenv>=1.0.0
+
+# Memory monitoring
+psutil>=5.9.0
+
+# Audio processing for long text concatenation
+pydub>=0.25.1
+
+# Testing Dependencies
+requests>=2.28.0 
+
+
+# Machine Learning & Audio
+torch @ https://repo.radeon.com/rocm/manylinux/rocm-rel-6.4.1/torch-2.6.0%2Brocm6.4.1.git1ded221d-cp310-cp310-linux_x86_64.whl
+torchaudio @ https://repo.radeon.com/rocm/manylinux/rocm-rel-6.4.1/torchaudio-2.6.0%2Brocm6.4.1.gitd8831425-cp310-cp310-linux_x86_64.whl
+pytorch-triton-rocm @ https://repo.radeon.com/rocm/manylinux/rocm-rel-6.4.1/pytorch_triton_rocm-3.2.0%2Brocm6.4.1.git6da9e660-cp310-cp310-linux_x86_64.whl
+numpy
+soundfile # Requires libsndfile system library (e.g., sudo apt-get install libsndfile1 on Debian/Ubuntu)
+huggingface_hub
+descript-audio-codec
+safetensors
