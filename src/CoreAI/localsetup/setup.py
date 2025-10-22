@@ -13,13 +13,13 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
 
 setup(
     name="chatterbox-tts-api",
-    version="",
-    author="T",
+    version="2.1.0",
+    author="",
     author_email="",
-    description="REST API for Chatterbox TTS with OpenAI compatibility",
+    description="",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com",
+    url="",
     packages=find_packages(),
     license="AGPLv3",
     classifiers=[

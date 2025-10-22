@@ -45,6 +45,9 @@ RUN uv pip install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-ur
 # Install base dependencies first
 RUN uv pip install setuptools fastapi uvicorn[standard] python-dotenv python-multipart requests psutil pydub sse-starlette
 
+# Install chatterbox-tts 
+RUN uv pip install chatterbox-tts==0.1.4 
+
 # Copy application code
 COPY app/ ./app/
 COPY main.py ./
@@ -63,10 +66,11 @@ ENV TEMPERATURE=0.8
 ENV VOICE_SAMPLE_PATH=/app/voice-sample.mp3
 ENV MAX_CHUNK_LENGTH=280
 ENV MAX_TOTAL_LENGTH=3000
-ENV DEVICE=cuda
 ENV MODEL_CACHE_DIR=/cache
 ENV VOICE_LIBRARY_DIR=/voices
 ENV HOST=0.0.0.0
+ENV USE_MULTILINGUAL_MODEL=false
+ENV DEVICE=auto
 
 # Long text TTS settings
 ENV LONG_TEXT_DATA_DIR=/data/long_text_jobs

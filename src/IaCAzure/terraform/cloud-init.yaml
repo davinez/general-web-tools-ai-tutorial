@@ -1,0 +1,30 @@
+# This script runs on the VM's first boot. (Approach A: Bash/Automated)
+
+#cloud-config
+package_update: true
+packages:
+  - git
+  - docker-compose-plugin # Install Docker Compose v2 (plugin)
+
+runcmd:
+  # The Canonical GPU image already includes Docker and NVIDIA Container Toolkit.
+  # We just need to add git and docker-compose-plugin.
+  
+  # 1. Clone the application repository
+  # git clone <repository_url> <destination_directory>
+  - ['git', 'clone', 'https://github.com/YOUR_USERNAME/YOUR_CHATTERBOX_REPO.git', '/home/azureuser/chatterbox-app']
+  - ['chown', '-R', 'azureuser:azureuser', '/home/azureuser/chatterbox-app']
+  
+  # 2. Run Docker Compose as the 'azureuser'
+  - - 'su'
+    - 'azureuser'
+    - '-c'
+    - |
+      cd /home/azureuser/chatterbox-app
+      
+      # Build and run the docker-compose file
+      # The 'deploy' key for GPU requires Docker Compose v2 (this command)
+      # The host's NVIDIA Container Toolkit will automatically handle the GPU mapping.
+      # docker compose -f docker/docker-compose.uv.gpu.yml --profile frontend up --build
+      docker compose -f docker/docker-compose.uv.gpu.yml --profile frontend build
+      docker compose -f docker/docker-compose.uv.gpu.yml --profile frontend up -d

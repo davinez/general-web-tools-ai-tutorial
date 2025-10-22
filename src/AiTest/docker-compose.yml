@@ -1,0 +1,18 @@
+# Run app
+# docker exec -it rocm_pytorch_env bash
+# pip list to see installed packages
+
+services:
+  rocm-pytorch:
+    # The image you specified
+    image: rocm/pytorch:rocm7.0_ubuntu22.04_py3.10_pytorch_release_2.6.0
+    # Give the container a friendly name
+    container_name: rocm_pytorch_env
+    # Set the container to run in privileged mode (often required for full ROCm/GPU access)
+    privileged: true
+    # Run a simple command to keep the container alive
+    # Use 'sleep infinity' or 'tail -f /dev/null' or similar
+    command: ["sleep", "infinity"]
+    # Optional: If you need to access specific ports (e.g., for Jupyter, TensorBoard)
+    # ports:
+    #   - "8888:8888"

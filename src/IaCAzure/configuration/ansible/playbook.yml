@@ -1,0 +1,42 @@
+# This playbook performs the same steps as cloud-init, 
+# but you run it manually from your local machine after Terraform is done.
+
+- name: Deploy Chatterbox TTS on Azure VM
+  hosts: gpu_vm
+  become: yes # Most tasks require sudo
+  tasks:
+    - name: Ensure apt cache is updated
+      apt:
+        update_cache: yes
+      changed_when: false # Don't report a change for just updating cache
+
+    - name: Install required system packages
+      apt:
+        name:
+          - git
+          - docker-compose-plugin # Docker Compose v2 (plugin)
+        state: present
+
+    - name: Get home directory of ansible_user
+      shell: "eval echo ~{{ ansible_user }}"
+      register: user_home
+      changed_when: false
+
+    - name: Define app directory path
+      set_fact:
+        app_dir: "{{ user_home.stdout }}/chatterbox-app"
+
+    - name: Clone the application repository
+      git:
+        # !!! IMPORTANT: REPLACE THIS URL with your own Git repository !!!
+        repo: 'https://github.com/YOUR_USERNAME/YOUR_CHATTERBOX_REPO.git'
+        dest: "{{ app_dir }}"
+        force: yes # Pull changes if it already exists
+      become_user: "{{ ansible_user }}"
+
+    - name: Build and run the Docker Compose project
+      community.docker.docker_compose_v2:
+        project_src: "{{ app_dir }}"
+        state: present # Ensures it's 'up'
+        build: yes     # Re-builds images if Dockerfile changed
+      become_user: "{{ ansible_user }}"

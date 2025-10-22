@@ -1,0 +1,27 @@
+secrets.md
+
+# Terraform variable files with secrets
+*.tfvars
+
+# Ansible inventory file with live IPs
+# We track the .example, but not the real one.
+configuration/ansible/inventory.ini
+
+# Application secrets file
+# We track .env.example, but not the real .env file.
+src/.env
+src/.env.*
+!src/.env.example
+
+# Terraform State & Cache (Contains sensitive data)
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+crash.log
+*.plan
+
+# OS & IDE Files (Local machine junk)
+.DS_Store
+Thumbs.db
+.vscode/

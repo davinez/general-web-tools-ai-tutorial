@@ -1,0 +1,131 @@
+# We can also use rocm/pytorch images
+FROM rocm/dev-ubuntu-22.04:7.0
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install all system dependencies (build-time and runtime)
+# The base image already contains python3.10, we only need the dev headers
+RUN apt-get update && apt-get install -y \
+    python3.11 \
+    python3.11-dev \
+    python3.11-venv \
+    build-essential \
+    git \
+    curl \
+    ffmpeg \
+    libsndfile1 \
+    cmake \
+    protobuf-compiler \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create a virtual environment using python3.11
+RUN python3.11 -m venv /opt/venv
+
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Now you can just use 'pip' and it will be the correct one
+# We also upgrade pip in the venv
+RUN pip install --no-cache-dir --upgrade pip
+
+# Set workdir
+WORKDIR /app
+
+# [STEP 1] Install the API server dependencies
+RUN pip install --no-cache-dir \
+    fastapi \
+    uvicorn[standard] \
+    python-dotenv \
+    python-multipart \
+    requests \
+    psutil \
+    pydub \
+    sse-starlette
+
+# [STEP 2] Install chatterbox's OTHER dependencies manually.
+# We are installing everything from its 'dependencies' list EXCEPT
+# numpy, torch, and torchaudio (which are in the base image).
+RUN pip install --no-cache-dir \
+    "numpy>=1.24.0,<1.26.0" \
+    "setuptools>=61.0" \
+    "wheel" \
+    "cython" \
+    "librosa==0.11.0" \
+    "s3tokenizer" \
+    "transformers==4.46.3" \
+    "diffusers==0.29.0" \
+    "resemble-perth==1.0.1" \
+    "conformer==0.3.2" \
+    "safetensors==0.5.3" \
+    "spacy-pkuseg" \
+    "pykakasi==2.3.0" \
+    "russian-text-stresser @ git+https://github.com/Vuizur/add-stress-to-epub" \ 
+    "torch @ https://repo.radeon.com/rocm/manylinux/rocm-rel-7.0/torch-2.6.0%2Brocm7.0.0.git2e48b21f-cp311-cp311-linux_x86_64.whl" \  
+    "torchaudio @ https://repo.radeon.com/rocm/manylinux/rocm-rel-7.0/torchaudio-2.6.0%2Brocm7.0.0.gitd8831425-cp311-cp311-linux_x86_64.whl" \ 
+    "pytorch-triton-rocm @ https://repo.radeon.com/rocm/manylinux/rocm-rel-7.0/pytorch_triton_rocm-3.2.0%2Brocm7.0.0.git20943800-cp311-cp311-linux_x86_64.whl"
+
+# [STEP 3] Install chatterbox-tts itself WITHOUT dependencies
+# This forces pip to install the package but NOT check its dependency
+# list. This will prevent the numpy downgrade.
+RUN pip install --no-cache-dir --no-dependencies chatterbox-tts==0.1.4
+
+# Copy requirements file
+# COPY requirements-rocm.txt ./requirements.txt
+
+#RUN pip install --no-cache-dir fastapi uvicorn[standard] python-dotenv python-multipart requests psutil pydub sse-starlette
+
+# Install chatterbox-tts — with the breaking fix (pkuseg package exclusion) 
+#RUN pip install git+https://github.com/travisvn/chatterbox-multilingual.git@exp
+
+# RUN pip install --no-cache-dir "numpy>=1.24.0,<1.26.0" setuptools wheel
+
+# [STEP 2] Install all the *other* dependencies from the requirements file.
+# RUN pip install --no-cache-dir --no-build-isolation -r requirements.txt
+
+# Copy the application code
+COPY app/ ./app/
+COPY main.py ./
+
+# Copy voice sample if it exists (optional, can be mounted)
+COPY voice-sample.mp3 ./voice-sample.mp3
+
+# Create directories required by the application
+# We are root, so no chown is needed
+RUN mkdir -p /cache /voices /data/long_text_jobs
+
+# --- Set runtime configuration ---
+
+# Set default environment variables
+ENV PORT=4123
+ENV EXAGGERATION=0.5
+ENV CFG_WEIGHT=0.5
+ENV TEMPERATURE=0.8
+ENV VOICE_SAMPLE_PATH=/app/voice-sample.mp3
+ENV MAX_CHUNK_LENGTH=280
+ENV MAX_TOTAL_LENGTH=3000
+# This is correct. PyTorch on ROCm identifies the GPU as a 'cuda' device.
+ENV DEVICE=auto
+ENV VOICE_LIBRARY_DIR=/voices
+ENV HOST=0.0.0.0
+ENV USE_MULTILINGUAL_MODEL=true
+ENV MODEL_CACHE_DIR=/cache
+
+# Long text TTS settings
+ENV LONG_TEXT_DATA_DIR=/data/long_text_jobs
+ENV LONG_TEXT_MAX_LENGTH=100000
+ENV LONG_TEXT_CHUNK_SIZE=2500
+ENV LONG_TEXT_SILENCE_PADDING_MS=200
+ENV LONG_TEXT_JOB_RETENTION_DAYS=7
+ENV LONG_TEXT_MAX_CONCURRENT_JOBS=3
+
+# Expose port
+EXPOSE ${PORT}
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5m --retries=3 \
+    CMD curl -f http://localhost:${PORT}/health || exit 1
+
+# Run the application with the new entry point
+CMD ["python", "main.py"]

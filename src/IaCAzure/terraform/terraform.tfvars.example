@@ -1,0 +1,6 @@
+# Get your IP from https://www.whatismyip.com/ or `curl ifconfig.me`
+# This is critical for security to lock down SSH.
+my_ip = "YOUR_PUBLIC_IP_ADDRESS"
+
+# Path to your SSH public key.
+public_key_path = "~/.ssh/id_rsa.pub"

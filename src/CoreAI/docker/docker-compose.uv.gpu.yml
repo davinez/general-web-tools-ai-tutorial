@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Main API Service (always included)
   chatterbox-tts:
@@ -33,7 +31,7 @@ services:
 
       # Voice and Model Settings
       - VOICE_SAMPLE_PATH=/app/voice-sample.mp3
-      - DEVICE=${DEVICE:-cuda}
+      - DEVICE=${DEVICE:-auto}
       - MODEL_CACHE_DIR=${MODEL_CACHE_DIR:-/cache}
       - VOICE_LIBRARY_DIR=${VOICE_LIBRARY_DIR:-/voices}
 

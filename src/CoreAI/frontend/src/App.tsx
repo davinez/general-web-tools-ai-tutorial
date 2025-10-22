@@ -9,8 +9,12 @@ import MemoryPage from './pages/MemoryPage';
 import { createTTSService } from './services/tts';
 import { useApiEndpoint } from './hooks/useApiEndpoint';
 import { getFrontendVersion } from './lib/version';
+import { useGlobalErrorHandler } from './hooks/useGlobalErrorHandler';
 
 function App() {
+  // Initialize global error handler
+  useGlobalErrorHandler();
+
   const { apiBaseUrl } = useApiEndpoint();
   const ttsService = createTTSService(apiBaseUrl);
 
@@ -68,7 +72,7 @@ function App() {
             </div>
             <div className="flex items-center gap-4">
               <a
-                href="https://github.com"
+                href=""
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors duration-300"
