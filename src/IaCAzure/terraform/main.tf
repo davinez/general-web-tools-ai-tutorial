@@ -20,7 +20,7 @@ resource "azurerm_public_ip" "pip" {
   name                = "chatterbox-pip"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  allocation_method   = "Static"
+  allocation_method   = "Dynamic"
   sku                 = "Standard"
 }
 
@@ -114,20 +114,14 @@ resource "azurerm_linux_virtual_machine" "vm" {
   eviction_policy   = "Delete" # Deallocates on eviction. Use "Delete" if you don't need the disk.
   max_bid_price     = 0.22  # Use -1 for Azure Spot price (pay-as-you-go cap)
 
-  # --- Use a Marketplace Image with NVIDIA Drivers + Docker ---
-  # This image has Docker, NVIDIA Drivers, and NVIDIA Container Toolkit
-  plan {
-    name      = "22_04-lts-gpu"
-    publisher = "Canonical"
-    product   = "0001-com-ubuntu-server-jammy"
-  }
-
+ # az vm image list --all --publisher Canonical --sku="22_04-lts-gen2""
   source_image_reference {
-    publisher = "Canonical"
-    offer     = "0001-com-ubuntu-server-jammy"
-    sku       = "22_04-lts-gpu"
-    version   = "latest"
-  }
+  # Defines the specific VM image to use from the gallery.
+  publisher = "Canonical"               
+  offer     = "0001-com-ubuntu-server-jammy" 
+  sku       = "22_04-lts-gen2"          
+  version   = "latest"                 
+ }
 
   # --- Managed Identity (for Azure Key Vault) ---
   identity {
@@ -153,4 +147,16 @@ resource "azurerm_linux_virtual_machine" "vm" {
   boot_diagnostics {
     storage_account_uri = null # Set to a storage account if you need boot logs
   }
+}
+
+# This will read the public IP's data after it has been created and assigned by Azure.
+data "azurerm_public_ip" "pip_data" {
+  name                = azurerm_public_ip.pip.name
+  resource_group_name = azurerm_resource_group.rg.name
+
+  # This tells Terraform to wait until the VM is finished
+  # before trying to read the dynamic IP.
+  depends_on = [
+    azurerm_linux_virtual_machine.vm
+  ]
 }

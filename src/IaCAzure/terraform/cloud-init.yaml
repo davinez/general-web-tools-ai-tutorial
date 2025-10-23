@@ -1,30 +1,79 @@
 # This script runs on the VM's first boot. (Approach A: Bash/Automated)
 
-#cloud-config
 package_update: true
 packages:
   - git
-  - docker-compose-plugin # Install Docker Compose v2 (plugin)
+  - docker.io
+  - docker-compose-plugin
+  - wget # Needed for the keyring download
+  # CRITICAL: This package allows Docker to use the host's GPU
+  - nvidia-container-toolkit 
+
+# docker compose -f docker/docker-compose.uv.gpu.yml --profile frontend up --build
+write_files:
+  # This is PART 2 of your script. It will run AFTER the reboot.
+  - path: /opt/post-boot-setup.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      
+      # 1. Restart Docker to make sure it sees the NVIDIA runtime
+      systemctl restart docker
+
+      # 2. Clone the repo
+      git clone https://github.com/davinez/general-web-tools-ai-tutorial.git /home/azureuser/chatterbox-app
+      chown -R azureuser:azureuser /home/azureuser/chatterbox-app
+      
+      # 3. Add azureuser to docker group
+      usermod -aG docker azureuser
+      
+      # 4. Run Docker Compose as azureuser
+      # We use 'su -l' to log in as the user, which loads their new 'docker' group membership
+      su -l azureuser -c "cd /home/azureuser/chatterbox-app/src/CoreAI && docker compose -f docker/docker-compose.uv.gpu.yml --profile frontend up --build -d"
+      
+      # 5. Disable this service so it doesn't run on future boots
+      systemctl disable post-boot-setup.service
+
+  # This file creates the systemd service that will run the script above
+  - path: /etc/systemd/system/post-boot-setup.service
+    permissions: '0644'
+    content: |
+      [Unit]
+      Description=Run setup script after GPU driver install and reboot
+      # We want this to run after the network is up and Docker has started
+      After=network-online.target docker.service
+      Wants=network-online.target docker.service
+
+      [Service]
+      Type=oneshot
+      ExecStart=/opt/post-boot-setup.sh
+      RemainAfterExit=true
+
+      [Install]
+      WantedBy=multi-user.target
 
 runcmd:
-  # The Canonical GPU image already includes Docker and NVIDIA Container Toolkit.
-  # We just need to add git and docker-compose-plugin.
+  # --- PART 1: Runs on the VM's FIRST boot ---
   
-  # 1. Clone the application repository
-  # git clone <repository_url> <destination_directory>
-  - ['git', 'clone', 'https://github.com/YOUR_USERNAME/YOUR_CHATTERBOX_REPO.git', '/home/azureuser/chatterbox-app']
-  - ['chown', '-R', 'azureuser:azureuser', '/home/azureuser/chatterbox-app']
+  # 1. Install CUDA Toolkit (which includes the driver)
+  # NOTE: I corrected your URL to point to the 'ubuntu2204' repo.
+  - ['wget', 'https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb']
   
-  # 2. Run Docker Compose as the 'azureuser'
-  - - 'su'
-    - 'azureuser'
-    - '-c'
-    - |
-      cd /home/azureuser/chatterbox-app
-      
-      # Build and run the docker-compose file
-      # The 'deploy' key for GPU requires Docker Compose v2 (this command)
-      # The host's NVIDIA Container Toolkit will automatically handle the GPU mapping.
-      # docker compose -f docker/docker-compose.uv.gpu.yml --profile frontend up --build
-      docker compose -f docker/docker-compose.uv.gpu.yml --profile frontend build
-      docker compose -f docker/docker-compose.uv.gpu.yml --profile frontend up -d
+  # Use 'dpkg -i' to install the .deb file
+  - ['dpkg', '-i', 'cuda-keyring_1.1-1_all.deb'] 
+  
+  # Clean up the downloaded file
+  - ['rm', 'cuda-keyring_1.1-1_all.deb']
+  
+  - ['apt-get', 'update']
+  
+  # Install the CUDA toolkit version you specified. This will pull in the driver.
+  - ['apt-get', 'install', '-y', 'cuda-toolkit-12-5']
+
+  # 2. Enable the custom service to run ONCE on the *next* boot
+  - ['systemctl', 'enable', 'post-boot-setup.service']
+  
+  # 3. Reboot the machine. This is the LAST command.
+  # The cloud-init script STOPS here.
+  # After reboot, the drivers will be loaded, and 'post-boot-setup.service' will run.
+  - ['reboot', 'now']

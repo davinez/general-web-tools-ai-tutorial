@@ -39,14 +39,20 @@ RUN uv venv --python 3.11
 ENV VIRTUAL_ENV=/app/.venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-# Install PyTorch with CUDA support using uv
-RUN uv pip install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu124
+RUN uv pip install --upgrade pip setuptools wheel cython
 
-# Install base dependencies first
-RUN uv pip install setuptools fastapi uvicorn[standard] python-dotenv python-multipart requests psutil pydub sse-starlette
+# Install numpy first, as pkuseg requires it to build
+RUN uv pip install numpy
 
-# Install chatterbox-tts 
-RUN uv pip install chatterbox-tts==0.1.4 
+# Now install pkuseg, which will find the already-installed numpy
+RUN uv pip install --no-build-isolation pkuseg==0.0.25
+
+# Install requirements from file
+COPY requirements-cuda.txt .
+RUN uv pip install -r requirements-cuda.txt
+
+COPY requirements.txt .
+RUN uv pip install -r requirements.txt
 
 # Copy application code
 COPY app/ ./app/

@@ -1,7 +1,9 @@
+
+# https://learn.microsoft.com/en-us/azure/reliability/regions-list
 variable "location" {
   description = "Azure region to deploy resources."
   type        = string
-  default     = "East US" # Check for NCasT4_v3 availability in your region
+  default     = "northcentralus" # Check for NCasT4_v3 availability in your region
 }
 
 variable "admin_user" {

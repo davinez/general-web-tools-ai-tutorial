@@ -150,3 +150,67 @@ terraform destroy
 ```
 
 Terraform will delete the **entire resource group**, including the VM, the public IP, the network, and all associated disks. Everything will be gone, and you will stop being charged.
+
+
+### Quick Reference
+
+
+# AZ Login
+
+```bash
+az login
+# Azure Portal > Entra ID > Overview
+az login --tenant "<tenant>"
+az account set --subscription "<YOUR_SUBSCRIPTION_ID>"`
+```
+
+# Terraform
+
+```bash
+terraform init # Only once
+terraform plan -out=spot.plan # To run or after been evicted
+terraform apply "spot.plan"
+
+terraform destroy
+```
+
+# VM
+
+* To check progress
+
+```bash
+# Get the IP from terraform output Optional
+terraform output -raw public_ip_address
+
+# Set env variable
+VM_IP=$(terraform output -raw public_ip_address)
+    
+# SSH in and tail the logs
+ssh -i ~/.ssh/id_rsa azureuser@$VM_IP
+
+# If named different
+ssh -i /path/to/my/other_key azureuser@$VM_IP 
+
+# Inside the VM
+tail -f /var/log/cloud-init-output.log
+```
+* To see your containers
+
+```bash
+# should be chatterbox-tts-api-uv-gpu
+docker ps
+
+# You can use either the Container ID (a1b2c3d4e5f6) or the Name (my-web-app)
+
+# Follow the logs in real-time (like tail -f): This is the most common use. It will stream new logs as they happen.
+docker logs --follow my-web-app
+
+# Show logs since a certain time (e.g., the last 10 minutes):
+docker logs --since 10m my-web-app
+
+```
+
+# App
+
+* React Frontend `http://<VM_PUBLIC_IP>:4321`
+* API Health Check `http://<VM_PUBLIC_IP>:4123/health`
