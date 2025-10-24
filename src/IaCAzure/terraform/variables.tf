@@ -10,7 +10,7 @@ variable "location" {
 variable "locationvm" {
   description = "Azure region to deploy vm"
   type        = string
-  default     = "northeurope" # Check for NCasT4_v3 availability in your region
+  default     = "westus2" # Check for NCasT4_v3 availability in your region
 }
 
 variable "admin_user" {
