@@ -141,7 +141,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
   # --- Approach A: cloud-init (Bash) ---
   # This runs the 'cloud-init.yaml' script on first boot.
   # Comment this line out if you want to use Approach B (Ansible).
-  custom_data = filebase64("${path.module}/cloud-init.yaml")
+  custom_data = data.cloudinit_config.vm_config.rendered
 
   # --- Boot Diagnostics ---
   boot_diagnostics {
@@ -163,4 +163,15 @@ data "azurerm_public_ip" "pip_data" {
   depends_on = [
     azurerm_linux_virtual_machine.vm
   ]
+}
+
+data "cloudinit_config" "vm_config" {
+  gzip          = true
+  base64_encode = true
+
+  part {
+    # This correctly tags your YAML as cloud-config for cloud-init to process
+    content_type = "text/cloud-config" 
+    content      = file("${path.module}/cloud-init.yaml")
+  }
 }

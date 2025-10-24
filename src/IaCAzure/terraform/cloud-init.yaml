@@ -4,10 +4,8 @@ package_update: true
 packages:
   - git
   - docker.io
-  - docker-compose-plugin
-  - wget # Needed for the keyring download
-  # CRITICAL: This package allows Docker to use the host's GPU
-  - nvidia-container-toolkit 
+  - docker-compose
+  - wget # Needed for the keyring download 
 
 # docker compose -f docker/docker-compose.uv.gpu.yml --profile frontend up --build
 write_files:
@@ -28,9 +26,9 @@ write_files:
       usermod -aG docker azureuser
       
       # 4. Run Docker Compose as azureuser
-      # We use 'su -l' to log in as the user, which loads their new 'docker' group membership
-      su -l azureuser -c "cd /home/azureuser/chatterbox-app/src/CoreAI && docker compose -f docker/docker-compose.uv.gpu.yml --profile frontend up --build -d"
-      
+      # We use 'su -l' to log in as the user, which loads their new 'docker' group membership   
+      su -l azureuser -c "cd /home/azureuser/chatterbox-app/src/CoreAI && docker-compose -f docker/docker-compose.uv.gpu.yml --profile frontend up --build -d &> /tmp/docker-compose-setup.log"
+
       # 5. Disable this service so it doesn't run on future boots
       systemctl disable post-boot-setup.service
 
@@ -54,26 +52,28 @@ write_files:
 
 runcmd:
   # --- PART 1: Runs on the VM's FIRST boot ---
-  
-  # 1. Install CUDA Toolkit (which includes the driver)
-  # NOTE: I corrected your URL to point to the 'ubuntu2204' repo.
+  # 1. Add the NVIDIA CUDA repository
   - ['wget', 'https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb']
-  
-  # Use 'dpkg -i' to install the .deb file
-  - ['dpkg', '-i', 'cuda-keyring_1.1-1_all.deb'] 
-  
-  # Clean up the downloaded file
+  - ['dpkg', '-i', 'cuda-keyring_1.1-1_all.deb']
   - ['rm', 'cuda-keyring_1.1-1_all.deb']
-  
-  - ['apt-get', 'update']
-  
-  # Install the CUDA toolkit version you specified. This will pull in the driver.
-  - ['apt-get', 'install', '-y', 'cuda-toolkit-12-5']
+  - ['apt-get', 'update']  
 
-  # 2. Enable the custom service to run ONCE on the *next* boot
+  # 2. Install the driver (and its dependencies)
+  # 'cuda-drivers' is a meta-package that installs the latest driver.
+  # This is much cleaner than installing the full 'cuda-toolkit'.
+  - ['apt-get', 'install', '-y', 'cuda-drivers']
+
+  # 3. Install the NVIDIA Container Toolkit (AFTER the driver)
+  - ['apt-get', 'install', '-y', 'nvidia-container-toolkit']
+
+  # 4. CRITICAL: Configure Docker to use the NVIDIA runtime
+  # This modifies /etc/docker/daemon.json
+  - ['nvidia-ctk', 'runtime', 'configure', '--runtime=docker']
+
+  # 5. Enable the custom service to run ONCE on the *next* boot
   - ['systemctl', 'enable', 'post-boot-setup.service']
   
-  # 3. Reboot the machine. This is the LAST command.
-  # The cloud-init script STOPS here.
-  # After reboot, the drivers will be loaded, and 'post-boot-setup.service' will run.
+  # 6. Reboot.
+  # The driver will load, and Docker will restart with the new config.
+  # Then, post-boot-setup.service will run.
   - ['reboot', 'now']

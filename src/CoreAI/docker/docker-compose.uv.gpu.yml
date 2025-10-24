@@ -36,8 +36,8 @@ services:
       - VOICE_LIBRARY_DIR=${VOICE_LIBRARY_DIR:-/voices}
 
       # NVIDIA/CUDA settings
-      - NVIDIA_VISIBLE_DEVICES=all
-      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      # - NVIDIA_VISIBLE_DEVICES=all
+      # - NVIDIA_DRIVER_CAPABILITIES=compute,utility
     volumes:
       # Mount voice sample file (optional)
       - ${VOICE_SAMPLE_HOST_PATH:-../voice-sample.mp3}:/app/voice-sample.mp3:ro
