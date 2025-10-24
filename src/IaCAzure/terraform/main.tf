@@ -20,7 +20,7 @@ resource "azurerm_public_ip" "pip" {
   name                = "chatterbox-pip"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  allocation_method   = "Dynamic"
+  allocation_method   = "Static"
   sku                 = "Standard"
 }
 
@@ -101,18 +101,18 @@ resource "azurerm_network_interface_security_group_association" "nsg_assoc" {
 # https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/gpu-accelerated/ncast4v3-series?tabs=sizebasic
 resource "azurerm_linux_virtual_machine" "vm" {
   name                = "chatterbox-vm"
-  location            = azurerm_resource_group.rg.location
+  location            = var.locationvm
   resource_group_name = azurerm_resource_group.rg.name
   size                = "Standard_NC4as_T4_v3"
   admin_username      = var.admin_user
   network_interface_ids = [
     azurerm_network_interface.nic.id,
   ]
-
+  # zone = "2" 
   # --- Spot VM Configuration ---
   priority          = "Spot"
-  eviction_policy   = "Delete" # Deallocates on eviction. Use "Delete" if you don't need the disk.
-  max_bid_price     = 0.22  # Use -1 for Azure Spot price (pay-as-you-go cap)
+  eviction_policy   = "Delete" # Deletes on eviction. Use "Deallocate" if you need the disk
+  max_bid_price     = -1  # Use -1 for Azure Spot price (pay-as-you-go cap)
 
  # az vm image list --all --publisher Canonical --sku="22_04-lts-gen2""
   source_image_reference {
@@ -124,9 +124,9 @@ resource "azurerm_linux_virtual_machine" "vm" {
  }
 
   # --- Managed Identity (for Azure Key Vault) ---
-  identity {
-    type = "SystemAssigned"
-  }
+  # identity {
+  #   type = "SystemAssigned"
+  # }
 
   os_disk {
     caching              = "ReadWrite"
@@ -147,6 +147,10 @@ resource "azurerm_linux_virtual_machine" "vm" {
   boot_diagnostics {
     storage_account_uri = null # Set to a storage account if you need boot logs
   }
+
+  depends_on = [
+    azurerm_network_interface_security_group_association.nsg_assoc
+  ]
 }
 
 # This will read the public IP's data after it has been created and assigned by Azure.

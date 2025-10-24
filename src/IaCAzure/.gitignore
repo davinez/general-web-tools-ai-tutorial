@@ -1,4 +1,5 @@
 secrets.md
+*sshkey*
 
 # Terraform variable files with secrets
 *.tfvars

@@ -1,9 +1,16 @@
-
-# https://learn.microsoft.com/en-us/azure/reliability/regions-list
 variable "location" {
   description = "Azure region to deploy resources."
   type        = string
-  default     = "northcentralus" # Check for NCasT4_v3 availability in your region
+  default     = "westus2" 
+}
+
+# https://learn.microsoft.com/en-us/azure/reliability/regions-list
+# az vm list-skus --size 'Standard_NC4as_T4_v3' --resource-type virtualMachines --all --zone --output table
+# az vm list-skus --location westus2 --size Standard_N --all --output table
+variable "locationvm" {
+  description = "Azure region to deploy vm"
+  type        = string
+  default     = "northeurope" # Check for NCasT4_v3 availability in your region
 }
 
 variable "admin_user" {
