@@ -108,10 +108,10 @@ resource "azurerm_linux_virtual_machine" "vm" {
   network_interface_ids = [
     azurerm_network_interface.nic.id,
   ]
-  # zone = "2" 
+  # zone = "3" 
   # --- Spot VM Configuration ---
   priority          = "Spot"
-  eviction_policy   = "Delete" # Deletes on eviction. Use "Deallocate" if you need the disk
+  eviction_policy   = "Deallocate" # "Delete" Deletes on eviction. Use "Deallocate" if you need the disk, The managed OS disk and data disks will be preserved.
   max_bid_price     = -1  # Use -1 for Azure Spot price (pay-as-you-go cap)
 
  # az vm image list --all --publisher Canonical --sku="22_04-lts-gen2""
@@ -138,9 +138,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
     public_key = file(var.public_key_path)
   }
 
-  # --- Approach A: cloud-init (Bash) ---
   # This runs the 'cloud-init.yaml' script on first boot.
-  # Comment this line out if you want to use Approach B (Ansible).
   custom_data = data.cloudinit_config.vm_config.rendered
 
   # --- Boot Diagnostics ---
