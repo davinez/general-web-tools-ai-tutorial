@@ -1,3 +1,6 @@
+
+Of the text provided, make the best summary possible trying to keep minimal text but keeping a good brief of the notes, as i will use them to study later. Give the summary in .md file: 
+
 # Cert
 
 https://www.datacamp.com/tutorial/azure-openai

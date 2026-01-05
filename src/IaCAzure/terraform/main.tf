@@ -89,7 +89,13 @@ resource "azurerm_network_interface" "nic" {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.subnet.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.pip.id
+    # To destroy and recreate the public IP on VM recreation 
+    # set public_ip_address_id = null
+    # Then, terraform apply
+    # terraform destroy -target=azurerm_public_ip.pip
+    # This will destroy the Public IP, stopping its associated costs, while leaving your VM, NIC, and (most importantly) your Standard_LRS OS disk completely untouched.
+    # When you want to re-attach the IP, just revert the change in main.tf (add the azurerm_public_ip.pip.id line back) and run terraform apply again.
+    public_ip_address_id         = azurerm_public_ip.pip.id
   }
 }
 
