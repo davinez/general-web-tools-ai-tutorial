@@ -1,3 +1,5 @@
+https://learn.microsoft.com/training/paths/develop-ai-agents-on-azure/
+
 # Get started with AI agent development on Azure
 
 As generative AI models evolve, they are moving beyond simple chat applications to power **intelligent agents** that operate autonomously to automate tasks, orchestrate business processes, and coordinate workloads.
@@ -1338,3 +1340,938 @@ The Microsoft Agent Framework uses the following workflow for sequential executi
 ## Summary: Use group chat orchestration
 
 ![alt text](images-cert/image28.png)
+
+## 1. Overview
+
+Group chat orchestration models collaborative conversations between multiple AI agents and optional human participants. A **central chat manager** controls the flow, deciding who speaks next and when the process ends.
+
+- **Goal:** Simulate meetings, debates, or collaborative problem-solving.
+- **Key Feature:** Agents contribute to a conversation rather than directly changing systems.
+- **Support:** Works for both free-flowing ideation and formal workflows with approval steps.
+
+## 2. When to Use vs. Avoid
+
+### Use When:
+
+- **Collaboration is needed:** Spontaneous or guided interaction between agents/humans.
+- **Iterative loops:** "Maker-checker" setups where agents review each other's work.
+- **Oversight:** Scenarios requiring real-time human intervention.
+- **Transparency:** All outputs are collected in a single, auditable thread.
+- **Complex tasks:** Brainstorming, consensus-building, or cross-disciplinary dialogue.
+
+### Avoid When:
+
+- Tasks are simple, linear, or involve basic delegation.
+- Real-time speed requirements make discussion overhead too slow.
+- Workflows are strictly hierarchical or deterministic.
+- The chat manager cannot clearly define a completion point.
+- **Agent Count:** Avoid having too many agents (limit to three or fewer for easier control).
+
+## 3. The Maker-Checker Loop
+
+A specific type of orchestration where:
+
+1.  **The Maker:** Proposes content or solutions.
+2.  **The Checker:** Reviews and critiques the proposal.
+3.  **The Cycle:** Feedback is sent back to the maker; the loop repeats until the result is satisfactory.
+
+## 4. Implementation (Microsoft Agent Framework SDK)
+
+To implement this pattern, follow these steps:
+
+1.  **Create Chat Client:** Set up a client (e.g., `AzureOpenAIChatClient`) with credentials.
+2.  **Define Agents:** Use `create_agent` to create instances with specific names and roles.
+3.  **Build Workflow:** Use the `GroupChatBuilder` class. Add agents via `.participants()` and finalize with `.build()`.
+4.  **Run Workflow:** Use the `.run()` method with the initial task.
+5.  **Process Results:** Use `get_outputs()` to extract aggregated messages from the workflow events.
+6.  **Identify Responses:** Each message includes the author's name to identify the specific agent.
+
+## 5. Customizing the Group Chat Manager
+
+By extending the `GroupChatManager` class, you can control:
+
+- Filtering/summarizing results.
+- Selecting the next agent.
+- Timing for human intervention.
+- Termination conditions.
+
+### Call Order (Logic Flow)
+
+During each round, the manager calls methods in this specific order:
+
+1.  `should_request_user_input`: Checks if a human needs to intervene.
+2.  `should_terminate`: Checks if the conversation should end (e.g., max rounds).
+3.  `filter_results`: Processes/summarizes the final thread if terminating.
+4.  `select_next_agent`: Chooses the next participant if continuing.
+
+## Summary: Use handoff orchestration
+
+![alt text](images-cert/image29.png)
+
+## 1. Overview
+
+Handoff orchestration allows AI agents to transfer control to one another based on task context or specific user requests. Unlike parallel patterns, agents work **one at a time**, ensuring the most qualified expert handles the current stage of the task.
+
+- **Core Concept:** Dynamic delegation where the "best" agent may not be known at the start.
+- **Ideal for:** Customer support, expert systems, and multi-domain problem solving.
+
+## 2. When to Use vs. Avoid
+
+### Use When:
+
+- **Emergent Expertise:** Requirements become clear only during processing.
+- **Sequential Specialization:** Problems require different specialists to work in a specific order.
+- **Dynamic Routing:** The number or order of agents cannot be determined in advance.
+- **Clear Signals:** You can define specific rules or triggers for when a handoff should occur.
+
+### Avoid When:
+
+- **Fixed Workflows:** The order of agents is known and constant.
+- **Simple Logic:** Routing is basic and doesn't require dynamic interpretation.
+- **Parallel Needs:** Multiple operations must run simultaneously.
+- **Risk of Loops:** There is a high risk of "bouncing" between agents or infinite loops.
+
+## 3. Implementation (Microsoft Agent Framework SDK)
+
+Implementation relies on **control workflows** using a switch-case structure to route tasks based on an agent's output.
+
+### Step 1: Data Models and Chat Client
+
+- Set up the chat client (AI service connection).
+- Define **Pydantic models** for structured JSON responses from agents.
+- Create data classes to pass information between workflow steps.
+- Configure agents with a `response_format` for structured output.
+
+### Step 2: Specialized Executor Functions
+
+- **Input Storage Executor:** Saves data to a shared state and forwards it to the classifier.
+- **Transformation Executor:** Converts the agent’s JSON response into a typed routing object.
+- **Handler Executors:** Separate executors for each outcome with guard conditions to verify processing.
+
+### Step 3: Routing Logic
+
+- Create factory functions for **condition checkers**.
+- Use `Case` objects within **switch-case edge groups**.
+- **Crucial:** Always include a `Default` case as a fallback for unexpected scenarios.
+
+### Step 4: Assemble the Workflow
+
+- Use `WorkflowBuilder` to connect executors.
+- Add the switch-case edge group for dynamic routing.
+- Configure the workflow to follow the first matching case.
+- Set a **terminal executor** to yield the final result.
+
+## 4. Key Takeaways
+
+Handoff orchestration provides flexibility for evolving tasks. By using the Microsoft Agent Framework SDK, you can create systems that seamlessly transfer control between specialized experts and include human input where necessary to ensure efficient task completion.
+
+## Summary: Use Magentic orchestration
+
+![alt text](images-cert/image30.png)
+
+## 1. Overview
+
+Magentic orchestration is a flexible, general-purpose pattern for **complex, open-ended tasks**. It utilizes a dedicated **Magentic manager** that coordinates a team of specialized agents by building a dynamic execution plan in real-time.
+
+- **Core Philosophy:** Emphasizes planning and documentation as much as the final solution.
+- **The Task Ledger:** A dynamic record of goals, subgoals, and plans that is refined as the workflow progresses.
+- **Adaptive Nature:** The manager tracks progress and adapts the workflow based on evolving context and agent capabilities.
+
+## 2. When to Use vs. Avoid
+
+### Use When:
+
+- **Open-Ended Problems:** The solution path is unknown and must be discovered.
+- **Specialized Collaboration:** Multiple experts are needed to shape the final result.
+- **Human Review Required:** You need a documented plan of approach for a human to audit.
+- **Direct Interaction:** Agents use tools to interact with external systems.
+- **Step-by-Step Planning:** There is high value in having an execution plan before tasks run.
+
+### Avoid When:
+
+- **Fixed Paths:** The process is deterministic or simple enough for lightweight patterns.
+- **Speed Over Planning:** The overhead of creating a ledger/plan is impractical for fast execution requirements.
+- **Low Complexity:** No need to produce a formal "plan of approach."
+- **High Risk of Stalls:** Scenarios where frequent loops occur without a clear resolution path.
+
+## 3. Implementation Steps (Microsoft Agent Framework)
+
+1.  **Define Specialized Agents:** Create agents (e.g., `ChatAgent`) with specific roles and instructions.
+2.  **Setup Event Callbacks:** Define an `async` function to handle orchestrator messages, streaming updates, and final results.
+3.  **Build with MagenticBuilder:** \* Add participants (agents).
+    - Configure the event callback.
+    - Set parameters like `max_round_count` and `stall_limits`.
+4.  **Configure the Standard Manager:** Use a chat client to enable the manager's planning and progress-tracking capabilities.
+5.  **Run with `run_stream`:** Execute the complex task; the manager will dynamically plan and delegate.
+6.  **Process and Extract:** Iterate through workflow events and collect the final `WorkflowOutputEvent`.
+
+## 4. Key Parameters for Control
+
+To prevent infinite loops or inefficient planning, the manager uses:
+
+- **Max Round Count:** Limits how many total turns the orchestration can take.
+- **Stall Count:** Detects when no progress is being made and triggers a reset or intervention.
+- **Reset Count:** Controls how many times the manager can restart the planning process.
+
+# Exercise: Develop a multi-agent solution
+
+https://learn.microsoft.com/en-us/training/modules/orchestrate-semantic-kernel-multi-agent-solution/9-exercise
+
+# Summary: Discover Azure AI Agents with A2A
+
+# Study Guide: Introduction to A2A Protocol
+
+## 1. The Challenge of Multi-Agent Systems
+
+While individual AI agents are powerful, real-world tasks often require collaboration. Manually coordinating interactions between remote or distributed agents is complex and often leads to "siloed" systems that cannot talk to each other.
+
+## 2. What is the A2A Protocol?
+
+The **Agent-to-Agent (A2A)** protocol is a standardized framework designed to solve interoperability challenges. It provides a "universal language" for AI agents.
+
+- **Discovery:** Allows agents to find each other and understand their respective skills.
+- **Communication:** Provides a secure and standardized way for agents to exchange messages.
+- **Task Delegation:** Enables one agent to hand off work to another seamlessly.
+- **Security:** Ensures communication is standardized and secure across distributed environments.
+
+## 3. Workflow Example: Technical Writing
+
+To understand A2A in practice, consider a content creation workflow managed by a **Routing Agent**:
+
+1.  **User Request:** A user asks for blog content.
+2.  **Step A (Title Agent):** The routing agent sends the request to a specialized agent that generates catchy headlines.
+3.  **Step B (Outline Agent):** The routing agent takes that title and passes it to an agent that builds detailed outlines.
+4.  **Final Delivery:** The routing agent returns the completed outline to the user automatically.
+
+## 4. Learning Objectives for Azure AI Agents
+
+When implementing A2A with Azure, the focus is on three main areas:
+
+- **Configuring Routing Agents:** Setting up the "central brain" that directs traffic.
+- **Registering Remote Agents:** Adding external or distributed agents to the system.
+- **Building Coordinated Workflows:** Creating end-to-end processes where multiple agents contribute to a single goal.
+
+## Summary: Define an A2A agent
+
+![alt text](images-cert/image31.png)
+
+## 1. Core Definition
+
+An **A2A Agent** is an AI entity that follows the Agent-to-Agent protocol to communicate, share context, and invoke capabilities across different vendors and platforms.
+
+### Key Advantages:
+
+- **Enhanced Collaboration:** Connects traditionally disconnected systems.
+- **Flexible Model Selection:** Each agent can use a different, optimized LLM (unlike MCP, which often uses one).
+- **Integrated Authentication:** Security and identity verification are built directly into the protocol.
+
+## 2. Agent Skills
+
+An **Agent Skill** is a discrete building block that describes a specific function an agent can perform. It is the "What" of the agent's capabilities.
+
+| Element         | Description                                         |
+| :-------------- | :-------------------------------------------------- |
+| **ID & Name**   | Unique identifier and human-readable name.          |
+| **Description** | Detailed explanation of the task the skill handles. |
+| **Tags**        | Keywords used for categorization and discovery.     |
+| **Examples**    | Sample prompts showing the skill in action.         |
+| **I/O Modes**   | Supported formats (e.g., Text, JSON, Image).        |
+
+## 3. The Agent Card
+
+The **Agent Card** is a machine-readable JSON document (the agent's "digital business card") that allows others to discover its skills and how to connect to it.
+
+- **Identity:** Name, description, and version.
+- **Endpoint URL:** The digital address where the agent is reached.
+- **Capabilities:** Features supported (e.g., streaming, push notifications).
+- **Authentication:** Details on the credentials required to talk to the agent.
+- **Skill List:** The comprehensive list of available skills defined above.
+
+## 4. The Collaborative Process
+
+1.  **Discovery:** A routing agent or client automatically finds an agent via its Agent Card.
+2.  **Routing:** The request is directed to the specific **Skill** best suited for the task.
+3.  **Collaboration:** The agent performs the task and returns the response in a supported format.
+
+**Example:** In a writing workflow, a **Routing Agent** retrieves the cards for a "Title Agent" and an "Outline Agent." It passes the user's topic to the Title Agent's skill, then feeds that output into the Outline Agent's skill to generate the final document.
+
+## Summary: Implement an agent executor
+
+![alt text](images-cert/image32.png)
+
+## Overview
+
+The **Agent Executor** is a core A2A component that bridges protocol requirements with business logic. It defines how an agent processes requests and communicates within multi-agent workflows.
+
+## Key Operations
+
+- **Execute**: Accesses `RequestContext` to process tasks and pushes results to an `EventQueue`.
+- **Cancel**: Manages the termination of ongoing tasks (optional for simple agents).
+
+## Request Handling Flow
+
+1. **Receive**: Executor gets a request.
+2. **Process**: Calls internal logic/helper classes.
+3. **Wrap**: Formats the result as an event.
+4. **Respond**: Places the event on the `EventQueue` for the routing mechanism to deliver.
+
+**Note:** The Agent Executor ensures standardized communication, enabling seamless integration between clients and other agents.
+
+## Summary: Host an A2A server
+
+## Overview
+
+Hosting transforms an agent into a reachable service over HTTP. This enables the agent to expose its **Agent Card**, process incoming requests via the **Agent Executor**, and manage complex task lifecycles.
+
+## The Three Essential Components
+
+1. **Agent Card**: The "directory" of the agent.
+   - Contains skills and metadata.
+   - Endpoint: `/.well-known/agent-card.json`.
+2. **Request Handler**: The "manager".
+   - Routes actions (execute, cancel).
+   - Requires a **Task Store** for reliability and state tracking.
+3. **Server Application**: The "infrastructure".
+   - Uses **Starlette** (Framework) and **Uvicorn** (ASGI Server).
+
+## Implementation Workflow
+
+1. Define Skills + Agent Card.
+2. Initialize Request Handler (Executor + Task Store).
+3. Set up the Server Application.
+4. Run via Uvicorn.
+
+**Note:** Even a "Hello World" agent requires this hosting structure to respond to network-based requests and participate in multi-agent workflows.
+
+## Summary: Connect to your A2A agent
+
+## Client Responsibilities
+
+- **Discovery**: Locating the Agent Card for metadata and endpoints.
+- **Communication**: Sending requests and managing transmission.
+- **Interpretation**: Decoding direct messages vs. task-based objects.
+
+## Interaction Mechanics
+
+### 1. Establishing Connection
+
+- Requires the **Base URL**.
+- Starts by fetching the **Agent Card** to understand what the agent can do.
+
+### 2. Request Patterns
+
+- **Sync (Non-Streaming)**: Standard request-response loop.
+- **Async (Streaming)**: Asynchronous partial results; useful for long-running logic.
+
+### 3. Response Varieties
+
+- **Direct**: Immediate output.
+- **Task-based**: Represents a lifecycle; allows for tracking and cancellation.
+
+## Key Technical Details
+
+- **Identification**: Use unique IDs for every request.
+- **Roles**: Define the sender (e.g., `role: "user"`) in the message payload.
+- **Complexity**: Advanced agents may return multiple tasks simultaneously rather than a single message string.
+
+# Exercise: Connect to remote Azure AI Agents with the A2A protocol
+
+https://learn.microsoft.com/en-us/training/modules/discover-agents-with-a2a/6-exercise
+
+# Summary: Build agent-driven workflows using Microsoft Foundry
+
+## What is Microsoft Foundry?
+
+A platform to orchestrate multiple AI agents through a visual interface. It balances automation with **runtime safeguards** to ensure reliability.
+
+## Key Capabilities
+
+- **Low-Code Design**: A visual canvas for defining agent interactions.
+- **Decision Logic**: Using agent outputs to move data through specific steps.
+- **Triage & Scaling**: Managing high volumes of tasks (like support tickets) by routing them based on complexity.
+
+## Critical Concepts
+
+| Concept               | Definition                                                                |
+| :-------------------- | :------------------------------------------------------------------------ |
+| **Workflow Nodes**    | The individual building blocks/steps of a process.                        |
+| **Human-in-the-Loop** | A pattern where humans intervene when AI confidence is low.               |
+| **Power Fx**          | The expression language used to manipulate data and evaluate conditions.  |
+| **For-Each Loops**    | A method to process multiple inputs (e.g., a batch of tickets) in one go. |
+
+## Why use Workflows?
+
+Workflows solve the "Scale vs. Safety" dilemma. They allow for high-speed triage while maintaining human control over sensitive or complex decisions.
+
+# Summary: Understand Workflows
+
+## Core Definition
+
+Workflows are **visual and declarative**. You arrange nodes to define an execution path, and the system manages the "state" (memory) and execution automatically.
+
+## Node Functions
+
+| Node Type               | Purpose                              |
+| :---------------------- | :----------------------------------- |
+| **Agent Nodes**         | Execute AI reasoning or skills.      |
+| **Condition Nodes**     | Branch the path based on logic/data. |
+| **Communication Nodes** | Interface with the end-user.         |
+
+## Orchestration Patterns
+
+- **Specialization**: Instead of one "do-it-all" agent, workflows link multiple agents with distinct responsibilities.
+- **Human Oversight**: Workflows can be configured to stop and wait for a human if the agent is unsure, ensuring safety in real-world applications.
+- **Flow Control**: You determine exactly how information moves from the output of one node to the input of the next.
+
+**Key Takeaway**: Workflows turn individual AI "brains" into a functional, reliable business "process."
+
+# Summary: Identify Workflow Patterns
+
+## Pattern Comparison Table
+
+| Pattern               | Logic Type              | Best Use Case                                  |
+| :-------------------- | :---------------------- | :--------------------------------------------- |
+| **Sequential**        | Linear / Fixed          | Data processing pipelines & validation.        |
+| **Human-in-the-Loop** | Oversight-driven        | Approvals, confirmations, and safety checks.   |
+| **Group Chat**        | Dynamic / Collaborative | Complex support and multi-agent brainstorming. |
+
+## Key Insights
+
+- **Sequential** is the easiest to reason about and serves as the best starting point for beginners.
+- **Human-in-the-Loop** balances the speed of AI with the reliability of human judgment.
+- **Group Chat** allows for flexibility; agents can adapt to changing inputs and "talk" to each other to refine a result.
+
+**Decision Tip:** Choose your pattern based on how much "flexibility" vs. "predictability" your specific business process requires.
+
+# Summary: Create workflows in Microsoft Foundry
+
+## Workflow Design Principles
+
+- **Nodes as Building Blocks**: Every action (AI call, logic check, data change) is a node.
+- **Manual Persistence**: Remember to **Save Regularly**; there is no auto-save in the designer.
+- **Interactivity**: Test workflows via the chat window to trace execution paths live.
+
+## Essential Node Catalog
+
+### 1. The "Brains" (Invoke)
+
+- **Agent Node**: Used for classification, recommendations, and reasoning.
+- _Key Tip_: Use structured outputs (JSON) to make data easier for "Flow" nodes to read.
+
+### 2. The "Logic" (Flow)
+
+- **If/Else**: Creating branches based on conditions.
+- **For Each**: Processing arrays or lists (e.g., a list of emails).
+- **Go To**: Non-linear navigation within the workflow.
+
+### 3. The "Memory" (Data & Variables)
+
+- **Set Variable**: Storing data for later steps.
+- **Parse Value**: Cleaning up agent responses into usable formats.
+- **Basic Chat**: The interface for human-agent interaction.
+
+## Best Practices
+
+- Start with a **predefined pattern** (like Sequential) to learn the ropes.
+- Use **Variables** to pass information from the beginning of a workflow to the end.
+- Use the **End node** to clearly define the final output or success state.
+
+# Summary: Add Agents to a Workflow
+
+## The Invoke Agent Node
+
+The primary tool for adding AI reasoning to a workflow.
+
+- **Sources**: Use existing project agents or create new "inline" agents.
+- **Inputs**: Receives context from previous steps or user messages.
+- **Outputs**: Returns data that can be used by subsequent nodes.
+
+## Key Configuration Options
+
+| Feature               | Purpose                                                        |
+| :-------------------- | :------------------------------------------------------------- |
+| **Response Format**   | Define a JSON schema for predictable, machine-readable data.   |
+| **Action Settings**   | Where you map the agent's response to a specific **Variable**. |
+| **Tools & Knowledge** | Grant the agent access to external data or specific functions. |
+
+## Strategic Patterns
+
+- **Modularity**: Build a library of specialized agents (Classifiers, Summarizers, Researchers) and reuse them across different workflows.
+- **Structured Reasoning**: Always use structured outputs when the agent's answer needs to trigger an `If/Else` or `For-Each` loop.
+- **State Persistence**: Store agent results in variables to ensure the "memory" of the conversation carries through the entire execution path.
+
+**Pro Tip**: If an agent's output will be used to make a logic decision, define a JSON schema to prevent "hallucinated" formatting from breaking your workflow.
+
+# Summary: Apply Power Fx in Workflows
+
+# Study Guide: Apply Power Fx in Workflows
+
+Power Fx is the low-code, Excel-like language that acts as the glue of a workflow. It allows for data manipulation, condition evaluation, and execution control without complex coding.
+
+## Core Concepts
+
+### 1. How Formulas Work
+
+A Power Fx formula is an expression that evaluates to a value. These formulas can reference two types of variables:
+
+- **System variables:** Provide contextual info (e.g., current activity, last message, user info).
+- **Local variables:** Store data captured or created during workflow execution for use in later nodes.
+
+### 2. Decision Points and loops
+
+- **Conditions:** Expressions are used in **If/Else** nodes to branch execution (e.g., checking an agent's confidence score to decide if a human is needed).
+- **Loops:** **For-each** nodes use Power Fx to iterate over collections, applying actions to each item in a list (e.g., processing multiple support tickets).
+
+---
+
+## Power Fx Formula Reference
+
+| Purpose                  | Formula Example                                     | Notes                                       |
+| :----------------------- | :-------------------------------------------------- | :------------------------------------------ |
+| **Convert to uppercase** | `Upper(Local.Input)`                                | Transforms a string to all caps             |
+| **Convert to lowercase** | `Lower(Local.Input)`                                | Transforms a string to all lowercase        |
+| **Get string length**    | `Len(Local.Input)`                                  | Returns the number of characters            |
+| **Conditional check**    | `Local.Confidence > 0.8`                            | Returns true/false; used in If/Else nodes   |
+| **If/Else logic**        | `If(Local.Confidence > 0.8, "Proceed", "Escalate")` | Returns one of two values                   |
+| **Sum simple list**      | `Sum([10, 20, 30])`                                 | Adds up numbers in a simple list            |
+| **Sum table column**     | `Sum(Local.ItemList, Amount)`                       | Adds the **Amount** property of each record |
+| **Count items**          | `Count(Local.ItemList)`                             | Returns the number of items in a table/list |
+| **Check if blank**       | `IsBlank(Local.Input)`                              | Returns true if variable or input is empty  |
+| **Check if empty table** | `IsEmpty(Local.ItemList)`                           | Returns true if a table has no records      |
+| **Loop over items**      | `ForAll(Local.ItemList, Upper(Name))`               | Applies a formula to each item in a list    |
+| **Concatenate text**     | `Concatenate(Local.FirstName, " ", Local.LastName)` | Joins multiple strings into one             |
+
+## Logic Summary for Workflows
+
+- **Dynamic Adaptation:** Using variables allows workflows to change behavior based on previous steps.
+- **Maintainability:** This low-code approach keeps complex logic understandable and easy to manage.
+
+```powerfx
+// Example of a combined logic check
+If(
+    Count(Local.ItemList) > 0,
+    ForAll(Local.ItemList, Upper(Name)),
+    "No items to process"
+)
+```
+
+**Tip**
+
+1- For more information about the Power Fx language, visit the Power Fx documentation. https://learn.microsoft.com/en-us/power-platform/power-fx/overview
+
+# Summary: Maintain Workflows in Microsoft Foundry
+
+Maintaining and refining workflows ensures they remain reliable, understandable, and adaptable as business needs or AI models change.
+
+## Core Maintenance Features
+
+### 1. Dual Representations
+
+Microsoft Foundry provides two synchronized ways to view and edit workflows:
+
+- **Visual Canvas:** Best for conceptual understanding, tracing execution paths, and collaboration.
+- **YAML:** A textual representation used for advanced configuration, version tracking, and source control integration.
+- **Synchronization:** Changes made in one view are automatically reflected in the other to ensure consistency.
+
+### 2. Versioning
+
+Foundry automatically creates a new, **immutable version** every time a workflow is saved.
+
+- **Safety Net:** Allows users to review prior versions, compare changes, or roll back if errors occur.
+- **Collaboration:** Simplifies tracking who made specific changes and the reasoning behind them.
+
+### 3. Documentation (Notes)
+
+The workflow visualizer allows maintainers to attach notes directly to nodes or sections.
+
+- **Context:** Explains design decisions and clarifies variable usage.
+- **Efficiency:** Reduces errors and accelerates updates for future team members.
+
+## Best Practices for Refinement
+
+To improve clarity, reliability, and efficiency, follow these standards:
+
+- **Clean Up:** Regularly review workflows to remove unused or redundant nodes.
+- **Consistency:** Ensure structured agent outputs are handled uniformly.
+- **Documentation:** Consistently use notes to document logic and decisions.
+- **Validation:** Use version history to track changes and validate all updates.
+
+## Summary Table: YAML vs. Visual Canvas
+
+| Feature           | Visual Canvas                     | YAML Representation                |
+| :---------------- | :-------------------------------- | :--------------------------------- |
+| **Primary Use**   | Conceptual mapping & flow tracing | Advanced config & version tracking |
+| **Collaboration** | Ideal for team walk-throughs      | Integration with source control    |
+| **Editing**       | Drag-and-drop interface           | Text-based editing                 |
+
+### YAML Configuration Example
+
+```yaml
+# Example snippet of a workflow's textual representation
+name: "Customer Support Logic"
+version: 1.2.0
+nodes:
+  - id: "check_confidence"
+    type: "condition"
+    inputs:
+      formula: "Local.Confidence > 0.8"
+```
+
+# Summary: Use workflows in code
+
+## Overview
+
+Workflows designed in the **Microsoft Foundry visual designer** can be integrated into applications (web apps, APIs, backend services) using the **Azure AI Projects SDK**. Workflows are defined by YAML but are invoked programmatically by name.
+
+## 1. Invoking a Workflow
+
+To run a workflow, you must first establish a connection to the project using the `AIProjectClient`. This client manages authentication and provides access to an OpenAI-compatible API.
+
+### Implementation Steps:
+
+- Reference the workflow by its specific name.
+- Create a conversation context.
+- Invoke the workflow by passing the `conversation.id` and an `agent_reference`.
+
+### Python Example:
+
+```python
+# Reference a workflow created in the Foundry portal
+workflow_name = "triage-workflow"
+
+# Create a conversation context for the workflow
+conversation = openai_client.conversations.create()
+
+# Execute the workflow, passing input to drive the workflow logic
+stream = openai_client.responses.create(
+    conversation=conversation.id,
+    extra_body={"agent": {"name": workflow_name, "type": "agent_reference"}},
+    input="Users can't reset their password from the mobile app.",
+    stream=True,
+)
+```
+
+## 2. Input Parameters
+
+The `input` parameter drives the workflow logic. Depending on the design, this can be:
+
+- A user question for analysis.
+- A support ticket description for routing/classification.
+- A data payload for processing.
+- An empty string to simply trigger the start.
+
+## 3. Processing Workflow Events
+
+When **streaming** is enabled, the application receives real-time events. This allows for progress tracking and capturing agent outputs.
+
+### Python Example:
+
+```python
+for event in stream:
+    if event.type == "response.completed":
+        print("Workflow completed:")
+        for message in event.response.output:
+            if message.content:
+                for content_item in message.content:
+                    if content_item.type == 'output_text':
+                        print(content_item.text)
+    if (event.type == "response.output_item.done") and event.item.type == ItemType.WORKFLOW_ACTION:
+        print(f"Action '{event.item.action_id}' completed with status: {event.item.status}")
+
+```
+
+### Common Event Types:
+
+| Event Type                  | Description                                              |
+| --------------------------- | -------------------------------------------------------- |
+| `response.completed`        | The workflow finished and returned a final response.     |
+| `response.output_item.done` | An individual output (like a workflow action) completed. |
+
+## 4. Interaction Patterns
+
+- **Streaming:** Used for real-time monitoring and progress updates.
+- **Non-Streaming:** Waiting for the entire workflow to finish before processing.
+- **Human-in-the-loop:** Handling pauses where the workflow waits for user input; the application resumes execution by sending additional messages to the conversation.
+
+## 5. Benefits of Integration
+
+| Scenario               | Benefit                                       |
+| ---------------------- | --------------------------------------------- |
+| **Web applications**   | Embed AI workflows in user-facing apps.       |
+| **APIs/Microservices** | Expose workflows via REST endpoints.          |
+| **Batch processing**   | Programmatic invocation for bulk operations.  |
+| **Testing/Validation** | Automated testing via CI/CD pipelines.        |
+| **Custom interfaces**  | Build specialized UIs for specific workflows. |
+
+# Exercise - Create an Agent-driven Workflow
+
+https://learn.microsoft.com/en-us/training/modules/build-agent-workflows-microsoft-foundry/9-exercise
+
+# Unit: Build knowledge-enhanced AI agents with Foundry IQ
+
+# Summary: Understanding RAG for agents
+
+## Overview
+
+Enterprise environments require high accuracy and reliability. **Retrieval Augmented Generation (RAG)** is the architectural solution used to overcome the limitations of simple AI agents by connecting them to real-time organizational knowledge.
+
+---
+
+## 1. Limitations of Simple AI Agents
+
+Simple agents often fail in business settings because they rely solely on static training data.
+
+| Limitation               | Impact                    | Example                                          |
+| :----------------------- | :------------------------ | :----------------------------------------------- |
+| **Knowledge Cutoff**     | No access to recent info  | Inability to explain a policy updated yesterday. |
+| **Private Data Access**  | Generic responses only    | Missing internal product specs or procedures.    |
+| **Lack of Context**      | Irrelevant advice         | Ignoring specific company security protocols.    |
+| **Fabricated Responses** | Compliance/Security risks | Providing confident but "hallucinated" info.     |
+| **Scalability Issues**   | Engineering inefficiency  | Every team rebuilding RAG infra from scratch.    |
+
+---
+
+## 2. The RAG Process
+
+RAG transforms agents by moving from static data to **dynamic knowledge retrieval** through three coordinated steps:
+
+1.  **Retrieve**: The system searches internal knowledge bases for content relevant to the user's query.
+2.  **Augment**: The system combines the retrieved factual content with the user's original question.
+3.  **Generate**: The agent creates a final response using a blend of its core training and the specific retrieved information.
+
+## 3. Critical Advantages for Enterprise
+
+By implementing RAG, organizations gain three specific benefits:
+
+- **Real-time Updates**: Agents stay current with new policies without needing to be retrained.
+- **Source Transparency**: Users can see which documents informed the response, enabling verification and trust.
+- **Factual Grounding**: Responses are anchored in actual organizational data, eliminating fabrications and ensuring compliance.
+
+---
+
+## 4. Transition to Microsoft Foundry IQ
+
+Building custom RAG infrastructure requires significant technical expertise. **Microsoft Foundry IQ** serves as a "ready-made" knowledge platform designed to eliminate the complexity of manual RAG implementation.
+
+# Summary: Explore Foundry IQ
+
+## 1. What is Foundry IQ?
+
+Foundry IQ is a **managed knowledge platform** built on Azure AI Search. It acts as a shared service that allows multiple AI agents to access organizational data without rebuilding RAG (Retrieval Augmented Generation) infrastructure for every new agent.
+
+## 2. Knowledge Bases (KB)
+
+Foundry IQ organizes information by **business domain** (e.g., "HR Policies") rather than technical storage location (e.g., "SharePoint").
+
+- **Unified Source:** A single KB can aggregate data from SharePoint, Azure Blob Storage, and OneLake.
+- **Agent Perspective:** To the agent, the KB appears as one unified, searchable source.
+- **Management:** You connect data sources to KBs once, and any agent can be linked to them.
+
+## 3. Data Source Integration & Processing
+
+Foundry IQ automates the technical "heavy lifting" of RAG:
+
+1.  **Discovery:** Scans storage for documents.
+2.  **Processing:** Automatically handles **chunking** and **embedding** for semantic search.
+3.  **Indexing:** Makes content searchable.
+4.  **Monitoring:** Triggers automatic reindexing when documents change.
+
+## 4. Built-in Retrieval Intelligence
+
+The platform includes automated logic to optimize how information is found:
+
+- **Query Analysis:** Understands the intent of the agent's question.
+- **Strategy Selection:** Switches between keyword search (factual) and semantic search (complex) as needed.
+- **Relevance Ranking:** Scores results so the most important info surfaces first.
+- **Citations:** Provides source documents so agents can verify information.
+
+## 5. Connecting Agents to Knowledge (Code)
+
+Foundry IQ uses the **Model Context Protocol (MCP)** to connect agents to knowledge bases as a "tool."
+
+### Python Example:
+
+```python
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import PromptAgentDefinition, MCPTool
+
+project_client = AIProjectClient(endpoint=search_endpoint, credential=credential)
+
+# Connect to the product documentation knowledge base via MCP
+knowledge_tool = MCPTool(
+    server_label="product-docs",
+    server_url=f"{search_endpoint}/knowledgebases/product-documentation/mcp"
+)
+
+# Create an agent and grant it access to the KB via the 'tools' parameter
+agent = project_client.agents.create_version(
+    agent_name="product-support-agent",
+    definition=PromptAgentDefinition(
+        model="gpt-4o-mini",
+        instructions="Answer product questions using the knowledge base. Always cite your sources.",
+        tools=[knowledge_tool]
+    )
+)
+```
+
+## 6. The Shared Knowledge Advantage
+
+Scalability: One KB can serve multiple agents (e.g., a "Product Docs" KB can serve both a Support Agent and a Developer Agent).
+Consistency: Updating a single data source improves the responses of every connected agent simultaneously.
+Standardization: Uses MCP for secure, standardized access to external tools and data.
+
+# Summary: Configure data sources for knowledge bases
+
+## 1. Selecting the Right Data Source
+
+Foundry IQ supports six primary data source types. The choice depends on **data location** and **access requirements** (Real-time vs. Indexed).
+
+| Data Source               | Access Type | Best For...                                           |
+| :------------------------ | :---------- | :---------------------------------------------------- |
+| **Azure AI Search Index** | Indexed     | Pre-existing enterprise search with custom pipelines. |
+| **Azure Blob Storage**    | Direct      | Standard document files (PDF, Word, MD) in Azure.     |
+| **Web (Bing)**            | Real-time   | Grounding responses in current, public news/events.   |
+| **SharePoint (Remote)**   | Real-time   | Live content with M365 governance; no maintenance.    |
+| **SharePoint (Indexed)**  | Indexed     | Faster responses and advanced/custom search needs.    |
+| **OneLake**               | Direct      | Unstructured data from Microsoft Fabric lakehouses.   |
+
+## 2. Deep Dive: Key Source Characteristics
+
+### A. Azure AI Search Index
+
+- **Best Use:** When you have already invested in custom search indexes.
+- **Key Benefits:**
+  - **Semantic Ranking:** Finds context based on meaning, not just keywords.
+  - **Custom Scoring:** Prioritizes results based on business logic.
+  - **Faceted Navigation:** Allows filtering by categories.
+
+### B. Azure Blob Storage
+
+- **Supported Formats:** PDF, .docx, .txt, .md, .html.
+- **Advantage:** Direct path from files to KB without manually building an index.
+- **Organization:** Blobs can be organized into containers by topic/access level.
+
+### C. Web (Grounding via Bing)
+
+- **Purpose:** Provides news, pricing, and external info not found in internal KBs.
+- **Risk:** Less control over specific sources; accuracy is dependent on Bing.
+- **Hybrid Tip:** Can be combined with internal sources as a fallback.
+
+### D. SharePoint: Remote vs. Indexed
+
+| Feature            | SharePoint **Remote**         | SharePoint **Indexed**                   |
+| :----------------- | :---------------------------- | :--------------------------------------- |
+| **Access Method**  | Real-time queries             | Preprocessed index                       |
+| **Data Freshness** | Always current                | Depends on indexing schedule             |
+| **Maintenance**    | None                          | Requires index updates                   |
+| **Search Power**   | Standard                      | Advanced (Custom analyzers/AI pipelines) |
+| **Speed**          | Variable (SharePoint latency) | Fast (Pre-indexed)                       |
+
+### E. Microsoft OneLake
+
+- **Integration:** Connects to Microsoft Fabric data lakehouses.
+- **Common Use Cases:** Referencing business intelligence reports, analytical findings, and research outputs.
+
+---
+
+## 3. Decision Guide Summary
+
+To choose a source, follow this logic:
+
+- **Need real-time web info?** Choose **Web**.
+- **Data in SharePoint but need it "always current"?** Choose **SharePoint Remote**.
+- **Data in SharePoint but need "fast/advanced search"?** Choose **SharePoint Indexed**.
+- **Already have an Azure Search setup?** Choose **Azure AI Search Index**.
+- **Using Microsoft Fabric?** Choose **OneLake**.
+
+**Note:** You can **combine** multiple sources (e.g., SharePoint + Web) in a single knowledge base to ensure the agent is both an internal expert and aware of current events.
+
+# Summary: Configure retrieval with Foundry IQ
+
+This section moves from "how to store data" to "how to make an agent actually use it." The core challenge is ensuring that the agent doesn't just "know" the information, but consistently **retrieves** it, **cites** it, and **stays grounded** in it.
+
+---
+
+### **Summary: Configure Retrieval with Foundry IQ**
+
+# Study Guide: Configuring Retrieval & Instructions
+
+## 1. The Retrieval Behavior Problem
+
+Without specific configuration, agents may produce inconsistent results. The goal is to move from generic AI knowledge to **grounded, verifiable enterprise knowledge**.
+
+| Behavior                          | Result                                 | Verdict            |
+| :-------------------------------- | :------------------------------------- | :----------------- |
+| **Training Data Only**            | Generic, likely outdated answers.      | ❌ Unacceptable    |
+| **Search without Citation**       | Correct info but no accountability.    | ❌ Unacceptable    |
+| **Search + Citation + Grounding** | Verifiable info anchored in your data. | ✅ Target Behavior |
+
+---
+
+## 2. Writing Effective Retrieval Instructions
+
+Instructions act as the "contract" for how an agent uses the knowledge base. Vague instructions (e.g., "Use the KB") lead to inconsistent tool calls.
+
+### Critical Components of Instructions:
+
+1.  **When to retrieve:** Explicitly command the agent to search _every time_.
+2.  **How to cite:** Define the exact citation format (e.g., `【doc_id:search_id†source_name】`).
+3.  **Fallback logic:** Tell the agent exactly what to say if the answer is missing (avoid "guessing").
+
+### Python Example: Implementing Advanced Instructions
+
+```python
+# Define strict retrieval rules
+retrieval_instructions = """You are a helpful HR assistant.
+CRITICAL RULES:
+- ALWAYS search the knowledge base before answering.
+- NEVER answer from your own training data.
+- FORMAT citations exactly as: 【doc_id:search_id†source_name】
+- IF NOT FOUND: Say "I don't have that information. Contact hr@company.com"
+"""
+
+agent = project_client.agents.create_version(
+    agent_name="hr-assistant",
+    definition=PromptAgentDefinition(
+        model="gpt-4o-mini",
+        instructions=retrieval_instructions,
+        tools=[knowledge_tool]
+    )
+)
+
+```
+
+## 3. Systematic Testing
+
+Testing ensures the instructions are actually being followed across different query types.
+
+| Query Type       | Goal                      | Expected Result                         |
+| ---------------- | ------------------------- | --------------------------------------- |
+| **Factual**      | Test direct retrieval.    | Precise answer + citation.              |
+| **Synthesis**    | Test multi-doc retrieval. | Combined answer + multiple citations.   |
+| **Out-of-Scope** | Test fallback logic.      | Triggered the "I don't know" phrase.    |
+| **Ambiguous**    | Test reasoning.           | Clarifying question or relevant search. |
+
+---
+
+## 4. Specialized Retrieval Strategies
+
+Tailor your instructions based on the agent's specific role:
+
+- **Customer Support:** High accuracy, zero guessing, "connect to human" fallback.
+- **Research Assistant:** Broad synthesis, suggests related topics, indicates confidence levels.
+- **Compliance Expert:** Strictly factual, references specific policy sections and effective dates.
+
+---
+
+## 5. Production Monitoring
+
+Retrieval quality is an iterative process. Once in production, track:
+
+- **Citation Frequency:** Are citations appearing as requested?
+- **Fallback Rate:** Are there gaps in your documentation?
+- **Retrieval Accuracy:** Is the system surfacing the _right_ documents for the user's intent?
+
+# Exercise: Integrate an AI agent with Foundry IQ
+
+https://learn.microsoft.com/en-us/training/modules/introduction-foundry-iq/7-exercise
