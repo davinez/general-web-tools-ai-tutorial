@@ -1,5 +1,0 @@
-{
-  "/api/auth/login": "/login",
-  "/api/tutorial/locations": "/locations",
- "/api/tutorial/locations/:id": "/locations/:id"
-}

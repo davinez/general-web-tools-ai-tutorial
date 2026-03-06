@@ -2,7 +2,6 @@ using CoreApp.API.Config.Extensions;
 using CoreApp.API.Infrastructure.Data;
 using CoreApp.API.Infrastructure.Hubs;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using Serilog;
@@ -11,9 +10,9 @@ using System;
 // Configure Serilog for bootstrap logging. This will catch errors during startup.
 // This should be the very first thing in your Program.cs
 Log.Logger = new LoggerConfiguration()
-    .Enrich.FromLogContext()
-    .WriteTo.Console()
-    .CreateBootstrapLogger();
+   .Enrich.FromLogContext()
+   .WriteTo.Console()
+   .CreateBootstrapLogger();
 
 try
 {
@@ -63,8 +62,8 @@ try
 
   // Configure the HTTP request pipeline.
   app.UseSerilogRequestLogging(); // Optional: Log all HTTP requests
- // app.UseHealthChecks("/health");
-  //app.UseHttpsRedirection();
+                                  // app.UseHealthChecks("/health");
+                                  //app.UseHttpsRedirection();
   app.UseCors("gwtai_policy");
   //app.UseAuthentication();
   //app.UseAuthorization();
