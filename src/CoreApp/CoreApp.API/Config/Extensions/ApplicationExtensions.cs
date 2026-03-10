@@ -1,6 +1,8 @@
 using CoreApp.API.Domain.Security;
 using CoreApp.API.Endpoints.Bookmarks.CreateFolders;
 using CoreApp.API.Endpoints.Bookmarks.Upload;
+using CoreApp.API.Endpoints.JobMarket.FetchJobs;
+using CoreApp.API.Endpoints.JobMarket.Upload;
 using CoreApp.API.Infrastructure;
 using CoreApp.API.Infrastructure.Security;
 using FluentValidation;
@@ -32,6 +34,10 @@ public static class ApplicationExtensions
     services.AddSingleton(TimeProvider.System);
     services.AddScoped<IValidator<UploadCommand>, UploadCommandHandler.CommandValidator>();
     services.AddScoped<IValidator<CreateFoldersCommand>, CreateFoldersCommandHandler.CommandValidator>();
+
+    // CareerIntelligence AI – Phase 1
+    services.AddScoped<IValidator<UploadJobScreenshotsCommand>, UploadJobScreenshotsCommandHandler.CommandValidator>();
+    services.AddScoped<IValidator<FetchJobsCommand>, FetchJobsCommandHandler.CommandValidator>();
 
     services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 

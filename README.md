@@ -204,71 +204,180 @@ $dSec.AddAccessRule($rule)
 $dInfo.SetAccessControl($dSec)
 ```
 
-# The Great Plan
+######################
+The Great Plan
+######################
 
-Architecture, By combining a **Timer Trigger** (scheduled) with an **Event-Driven** (reactive) flow, we're building a system that handles both massive batch data and immediate user interaction perfectly.
+It establishes the "CareerIntelligence AI" context, focusing on a real-world **GenAIOps** approach using a high-performance, cost-effective architecture.
 
-Using **.NET 10** for the Event Grid logic it's efficient at handling those asynchronous cloud events, while **FastAPI** can stay focused on the "heavy" AI processing.
+# 🚀 Project Context: CareerIntelligence AI (v3.0)
 
-# 🚀 Project Context: CareerIntelligence AI
+**Project Vision:** A "Real-World" Market Intelligence platform that transforms messy, multi-source job data (Bulk Screenshots + External APIs) into actionable insights using a **Medallion Data Lakehouse** and **Agentic AI**.
 
-**Tech Stack:** \* **Frontend:** Angular 20 (Signals, Zoneless, Tailwind CSS)
+## 🏗️ The 5-Layer AI Architecture
 
-- **Gateway:** .NET 10 Minimal APIs (C# 14, Entra ID, SignalR)
-- **AI Engine:** FastAPI (Python 3.12+, Pydantic v2, Azure AI Foundry SDK)
-- **Infrastructure:** Azure AI Foundry (OpenAI, Search, Vision), Blob Storage, Azure Functions.
+### 1. Ingestion & Safety Layer (The Gatekeeper)
 
-## 🏗️ The Refined Architecture
+- **Purpose:** Securely land raw data and prevent redundant processing.
+- **Tools/Services:** \* **Angular 20:** Frontend using **Signals** (Zoneless) for bulk file uploads.
+- **Azure Blob Storage (Bronze):** Stores original images and raw API JSON.
+- **Azure AI Content Safety:** Scans uploads for PII and jailbreak attempts.
+- **.NET 10 Minimal APIs:** Implements an `IJobProvider` registry with **Daily-Lock caching** (SQL/Redis) to avoid redundant API calls within 24 hours.
 
-### 1. The Trigger System (Data Ingestion)
+### 2. Processing & Normalization Layer (The Factory)
 
-- **Automated (The Scraper):** An **Azure Function (Timer Trigger)** runs on a schedule (e.g., daily at 8 AM). It calls the **FastAPI** scraper service to crawl job boards.
-- **Manual (The Screenshot):** An **Angular 20** "Quick Capture" feature allows pasting/uploading screenshots. The **.NET 10 API** receives these and saves them to **Azure Blob Storage**.
-- **Event-Driven (The Processor):** When a new JSON file (scraper) or Image (manual) hits Blob Storage, an **Event Grid Trigger** kicks off the specific AI pipeline.
+- **Purpose:** Extract, clean, and deduplicate data using a hybrid LLM/SLM approach.
+- **Tools/Services:** \* **FastAPI (Python 3.12):** The high-performance "Brain" orchestrating the data flow.
+- **Azure AI Document Intelligence:** High-fidelity OCR and layout extraction.
+- **Phi-3.5 (SLM):** Used for low-latency, low-cost "Normalization" (e.g., CDMX → Mexico City).
+- **GPT-4o (LLM):** Used for complex "Reasoning" tasks like skill extraction and salary estimation.
+- **Pydantic v2:** Strict data validation for the **Silver Layer** (Clean JSON) in Blob Storage.
 
-### 2. The AI Pipeline (The "Brain")
+### 3. Knowledge & Intelligence Layer (The Library)
 
-- **Vision:** **Azure AI Document Intelligence** parses screenshots to extract raw text and layout.
-- **Language:** **Azure OpenAI (GPT-4o)** processes the raw text (from scrapers or OCR) to generate structured JSON (Skills, Salary, Seniority, Tech Stack).
-- **Knowledge:** **Azure AI Search** stores these jobs as **Vectors**, enabling semantic queries like: _"Find me jobs that match my specific .NET and React experience."_
+- **Purpose:** Enable high-speed semantic search and trend analysis.
+- **Tools/Services:** \* **Azure AI Search (Gold Layer):** High-performance vector store with **Integrated Vectorization**.
+- **Azure OpenAI Embeddings (ada-002):** Converts job descriptions into mathematical vectors.
+- **Prompt Flow:** Used for **GenAIOps**—evaluating prompt performance, groundedness, and relevance.
 
----
+### 4. Agentic Orchestration Layer (The Analyst)
 
-## 📋 Step-by-Step Implementation Roadmap
+- **Purpose:** A "Reasoning" agent that answers user queries by using tools.
+- **Tools/Services:** \* **Azure AI Foundry Agent Service:** Manages persistent state, threads, and multi-tool orchestration.
+- **Code Interpreter:** Allows the Agent to execute Python for real-time math or visualization.
+- **Model Context Protocol (MCP):** Connects the Agent to external data sources and internal .NET tools.
 
-### Phase 1: Environment & Gateway Foundation
+### 5. UI & Observability Layer (The Dashboard)
 
-- [ ] **1.1 Hub Setup:** Provision Azure AI Foundry Hub, OpenAI (GPT-4o), and AI Search.
-- [ ] **1.2 .NET 10 Gateway:** Setup Minimal API with OpenAPI 3.1. Configure **Azure Blob Storage** integration.
-- [ ] **1.3 Angular 20 Skeleton:** Initialize project with **Signals** for state and a simple upload component for screenshots.
+- **Purpose:** Visualize market trends and interact with the AI Analyst.
+- **Tools/Services:** \* **Angular 20 Signals:** Reactive dashboard for real-time market heatmaps.
+- **SignalR:** Pushes "Pipeline Finished" notifications from the cloud to the UI.
+- **Application Insights:** End-to-end monitoring of token costs, latency, and Agent "tool-call" logic.
 
-### Phase 2: Manual Input & Vision (FastAPI)
+## 📋 AI Engineering Master Roadmap
 
-- [ ] **2.1 FastAPI OCR Service:** Build the endpoint using **Azure AI Document Intelligence**.
-- [ ] **2.2 Event-Driven Flow:** Connect Blob Storage events to trigger the FastAPI processing layer.
+- **Phase 1: Foundation (GenAIOps):** Provision **Azure AI Foundry Hub**; set up .NET `IJobProvider` and Daily Cache logic.
+- **Phase 2: Extraction Pipeline:** Build **FastAPI** service for Bulk OCR + Phi-3.5 Normalization; establish **Medallion (Bronze/Silver)** folders.
+- **Phase 3: RAG Implementation:** Configure **Azure AI Search** to crawl Silver blobs; test indexing with **Prompt Flow**.
+- **Phase 4: Agentic Reasoning:** Deploy the **Foundry Agent** with a "Market Analyst" persona and Search tools.
+- **Phase 5: Agentic UI:** Build the Angular Chat + Signals Dashboard; implement **Responsible AI** filters and cost tracking.
 
-### Phase 3: Automated Scraper & Data Lake
+##############
 
-- [ ] **3.1 Playwright Scraper:** Build the Python scraping logic in FastAPI.
-- [ ] **3.2 Azure Function:** Setup the Timer Trigger to automate the scraper.
-- [ ] **3.3 Storage:** Store raw data in **Azure Data Lake Gen2**.
+### Topics
 
-### Phase 4: RAG & Intelligence
+##############
 
-- [ ] **4.1 LLM Structuring:** Write the system prompts in **Prompt Flow** to clean and categorize job data.
-- [ ] **4.2 Vector Indexing:** Configure **Azure AI Search** to index the structured jobs.
-- [ ] **4.3 Semantic Querying:** Add an endpoint to .NET to "search jobs by resume."
+# AI Services, Tools, Libraries, and Frameworks
 
-### Phase 5: Agentic UI & GenAIOps
+## Azure AI Services & Tools
 
-- [ ] **5.1 Career Agent:** Deploy an **Azure AI Foundry Agent** to chat with the user about market trends.
-- [ ] **5.2 Real-time Dashboard:** Use **SignalR** to push scraper updates to the Angular dashboard.
-- [ ] **5.3 Monitoring:** Implement **Application Insights** and Content Safety filters.
+- Azure AI Vision
+- Azure AI Language
+- Azure AI Foundry
+- Azure AI Foundry Agent Service
+- Azure AI Foundry Models API
+- Azure AI Foundry SDK
+- Azure AI Foundry portal
+- Azure AI Foundry extension for VS Code
+- Azure AI Services SDKs
+- Azure OpenAI (OpenAI models, GPT-4, GPT-4o, etc.)
+- Azure AI Search
+- Azure Key Vault
+- Azure Storage
+- Azure AI hub
+- Azure Machine Learning studio
+- Prompt Flow (in Azure AI Foundry and Azure ML Studio)
+- Microsoft Foundry Agent Service
+- Microsoft Foundry extension (VS Code)
+- Microsoft Agent Framework
+- Microsoft 365 Agents SDK
+- Microsoft Copilot Studio (Full and Lite)
+- AutoGen (open-source framework)
+- OpenAI Assistants API
+- Bing Search (as a grounding tool)
+- File Search (RAG)
+- Code Interpreter (Python execution)
+- OpenAPI Tools (external API integration)
+- Model Context Protocol (MCP)
+- Microsoft Fabric (data store integration)
+- GitHub Copilot
 
----
+## Libraries, Models, and Catalogs
 
-### 🏁 Where shall we begin?
+- Large Language Models (LLMs): GPT-4, Mistral Large, Llama3 70B, Llama 405B, Command R+
+- Small Language Models (SLMs): Phi3, Mistral OSS, Llama3 8B
+- Hugging Face model catalog
+- GitHub Marketplace models
+- DALL·E 3, Stability AI (image generation)
+- Ada, Cohere (embedding models)
+- Core42 JAIS (Arabic LLM)
+- Nixtla TimeGEN-1 (time-series forecasting)
+- DeepSeek-R1, o1 (reasoning models)
+- Phi3-vision (multi-modal)
+- Cohere Command R+
+- Meta, Databricks, Snowflake, Nvidia models
 
-Since the architecture depends on data being uploaded and stored correctly first, I recommend starting with **Phase 1.2 and 1.3**.
+# Methodologies, Concepts, and Abstract Topics
 
-**Would you like me to provide the .NET 10 code for the Minimal API Gateway (handling the image upload) or the Angular 20 "Quick Capture" component using Signals?**
+## AI & Agent Concepts
+
+- Generative AI
+- Language Models (LLMs, SLMs)
+- Foundation Models
+- Multi-modal Models
+- Retrieval Augmented Generation (RAG)
+- Prompt Engineering
+- Fine-tuning
+- Model Inference API
+- Model deployment (standard, serverless, managed compute)
+- Model selection and evaluation (benchmarks, manual/automated)
+- Model lifecycle and GenAIOps
+- System Prompts and Guidance/Templates
+- Embeddings and semantic search
+- Function calling and JSON support
+- Chat completion models
+- Reasoning models
+- Multi-agent orchestration
+
+## Agent Development & Architecture
+
+- Single-Agent and Multi-Agent Scenarios
+- Knowledge Integration (grounding)
+- Task Automation
+- Decision-Making
+- Threads, Messages, Runs (conversation/session management)
+- Tools: Knowledge Tools (grounding), Action Tools (execution)
+- Custom Tools (API integration, Azure Functions, OpenAPI)
+- Visual Agent Designer (VS Code)
+- Agent Instructions (persona, goals, constraints)
+- Agent Testing (Playground)
+- Deployment Pipeline (VS Code to Foundry)
+- Model Router (automatic model selection)
+- Foundry IQ (shared RAG knowledge base)
+- RBAC (Role-Based Access Control)
+- Human-in-the-Loop
+- Sandboxing
+- Prompt Filtering
+- Auditability and Observability
+
+## Responsible AI Principles
+
+- Fairness
+- Reliability and Safety
+- Privacy and Security
+- Inclusiveness
+- Transparency
+- Accountability
+
+## Development & Operations
+
+- Project/resource provisioning (Portal, BICEP/ARM, CLI)
+- Centralized access control and cost management
+- Regional availability considerations
+- Single vs. Multi-service resources
+- Connections and Runtimes (Prompt Flow)
+- Variants (Prompt Flow)
+- Metrics: Groundedness, Relevance, Coherence, Fluency, Similarity
+- End-user feedback and monitoring
+- Experimentation, Evaluation, Production lifecycle

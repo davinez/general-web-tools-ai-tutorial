@@ -1,15 +1,13 @@
 using CoreApp.API.Domain.Models;
 using CoreApp.API.Domain.Services.ExternalServices;
-using CoreApp.API.Endpoints.AiAzure.AIFoundrySDK;
 using CoreApp.API.Endpoints.AiAzure.GenerativeAIChat;
 using CoreApp.API.Endpoints.AiAzure.RAGGenerativeAI;
-using CoreApp.API.Endpoints.Bookmarks.Upload;
 using Mediator;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CoreApp.API.Endpoints.Ai
+namespace CoreApp.API.Endpoints.AiAzure
 {
   [ApiController]
   [Route("api/ai-azure")]

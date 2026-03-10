@@ -2,7 +2,6 @@ using Azure.AI.Projects;
 using Azure.Identity;
 using CoreApp.API.Domain.Errors.Exceptions;
 using CoreApp.API.Domain.Security;
-using CoreApp.API.Endpoints.AiAzure.GenerativeAIChat;
 using CoreApp.API.Infrastructure.Data;
 using FluentValidation;
 using Mediator;
@@ -15,7 +14,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CoreApp.API.Endpoints.AiAzure.AIFoundrySDK;
+namespace CoreApp.API.Endpoints.AiAzure.GenerativeAIChat;
 
 
 /*

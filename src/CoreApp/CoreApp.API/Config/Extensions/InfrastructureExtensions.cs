@@ -1,10 +1,13 @@
 using CoreApp.API.Domain.Errors.Exceptions;
 using CoreApp.API.Domain.MessageBrokers.Producers;
 using CoreApp.API.Domain.Services.ExternalServices;
+using CoreApp.API.Domain.Services.JobProviders;
 using CoreApp.API.Infrastructure;
 using CoreApp.API.Infrastructure.Data;
 using CoreApp.API.Infrastructure.Data.Interceptors;
 using CoreApp.API.Infrastructure.ExternalServices.AiServices;
+using CoreApp.API.Infrastructure.ExternalServices.JobProviders;
+using CoreApp.API.Infrastructure.ExternalServices.JobProviders.Providers;
 using CoreApp.API.Infrastructure.ExternalServices.Storage;
 using CoreApp.API.Infrastructure.MessageBrokers.Consumers;
 using CoreApp.API.Infrastructure.MessageBrokers.Dto;
@@ -129,6 +132,16 @@ namespace CoreApp.API.Config.Extensions
 
       services.AddScoped<IBookmarksMessageProducer, BookmarksMessageProducer>();
 
+      // JobProvider Registry + Daily-Lock Cache
+      // Register providers first so DI can inject IEnumerable<IJobProvider> into the registry.
+      services.AddHttpClient<IJobProvider, LinkedInJobProvider>(client =>
+      {
+        var baseUrl = configuration["JobProviders:LinkedIn:BaseUrl"] ?? "https://api.linkedin.com/v2/";
+        client.BaseAddress = new Uri(baseUrl);
+      });
+      services.AddSingleton<IJobProviderRegistry, JobProviderRegistry>();
+      services.AddSingleton<IDailyJobCache, DailyJobCache>();
+
       var redisEndPoint = configuration["Redis:Endpoint"] ?? throw new CoreAppException("Missing Redis:Endpoint");
       var redsUser = configuration["Redis:User"] ?? throw new CoreAppException("Missing Redis:User");
       var redisPassword = configuration["Redis:Password"] ?? throw new CoreAppException("Missing Redis:Password");
@@ -146,6 +159,12 @@ namespace CoreApp.API.Config.Extensions
         // options.Configuration.KeepAlive = 180; // 3 minutes
         // options.Configuration.ReconnectRetryPolicy = new ExponentialRetry(5000); // Retry every 5 seconds
       };
+
+      // Distributed cache (Redis) – used by DailyJobCache for the daily-lock
+      services.AddStackExchangeRedisCache(options =>
+      {
+        options.ConfigurationOptions = redisConfiguration;
+      });
 
       // Hubs
       // Add SignalR services

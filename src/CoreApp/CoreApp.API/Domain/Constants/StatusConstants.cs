@@ -28,6 +28,8 @@ namespace CoreApp.API.Domain.Constants
     public enum Workflow
     {
       BookmarksUpload,
+      ScreenshotsUpload,
+      JobFetch,
     }
 
     public const string VALIDATION_ERROR = "Validation error occurred";
